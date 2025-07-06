@@ -3,6 +3,7 @@
 
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -11,6 +12,8 @@ import { Search } from 'lucide-react';
 import { helpTopics, homeHostHelpTopics, experienceHostHelpTopics, serviceHostHelpTopics, travelAdminHelpTopics } from '@/lib/dummy-data';
 import { useAuth } from '@/hooks/use-auth';
 import { Button } from '@/components/ui/button';
+import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from '@/components/ui/carousel';
+import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 
 const faqs = [
     {
@@ -45,6 +48,43 @@ const allSearchableContent = [
   ...travelAdminHelpTopics.flatMap(category => category.links.map(link => ({ title: link.title, content: category.category, href: link.href })))
 ];
 
+const guides = [
+    {
+      title: "Getting Started for Guests",
+      description: "Find your perfect stay and what to expect during your trip.",
+      image: "https://placehold.co/600x400.png",
+      hint: "happy traveler",
+      href: "#",
+    },
+    {
+      title: "Setting Up Your Host Account",
+      description: "A step-by-step guide to listing your property and welcoming guests.",
+      image: "https://placehold.co/600x400.png",
+      hint: "property keys",
+      href: "/list-property",
+    },
+    {
+      title: "Understanding Cancellations",
+      description: "Learn about the different policies and how they affect you.",
+      image: "https://placehold.co/600x400.png",
+      hint: "calendar schedule",
+      href: "/cancellation-policy",
+    },
+    {
+      title: "Safety Tips for Everyone",
+      description: "Our top tips for staying safe, whether you're a host or a guest.",
+      image: "https://placehold.co/600x400.png",
+      hint: "security lock",
+      href: "/support/safety",
+    },
+    {
+      title: "Managing Your Bookings",
+      description: "Everything you need to know about your upcoming and past trips.",
+      image: "https://placehold.co/600x400.png",
+      hint: "booking confirmation",
+      href: "/my-bookings",
+    },
+];
 
 export default function HelpPage() {
   const { user } = useAuth();
@@ -128,6 +168,44 @@ export default function HelpPage() {
                   </Accordion>
                 </>
               )}
+                <div className="mt-16">
+                    <h2 className="text-3xl font-bold text-center mb-8">Quick Guides</h2>
+                    <Carousel
+                        opts={{
+                        align: "start",
+                        loop: true,
+                        }}
+                        className="w-full"
+                    >
+                        <CarouselContent>
+                        {guides.map((guide, index) => (
+                            <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
+                            <div className="p-1 h-full">
+                                <Link href={guide.href} className="block h-full">
+                                <Card className="h-full overflow-hidden group flex flex-col">
+                                    <div className="relative h-40 w-full flex-shrink-0">
+                                    <Image
+                                        src={guide.image}
+                                        alt={guide.title}
+                                        fill
+                                        className="object-cover transition-transform duration-300 group-hover:scale-105"
+                                        data-ai-hint={guide.hint}
+                                    />
+                                    </div>
+                                    <CardHeader className="flex-grow">
+                                        <CardTitle className="text-lg leading-snug">{guide.title}</CardTitle>
+                                        <CardDescription className="pt-1">{guide.description}</CardDescription>
+                                    </CardHeader>
+                                </Card>
+                                </Link>
+                            </div>
+                            </CarouselItem>
+                        ))}
+                        </CarouselContent>
+                        <CarouselPrevious />
+                        <CarouselNext />
+                    </Carousel>
+                </div>
                <div className="text-center mt-12">
                     <p className="text-muted-foreground">Can't find what you're looking for?</p>
                      <Link href="/help/all-topics" className="text-primary font-semibold hover:underline">
