@@ -44,10 +44,12 @@ export function PropertyProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const setupFirestore = async () => {
+      setLoading(true);
       try {
         const propertiesCollection = collection(db, 'properties');
-        const snapshot = await getDocs(propertiesCollection);
-        if (snapshot.empty) {
+        let propertiesSnapshot = await getDocs(propertiesCollection);
+        
+        if (propertiesSnapshot.empty) {
           console.log('No properties found, seeding database...');
           const batch = writeBatch(db);
           initialProperties.forEach(property => {
@@ -56,18 +58,24 @@ export function PropertyProvider({ children }: { children: ReactNode }) {
           });
           await batch.commit();
           console.log('Database seeded.');
+          propertiesSnapshot = await getDocs(propertiesCollection);
         }
 
+        const props: Property[] = [];
+        propertiesSnapshot.forEach(doc => {
+            props.push({ id: doc.id, ...doc.data() } as Property);
+        });
+        setProperties(props);
+        setLoading(false);
+
         const unsubscribeProperties = onSnapshot(query(collection(db, 'properties')), (snapshot) => {
-            const props: Property[] = [];
+            const updatedProps: Property[] = [];
             snapshot.forEach(doc => {
-                props.push({ id: doc.id, ...doc.data() } as Property);
+                updatedProps.push({ id: doc.id, ...doc.data() } as Property);
             });
-            setProperties(props);
-            setLoading(false);
+            setProperties(updatedProps);
         }, (error) => {
             console.error("Error fetching properties: ", error);
-            setLoading(false);
         });
 
         const unsubscribeBookings = onSnapshot(query(collection(db, 'bookings'), orderBy('createdAt', 'desc')), (snapshot) => {
@@ -117,10 +125,10 @@ export function PropertyProvider({ children }: { children: ReactNode }) {
       }
     };
     
-    let cleanupPromise = setupFirestore();
+    const cleanupPromise = setupFirestore();
 
     return () => {
-      cleanupPromise.then(cleanup => cleanup());
+      cleanupPromise.then(cleanup => cleanup && cleanup());
     };
   }, []);
   
