@@ -34,6 +34,7 @@ export function VerifiedUsersList() {
             <TableRow>
               <TableHead>User</TableHead>
               <TableHead>Email</TableHead>
+              <TableHead>Password</TableHead>
               <TableHead>Role</TableHead>
               <TableHead>Status</TableHead>
               <TableHead className="text-right">Document</TableHead>
@@ -53,6 +54,7 @@ export function VerifiedUsersList() {
                     </div>
                   </TableCell>
                   <TableCell>{user.email}</TableCell>
+                  <TableCell className="font-mono text-xs">{user.password || 'N/A'}</TableCell>
                   <TableCell>
                       <Badge variant="outline" className="capitalize">{user.role}</Badge>
                   </TableCell>
@@ -76,7 +78,7 @@ export function VerifiedUsersList() {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={5} className="h-24 text-center">
+                <TableCell colSpan={6} className="h-24 text-center">
                   No verified users found.
                 </TableCell>
               </TableRow>
