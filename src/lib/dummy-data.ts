@@ -1,9 +1,9 @@
 import type { Property, User, PrivacyType } from '@/types';
 
 export const dummyUsers: User[] = [
-  { id: 'user-1', name: 'Regular Joe', email: 'user@stayfinder.com', password: 'password123', avatar: 'https://placehold.co/100x100.png', role: 'user', verificationStatus: 'unverified' },
-  { id: 'user-2', name: 'Host Henrietta', email: 'host@stayfinder.com', password: 'password123', avatar: 'https://placehold.co/100x100.png', role: 'host', verificationStatus: 'pending', identityDocumentUrl: 'https://placehold.co/800x600.png' },
-  { id: 'user-3', name: 'Admin Adam', email: 'admin@stayfinder.com', password: 'password123', avatar: 'https://placehold.co/100x100.png', role: 'super-admin', verificationStatus: 'verified' },
+  { id: 'user-1', name: 'Regular Joe', email: 'user@stayfinder.com', password: 'password123', avatar: 'https://placehold.co/100x100.png', role: 'user', verificationStatus: 'unverified', wishlist: [] },
+  { id: 'user-2', name: 'Host Henrietta', email: 'host@stayfinder.com', password: 'password123', avatar: 'https://placehold.co/100x100.png', role: 'host', verificationStatus: 'pending', identityDocumentUrl: 'https://placehold.co/800x600.png', wishlist: [] },
+  { id: 'user-3', name: 'Admin Adam', email: 'admin@stayfinder.com', password: 'password123', avatar: 'https://placehold.co/100x100.png', role: 'super-admin', verificationStatus: 'verified', wishlist: [] },
 ];
 
 

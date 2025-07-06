@@ -8,7 +8,7 @@ import { useAuth } from '@/hooks/use-auth';
 import { useProperties } from '@/hooks/use-properties';
 import { Button } from '@/components/ui/button';
 import { 
-  Home, LogOut, Crown, LifeBuoy, PlusCircle, Settings, Globe, LayoutDashboard, MessageSquare
+  Home, LogOut, Crown, LifeBuoy, PlusCircle, Settings, Globe, LayoutDashboard, MessageSquare, Heart
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
@@ -125,10 +125,16 @@ export function Header({ className }: { className?: string }) {
                       )}
 
                       {(user.role === 'user' || user.role === 'host') && (
-                        <DropdownMenuItem onClick={() => router.push('/my-bookings')} className="cursor-pointer">
-                          <LayoutDashboard className="mr-2 h-4 w-4" />
-                          <span>My Bookings</span>
-                        </DropdownMenuItem>
+                        <>
+                          <DropdownMenuItem onClick={() => router.push('/my-bookings')} className="cursor-pointer">
+                            <LayoutDashboard className="mr-2 h-4 w-4" />
+                            <span>My Bookings</span>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => router.push('/wishlist')} className="cursor-pointer">
+                            <Heart className="mr-2 h-4 w-4" />
+                            <span>Wishlist</span>
+                          </DropdownMenuItem>
+                        </>
                       )}
 
                       {user.role === 'super-admin' && (

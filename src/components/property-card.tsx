@@ -2,9 +2,13 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { Star } from 'lucide-react';
+import { Heart, Star } from 'lucide-react';
 import type { Property } from '@/types';
 import { useSettings } from '@/hooks/use-settings';
+import { useAuth } from '@/hooks/use-auth';
+import { useRouter } from 'next/navigation';
+import { Button } from './ui/button';
+import { cn } from '@/lib/utils';
 
 interface PropertyCardProps {
   property: Property;
@@ -12,10 +16,22 @@ interface PropertyCardProps {
 
 export function PropertyCard({ property }: PropertyCardProps) {
   const { currencySymbol } = useSettings();
+  const { user, toggleWishlist, isInWishlist } = useAuth();
+  const router = useRouter();
 
   if (!property || !property.image1) {
     return null;
   }
+  
+  const handleWishlistToggle = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!user) {
+      router.push('/login');
+      return;
+    }
+    toggleWishlist(property.id);
+  };
 
   return (
     <Link href={`/property/${property.id}`} className="group block text-sm">
@@ -28,6 +44,16 @@ export function PropertyCard({ property }: PropertyCardProps) {
           height={800}
           className="aspect-square w-full object-cover transition-transform duration-300 group-hover:scale-105"
         />
+        {user && (
+          <Button
+            size="icon"
+            variant="ghost"
+            className="absolute top-2 right-2 h-8 w-8 rounded-full bg-black/30 hover:bg-black/50 text-white hover:text-white z-10"
+            onClick={handleWishlistToggle}
+          >
+            <Heart className={cn("h-5 w-5 transition-colors", isInWishlist(property.id) ? 'fill-red-500 stroke-red-500' : 'fill-none stroke-white')} />
+          </Button>
+        )}
       </div>
       
        <div className="flex justify-between">

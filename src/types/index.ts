@@ -24,6 +24,7 @@ export type User = {
   role: UserRole;
   verificationStatus: UserVerificationStatus;
   identityDocumentUrl?: string;
+  wishlist?: string[];
 };
 
 export type Property = {

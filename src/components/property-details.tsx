@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from "react";
-import { notFound } from "next/navigation";
+import { notFound, useRouter } from "next/navigation";
 import Image from "next/image";
 import { useProperties } from "@/hooks/use-properties";
 import { Header } from "@/components/layout/header";
@@ -14,11 +14,12 @@ import { Button } from "@/components/ui/button";
 import { 
   Star, MapPin, Bed, Bath, Users, Wifi, Wind, Car, UtensilsCrossed, Waves, 
   Flame, Building2, ArrowUpSquare, Dumbbell, Sprout, Dog, WashingMachine, 
-  Anchor, Tv, MessageSquare
+  Anchor, Tv, MessageSquare, Heart
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import type { Property } from "@/types";
 import { useAuth } from "@/hooks/use-auth";
+import { cn } from "@/lib/utils";
 
 const amenityIcons: Record<string, LucideIcon> = {
   'WiFi': Wifi,
@@ -44,12 +45,21 @@ const amenityIcons: Record<string, LucideIcon> = {
 };
 
 function PropertyDetailsClient({ property }: { property: Property}) {
-  const { user } = useAuth();
+  const { user, toggleWishlist, isInWishlist } = useAuth();
   const [isİnquiryFormOpen, setIsInquiryFormOpen] = useState(false);
+  const router = useRouter();
 
   if (!property) {
     notFound();
   }
+  
+  const handleWishlistToggle = () => {
+    if (!user) {
+      router.push('/login');
+      return;
+    }
+    toggleWishlist(property.id);
+  };
   
   const galleryImages = [property.image2, property.image3, property.image4, property.image1].filter(Boolean);
 
@@ -57,19 +67,32 @@ function PropertyDetailsClient({ property }: { property: Property}) {
     <div className="flex flex-col min-h-screen bg-background">
       <Header />
       <main className="container mx-auto px-4 py-8 md:py-12">
-        <div>
-          <h1 className="text-3xl md:text-4xl font-bold font-headline mb-2">{property.name}</h1>
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-muted-foreground">
-            <div className="flex items-center gap-1.5">
-              <Star className="w-5 h-5 text-primary" />
-              <span className="font-medium">{property.rating > 0 ? `${property.rating} (${property.reviewsCount} reviews)` : 'New'}</span>
-            </div>
-            <span className="hidden sm:inline">·</span>
-            <div className="flex items-center gap-1.5">
-              <MapPin className="w-5 h-5" />
-              <span>{property.location}</span>
+        <div className="flex justify-between items-start gap-4">
+          <div>
+            <h1 className="text-3xl md:text-4xl font-bold font-headline mb-2">{property.name}</h1>
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-muted-foreground">
+              <div className="flex items-center gap-1.5">
+                <Star className="w-5 h-5 text-primary" />
+                <span className="font-medium">{property.rating > 0 ? `${property.rating} (${property.reviewsCount} reviews)` : 'New'}</span>
+              </div>
+              <span className="hidden sm:inline">·</span>
+              <div className="flex items-center gap-1.5">
+                <MapPin className="w-5 h-5" />
+                <span>{property.location}</span>
+              </div>
             </div>
           </div>
+          {user && (
+            <Button
+              variant="outline"
+              size="lg"
+              onClick={handleWishlistToggle}
+              className="flex-shrink-0"
+            >
+              <Heart className={cn("mr-2 h-5 w-5", isInWishlist(property.id) ? 'text-red-500 fill-red-500' : 'text-foreground')} />
+              <span>{isInWishlist(property.id) ? 'Saved' : 'Save'}</span>
+            </Button>
+          )}
         </div>
 
         <div className="mt-6 grid grid-cols-1 md:grid-cols-4 gap-2 h-[300px] md:h-[550px] rounded-2xl overflow-hidden">

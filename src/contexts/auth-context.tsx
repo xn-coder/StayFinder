@@ -11,28 +11,34 @@ type LoginCredentials = {
   password?: string;
 };
 
-type SignupData = Omit<User, 'id' | 'verificationStatus' | 'avatar' | 'password'> & {
+type SignupData = Omit<User, 'id' | 'verificationStatus' | 'avatar' | 'password' | 'wishlist'> & {
     password?: string;
 };
 
 interface AuthContextType {
   user: User | null | undefined; // undefined means loading, null means not logged in
+  loading: boolean;
   users: User[];
   login: (credentials: LoginCredentials) => Promise<User>;
   signup: (userData: SignupData) => Promise<User>;
   logout: () => void;
   submitForVerification: (userId: string, documentUrl: string) => void;
   updateVerificationStatus: (userId: string, status: UserVerificationStatus) => void;
+  toggleWishlist: (propertyId: string) => void;
+  isInWishlist: (propertyId: string) => boolean;
 }
 
 export const AuthContext = createContext<AuthContextType>({
   user: undefined,
+  loading: true,
   users: [],
   login: async () => { throw new Error('login not implemented'); },
   signup: async () => { throw new Error('signup not implemented'); },
   logout: () => {},
   submitForVerification: () => {},
   updateVerificationStatus: () => {},
+  toggleWishlist: () => {},
+  isInWishlist: () => false,
 });
 
 const USERS_STORAGE_KEY = 'allUsers';
@@ -41,8 +47,10 @@ const CURRENT_USER_STORAGE_KEY = 'currentUser';
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null | undefined>(undefined);
   const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    setLoading(true);
     // Load all users from storage, or initialize
     try {
       const storedUsers = localStorage.getItem(USERS_STORAGE_KEY);
@@ -68,6 +76,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch (error) {
       console.error("Failed to parse current user from localStorage", error);
       setUser(null);
+    } finally {
+        setLoading(false);
     }
   }, []);
 
@@ -137,6 +147,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         id: uuidv4(),
         avatar: `https://placehold.co/100x100.png?text=${userData.name.charAt(0)}`,
         verificationStatus: 'unverified',
+        wishlist: [],
     };
 
     const updatedUsers = [...allUsers, newUser];
@@ -175,8 +186,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
     persistUsers(updatedUsers);
   }, []);
+  
+  const isInWishlist = (propertyId: string): boolean => {
+    return !!user?.wishlist?.includes(propertyId);
+  };
 
-  const value = { user, users, login, signup, logout, submitForVerification, updateVerificationStatus };
+  const toggleWishlist = (propertyId: string) => {
+    if (!user) return;
+
+    const currentUsers = JSON.parse(localStorage.getItem(USERS_STORAGE_KEY) || '[]');
+    let updatedUser: User | null = null;
+
+    const updatedUsers = currentUsers.map((u: User) => {
+        if (u.id === user.id) {
+            const currentWishlist = u.wishlist || [];
+            const newWishlist = currentWishlist.includes(propertyId)
+                ? currentWishlist.filter(id => id !== propertyId)
+                : [...currentWishlist, propertyId];
+            updatedUser = { ...u, wishlist: newWishlist };
+            return updatedUser;
+        }
+        return u;
+    });
+
+    if (updatedUser) {
+        persistUsers(updatedUsers, updatedUser);
+    }
+  };
+
+  const value = { user, loading, users, login, signup, logout, submitForVerification, updateVerificationStatus, toggleWishlist, isInWishlist };
 
   return (
     <AuthContext.Provider value={value}>
