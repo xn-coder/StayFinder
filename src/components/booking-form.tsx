@@ -1,11 +1,11 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { addDays, format, differenceInDays } from "date-fns";
+import { addDays, format, differenceInDays, eachDayOfInterval, isFriday, isSaturday } from "date-fns";
 import type { DateRange } from "react-day-picker";
 import { Calendar as CalendarIcon, Loader2, ShieldAlert } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -75,8 +75,35 @@ export function BookingForm({ property }: { property: Property }) {
   });
 
   const watchDateRange = form.watch("dateRange");
-  const numberOfNights = watchDateRange?.from && watchDateRange?.to ? differenceInDays(watchDateRange.to, watchDateRange.from) : 0;
-  const totalCost = numberOfNights * property.pricePerNight;
+
+  const { numberOfNights, totalCost, weekdayNights, weekendNights, weekendPrice } = useMemo(() => {
+    if (!watchDateRange?.from || !watchDateRange?.to || watchDateRange.to <= watchDateRange.from) {
+      return { numberOfNights: 0, totalCost: 0, weekdayNights: 0, weekendNights: 0, weekendPrice: 0 };
+    }
+
+    const nights = eachDayOfInterval({ start: watchDateRange.from, end: watchDateRange.to }).slice(0, -1);
+    const numNights = nights.length;
+
+    let weekendNightsCount = 0;
+    nights.forEach(night => {
+      if (isFriday(night) || isSaturday(night)) {
+        weekendNightsCount++;
+      }
+    });
+
+    const weekdayNightsCount = numNights - weekendNightsCount;
+    const weekendPricePerNight = property.pricePerNight * (1 + (property.weekendPremium || 0) / 100);
+    const cost = (weekdayNightsCount * property.pricePerNight) + (weekendNightsCount * weekendPricePerNight);
+
+    return {
+      numberOfNights: numNights,
+      totalCost: cost,
+      weekdayNights: weekdayNightsCount,
+      weekendNights: weekendNightsCount,
+      weekendPrice: weekendPricePerNight,
+    };
+  }, [watchDateRange, property]);
+  
   const serviceFee = totalCost * 0.1;
 
   const onSubmit = async (data: BookingFormValues) => {
@@ -129,10 +156,10 @@ export function BookingForm({ property }: { property: Property }) {
   return (
     <Card className="shadow-lg">
       <CardHeader>
-        <CardTitle className="font-headline">
-          <span className="text-2xl font-bold">{currencySymbol}{property.pricePerNight.toLocaleString()}</span> / night
+        <CardTitle className="font-headline text-2xl">
+          Book Your Stay
         </CardTitle>
-        <CardDescription>Enter your dates and guest count to book.</CardDescription>
+        <CardDescription>Select dates to see pricing.</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -229,17 +256,25 @@ export function BookingForm({ property }: { property: Property }) {
             
             {numberOfNights > 0 && (
                 <div className="space-y-2 pt-2 text-sm">
-                    <div className="flex justify-between">
-                        <span>{currencySymbol}{property.pricePerNight.toLocaleString()} x {numberOfNights} nights</span>
-                        <span>{currencySymbol}{totalCost.toLocaleString()}</span>
-                    </div>
+                    {weekdayNights > 0 && (
+                        <div className="flex justify-between">
+                            <span>{weekdayNights} weekday night{weekdayNights > 1 ? 's' : ''}</span>
+                            <span>{currencySymbol}{(weekdayNights * property.pricePerNight).toLocaleString()}</span>
+                        </div>
+                    )}
+                    {weekendNights > 0 && (
+                        <div className="flex justify-between">
+                            <span>{weekendNights} weekend night{weekendNights > 1 ? 's' : ''}</span>
+                            <span>{currencySymbol}{(weekendNights * weekendPrice).toLocaleString()}</span>
+                        </div>
+                    )}
                      <div className="flex justify-between">
                         <span>Service fee</span>
-                        <span>{currencySymbol}{serviceFee.toLocaleString()}</span>
+                        <span>{currencySymbol}{serviceFee.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                     </div>
                      <div className="flex justify-between font-bold pt-2 border-t">
                         <span>Total</span>
-                        <span>{currencySymbol}{(totalCost + serviceFee).toLocaleString()}</span>
+                        <span>{currencySymbol}{(totalCost + serviceFee).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                     </div>
                 </div>
             )}
@@ -253,7 +288,7 @@ export function BookingForm({ property }: { property: Property }) {
               </Alert>
             )}
 
-            <Button type="submit" className="w-full h-12 text-lg" disabled={loading || (!!user && !isVerified)}>
+            <Button type="submit" className="w-full h-12 text-lg" disabled={loading || (!!user && !isVerified) || numberOfNights <= 0}>
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {user && !isVerified ? 'Verification Required' : 'Book Now'}
             </Button>
