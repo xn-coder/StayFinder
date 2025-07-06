@@ -4,6 +4,7 @@
 import { useMemo, useState } from 'react';
 import Image from 'next/image';
 import { useAuth } from '@/hooks/use-auth';
+import type { User, UserVerificationStatus } from '@/types';
 import {
   Table,
   TableHeader,
@@ -14,16 +15,36 @@ import {
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Eye, ShieldCheck } from 'lucide-react';
+import { Eye, ShieldCheck, ShieldAlert, ShieldQuestion } from 'lucide-react';
 import { Badge } from '../ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '../ui/dialog';
 
-export function VerifiedUsersList() {
+const VerificationStatusBadge = ({ status }: { status: UserVerificationStatus }) => {
+  switch (status) {
+    case 'verified':
+      return <Badge variant="default" className="gap-1.5 pl-1.5"><ShieldCheck className="h-4 w-4" />Verified</Badge>;
+    case 'pending':
+      return <Badge variant="secondary" className="gap-1.5 pl-1.5"><ShieldAlert className="h-4 w-4" />Pending</Badge>;
+    case 'unverified':
+      return <Badge variant="destructive" className="gap-1.5 pl-1.5"><ShieldQuestion className="h-4 w-4" />Unverified</Badge>;
+    case 'rejected':
+      return <Badge variant="destructive" className="gap-1.5 pl-1.5"><ShieldQuestion className="h-4 w-4" />Rejected</Badge>;
+    default:
+      return <Badge variant="outline">{status}</Badge>;
+  }
+};
+
+export function AllUsersList() {
   const { users } = useAuth();
   const [viewingDocumentUrl, setViewingDocumentUrl] = useState<string | null>(null);
 
-  const verifiedUsers = useMemo(() => {
-    return users.filter(user => user.verificationStatus === 'verified');
+  const sortedUsers = useMemo(() => {
+    // Show super-admin first, then sort by name
+    return [...users].sort((a, b) => {
+        if (a.role === 'super-admin' && b.role !== 'super-admin') return -1;
+        if (a.role !== 'super-admin' && b.role === 'super-admin') return 1;
+        return a.name.localeCompare(b.name);
+    });
   }, [users]);
 
   return (
@@ -41,8 +62,8 @@ export function VerifiedUsersList() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {verifiedUsers.length > 0 ? (
-              verifiedUsers.map(user => (
+            {sortedUsers.length > 0 ? (
+              sortedUsers.map(user => (
                 <TableRow key={user.id}>
                   <TableCell>
                     <div className="flex items-center gap-2">
@@ -59,7 +80,7 @@ export function VerifiedUsersList() {
                       <Badge variant="outline" className="capitalize">{user.role}</Badge>
                   </TableCell>
                   <TableCell>
-                    <Badge variant="default" className="gap-1.5 pl-1.5"><ShieldCheck className="h-4 w-4" />Verified</Badge>
+                    <VerificationStatusBadge status={user.verificationStatus} />
                   </TableCell>
                   <TableCell className="text-right">
                     {user.identityDocumentUrl ? (
@@ -79,7 +100,7 @@ export function VerifiedUsersList() {
             ) : (
               <TableRow>
                 <TableCell colSpan={6} className="h-24 text-center">
-                  No verified users found.
+                  No users found.
                 </TableCell>
               </TableRow>
             )}
