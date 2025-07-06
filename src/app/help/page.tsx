@@ -85,6 +85,15 @@ const guides = [
     },
 ];
 
+const topArticles = [
+  { title: 'Booking places to stay', href: '#' },
+  { title: 'Fixing reservation issues', href: '#' },
+  { title: 'Paying for a reservation', href: '#' },
+  { title: 'ID and verification', href: '/account/settings' },
+  { title: 'Safety tips and guidelines', href: '/support/safety' },
+  { title: 'How StayFinder works', href: '#' },
+];
+
 export default function HelpPage() {
   const { user } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
@@ -193,6 +202,18 @@ export default function HelpPage() {
                             </div>
                           </div>
                       ))}
+                    </div>
+                </div>
+                 <div className="mt-16">
+                    <h2 className="text-3xl font-bold text-center mb-8">Top Articles</h2>
+                    <div className="grid md:grid-cols-2 gap-6">
+                        {topArticles.map((article) => (
+                        <Link href={article.href} key={article.title} className="block">
+                            <div className="p-6 border rounded-lg hover:bg-accent hover:shadow-md transition-all h-full flex items-center">
+                              <h3 className="font-semibold text-lg">{article.title}</h3>
+                            </div>
+                        </Link>
+                        ))}
                     </div>
                 </div>
                <div className="text-center mt-12">
