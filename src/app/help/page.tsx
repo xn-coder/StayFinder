@@ -6,10 +6,10 @@ import Link from 'next/link';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import Image from 'next/image';
 import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
 import { helpTopics, homeHostHelpTopics, experienceHostHelpTopics, serviceHostHelpTopics, travelAdminHelpTopics } from '@/lib/dummy-data';
+import { useAuth } from '@/hooks/use-auth';
 
 const faqs = [
     {
@@ -46,7 +46,10 @@ const allSearchableContent = [
 
 
 export default function HelpPage() {
+  const { user } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
+  
+  const greeting = user ? `Hi ${user.name.split(' ')[0]}, how can we help?` : 'How can we help?';
 
   const filteredResults = useMemo(() => {
     if (!searchTerm) {
@@ -63,26 +66,19 @@ export default function HelpPage() {
     <div className="flex flex-col min-h-screen">
       <Header />
       <main className="flex-grow">
-        <section className="relative h-96 flex items-center justify-center text-white text-center px-4">
-          <Image
-              src="https://placehold.co/1600x600.png"
-              alt="Person on a laptop looking for help"
-              fill
-              className="object-cover"
-              data-ai-hint="support contact"
-              priority
-          />
-          <div className="absolute inset-0 bg-black/50" />
-          <div className="relative z-10 w-full max-w-2xl">
-              <h1 className="text-5xl font-bold font-headline">Help Center</h1>
-              <p className="mt-4 text-lg max-w-2xl mx-auto">
-                  Have questions? We're here to help.
+        <section className="bg-muted/40 py-16 md:py-20 text-center px-4">
+          <div className="w-full max-w-2xl mx-auto">
+              <h1 className="text-4xl md:text-5xl font-bold font-headline">
+                {greeting}
+              </h1>
+              <p className="mt-4 text-lg text-muted-foreground max-w-xl mx-auto">
+                  Find advice and answers from the StayFinder team.
               </p>
               <div className="mt-8 max-w-xl mx-auto relative">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
                 <Input 
                   placeholder="Search for answers..." 
-                  className="h-14 pl-12 text-base bg-background/90 text-foreground backdrop-blur-sm rounded-full"
+                  className="h-14 pl-12 text-base bg-background rounded-full border border-border shadow-sm hover:shadow-md transition-shadow"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
