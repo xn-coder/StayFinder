@@ -743,10 +743,6 @@ export function ListPropertyForm() {
   return (
     <div className="w-full max-w-4xl p-4">
       <div className="w-full mb-8">
-        <div className="text-center mb-2">
-          <p className="font-semibold text-primary">{stageInfo.name}</p>
-          <p className="text-sm text-muted-foreground">Step {step} of {totalSteps}</p>
-        </div>
         <Progress value={(step / totalSteps) * 100} className="w-full h-2" />
       </div>
       
