@@ -1,13 +1,17 @@
 
+'use client';
+
+import { useState, useMemo } from 'react';
+import Link from 'next/link';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import Image from 'next/image';
 import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
+import { helpTopics } from '@/lib/dummy-data';
 
-export default function HelpPage() {
-  const faqs = [
+const faqs = [
     {
       question: "How do I book a property?",
       answer: "To book a property, simply navigate to the property's page, select your desired dates in the booking form, specify the number of guests, and click 'Book Now'. You'll be guided through the payment process."
@@ -29,6 +33,27 @@ export default function HelpPage() {
       answer: "When a host submits a new property listing, it enters a 'pending' state. Our super-admin team will review the listing for quality and accuracy. The listing will then be 'approved' and made public, or 'rejected' with feedback provided to the host."
     },
   ];
+
+// Combine all searchable content
+const allSearchableContent = [
+  ...faqs.map(faq => ({ title: faq.question, content: faq.answer, href: `/help#${faq.question.replace(/\s+/g, '-')}` })),
+  ...helpTopics.flatMap(category => category.links.map(link => ({ title: link.title, content: category.category, href: link.href })))
+];
+
+
+export default function HelpPage() {
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const filteredResults = useMemo(() => {
+    if (!searchTerm) {
+      return [];
+    }
+    const lowercasedTerm = searchTerm.toLowerCase();
+    return allSearchableContent.filter(item => 
+      item.title.toLowerCase().includes(lowercasedTerm) ||
+      item.content.toLowerCase().includes(lowercasedTerm)
+    );
+  }, [searchTerm]);
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -53,7 +78,9 @@ export default function HelpPage() {
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
                 <Input 
                   placeholder="Search for answers..." 
-                  className="h-14 pl-12 text-base bg-background/90 text-foreground backdrop-blur-sm rounded-full" 
+                  className="h-14 pl-12 text-base bg-background/90 text-foreground backdrop-blur-sm rounded-full"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
                 />
               </div>
           </div>
@@ -61,17 +88,49 @@ export default function HelpPage() {
 
         <div className="container mx-auto px-4 py-16">
             <div className="max-w-3xl mx-auto">
-                <h2 className="text-3xl font-bold text-center mb-8">Frequently Asked Questions</h2>
-                <Accordion type="single" collapsible className="w-full">
-                    {faqs.map((faq, index) => (
-                        <AccordionItem value={`item-${index}`} key={index}>
-                            <AccordionTrigger className="text-lg text-left">{faq.question}</AccordionTrigger>
-                            <AccordionContent className="text-base text-muted-foreground leading-relaxed">
-                                {faq.answer}
-                            </AccordionContent>
-                        </AccordionItem>
-                    ))}
-                </Accordion>
+              {searchTerm ? (
+                <div>
+                  <h2 className="text-3xl font-bold text-center mb-8">
+                    {filteredResults.length > 0 ? `Search results for "${searchTerm}"` : 'No results found'}
+                  </h2>
+                  {filteredResults.length > 0 ? (
+                    <div className="space-y-4">
+                      {filteredResults.map((item, index) => (
+                        <Link href={item.href} key={index}>
+                          <div className="p-4 border rounded-lg hover:bg-accent transition-colors">
+                            <h3 className="font-semibold text-lg">{item.title}</h3>
+                            <p className="text-muted-foreground text-sm line-clamp-2">{item.content}</p>
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  ) : (
+                     <p className="text-center text-muted-foreground">
+                        We couldn't find any articles for your search. Try different keywords.
+                     </p>
+                  )}
+                </div>
+              ) : (
+                <>
+                  <h2 className="text-3xl font-bold text-center mb-8">Frequently Asked Questions</h2>
+                  <Accordion type="single" collapsible className="w-full">
+                      {faqs.map((faq, index) => (
+                          <AccordionItem value={`item-${index}`} key={index} id={faq.question.replace(/\s+/g, '-')}>
+                              <AccordionTrigger className="text-lg text-left">{faq.question}</AccordionTrigger>
+                              <AccordionContent className="text-base text-muted-foreground leading-relaxed">
+                                  {faq.answer}
+                              </AccordionContent>
+                          </AccordionItem>
+                      ))}
+                  </Accordion>
+                </>
+              )}
+               <div className="text-center mt-12">
+                    <p className="text-muted-foreground">Can't find what you're looking for?</p>
+                     <Link href="/help/all-topics" className="text-primary font-semibold hover:underline">
+                        Browse all topics
+                    </Link>
+                </div>
             </div>
         </div>
       </main>

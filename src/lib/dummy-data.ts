@@ -371,3 +371,68 @@ export const properties: Property[] = [
 ];
 
 export const allAmenities = Array.from(new Set(properties.flatMap(p => p.amenities))).sort();
+
+export const helpTopics = [
+  {
+    category: 'Searching and booking',
+    links: [
+      { title: 'Search tips', href: '#' },
+      { title: 'Booking places to stay', href: '#' },
+      { title: 'Booking Experiences', href: '#' },
+      { title: 'Booking business travel and events', href: '#' },
+      { title: 'Messaging', href: '#' },
+      { title: 'Travel insurance and reservation insurance', href: '#' },
+    ],
+  },
+  {
+    category: 'Your reservations',
+    links: [
+      { title: 'Reservation status', href: '#' },
+      { title: 'Changes', href: '#' },
+      { title: 'Cancellations', href: '/cancellation-policy' },
+      { title: 'Checking in', href: '#' },
+      { title: 'Checking out', href: '#' },
+      { title: 'Preparing for an Experience', href: '#' },
+      { title: 'Fixing reservation issues', href: '#' },
+    ],
+  },
+  {
+    category: 'Payments and pricing',
+    links: [
+      { title: 'Paying for a reservation', href: '#' },
+      { title: 'Refunds', href: '#' },
+      { title: 'Pricing and fees', href: '#' },
+      { title: 'Coupons, credits, and gift cards', href: '#' },
+      { title: 'Invoices and receipts', href: '#' },
+      { title: 'Taxes', href: '#' },
+    ],
+  },
+  {
+    category: 'Your account and reviews',
+    links: [
+      { title: 'Creating an account', href: '/signup' },
+      { title: 'Managing your account', href: '/account/settings' },
+      { title: 'ID and verification', href: '/account/settings' },
+      { title: 'Account security', href: '#' },
+      { title: 'Reviews', href: '#' },
+    ],
+  },
+  {
+    category: 'Safety and accessibility',
+    links: [
+      { title: 'Safety concerns', href: '/support/safety' },
+      { title: 'Safety tips and guidelines', href: '#' },
+      { title: 'Reporting issues', href: '#' },
+      { title: 'Government travel restrictions and advisories', href: '#' },
+    ],
+  },
+  {
+    category: 'About StayFinder',
+    links: [
+      { title: 'Getting started', href: '#' },
+      { title: 'How StayFinder works', href: '#' },
+      { title: 'Our community policies', href: '#' },
+      { title: 'Partnerships', href: '#' },
+    ],
+  },
+];
