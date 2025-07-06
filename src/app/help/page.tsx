@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
 import { helpTopics, homeHostHelpTopics, experienceHostHelpTopics, serviceHostHelpTopics, travelAdminHelpTopics } from '@/lib/dummy-data';
 import { useAuth } from '@/hooks/use-auth';
+import { Button } from '@/components/ui/button';
 
 const faqs = [
     {
@@ -75,13 +76,15 @@ export default function HelpPage() {
                   Find advice and answers from the StayFinder team.
               </p>
               <div className="mt-8 max-w-xl mx-auto relative">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
                 <Input 
                   placeholder="Search for answers..." 
-                  className="h-14 pl-12 text-base bg-background rounded-full border border-border shadow-sm hover:shadow-md transition-shadow"
+                  className="h-14 pl-6 pr-16 text-base bg-background rounded-full border border-border shadow-sm hover:shadow-md transition-shadow"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
+                <Button size="icon" className="absolute right-2 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full">
+                    <Search className="h-5 w-5" />
+                </Button>
               </div>
           </div>
         </section>
