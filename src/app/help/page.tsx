@@ -87,12 +87,12 @@ const guides = [
 ];
 
 const topArticles = [
-  { title: 'Booking places to stay', href: '#' },
-  { title: 'Fixing reservation issues', href: '#' },
-  { title: 'Paying for a reservation', href: '#' },
-  { title: 'ID and verification', href: '/account/settings' },
-  { title: 'Safety tips and guidelines', href: '/support/safety' },
-  { title: 'How StayFinder works', href: '#' },
+  { title: 'Booking places to stay', href: '#', description: 'Find and book unique accommodations around the world.' },
+  { title: 'Fixing reservation issues', href: '#', description: 'Get help with any problems that arise with your reservations.' },
+  { title: 'Paying for a reservation', href: '#', description: 'Learn about our secure payment system and how to pay for your stay.' },
+  { title: 'ID and verification', href: '/account/settings', description: 'Understand our verification process to build trust in our community.' },
+  { title: 'Safety tips and guidelines', href: '/support/safety', description: 'Our top tips for staying safe, whether you\'re a host or a guest.' },
+  { title: 'How StayFinder works', href: '#', description: 'A complete guide to using StayFinder as a guest or host.' },
 ];
 
 export default function HelpPage() {
@@ -139,7 +139,7 @@ export default function HelpPage() {
         </section>
 
         <div className="container mx-auto px-4 py-16">
-            <div className="max-w-3xl mx-auto">
+            <div className="max-w-4xl mx-auto">
               {searchTerm ? (
                 <div>
                   <h2 className="text-3xl font-bold text-center mb-8">
@@ -207,19 +207,18 @@ export default function HelpPage() {
                 </div>
                  <div className="mt-16">
                     <h2 className="text-3xl font-bold text-center mb-8 font-headline">Top Articles</h2>
-                    <div className="border-t border-gray-200">
-                        {topArticles.map((article, index) => (
-                        <Link href={article.href} key={article.title} className="block group">
-                            <div className="py-6 border-b border-gray-200">
-                              <h3 className={cn(
-                                  "font-headline font-semibold group-hover:underline",
-                                   index === 0 ? "text-2xl" : "text-xl"
-                                )}>
-                                  {article.title}
-                                </h3>
-                              {index === 0 && <p className="text-muted-foreground mt-1">The most important reads to get you started and solve common issues.</p>}
-                            </div>
-                        </Link>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-10">
+                        {topArticles.map((article) => (
+                        <div key={article.title}>
+                            <Link href={article.href} className="group">
+                            <h3 className="font-semibold text-base group-hover:underline underline-offset-4">
+                                {article.title}
+                            </h3>
+                            <p className="text-muted-foreground mt-1 text-sm line-clamp-3">
+                                {article.description}
+                            </p>
+                            </Link>
+                        </div>
                         ))}
                     </div>
                 </div>
