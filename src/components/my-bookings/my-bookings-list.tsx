@@ -17,15 +17,17 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { FileText, Eye } from 'lucide-react';
+import { FileText, Eye, Star } from 'lucide-react';
 import { InvoiceDialog } from '../bookings/invoice-dialog';
 import Link from 'next/link';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ReviewDialog } from './review-dialog';
 
 export function MyBookingsList() {
   const { user } = useAuth();
   const { bookings, loading } = useProperties();
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
+  const [reviewingBooking, setReviewingBooking] = useState<Booking | null>(null);
   const [activeTab, setActiveTab] = useState('upcoming');
 
   const userBookings = useMemo(() => {
@@ -105,10 +107,10 @@ export function MyBookingsList() {
   return (
     <>
       <Tabs defaultValue="upcoming" onValueChange={setActiveTab} className="mb-6">
-          <TabsList className="grid w-full grid-cols-3 max-w-md mx-auto bg-primary/5 p-1 rounded-full">
-              <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
-              <TabsTrigger value="completed">Completed</TabsTrigger>
-              <TabsTrigger value="cancelled">Cancelled</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-3 max-w-md mx-auto bg-primary/5 p-1 rounded-full h-auto" style={{ background: '#155e63'}}>
+              <TabsTrigger value="upcoming" className="data-[state=active]:bg-background data-[state=inactive]:text-white data-[state=active]:text-foreground">Upcoming</TabsTrigger>
+              <TabsTrigger value="completed" className="data-[state=active]:bg-background data-[state=inactive]:text-white data-[state=active]:text-foreground">Completed</TabsTrigger>
+              <TabsTrigger value="cancelled" className="data-[state=active]:bg-background data-[state=inactive]:text-white data-[state=active]:text-foreground">Cancelled</TabsTrigger>
           </TabsList>
       </Tabs>
       <div className="border rounded-lg">
@@ -150,6 +152,16 @@ export function MyBookingsList() {
                               <FileText className="mr-2 h-4 w-4" />
                               Invoice
                           </Button>
+                          {activeTab === 'completed' && !booking.reviewed && (
+                            <Button 
+                                variant="default" 
+                                size="sm"
+                                onClick={() => setReviewingBooking(booking)}
+                            >
+                                <Star className="mr-2 h-4 w-4" />
+                                Leave Review
+                            </Button>
+                        )}
                       </div>
                   </TableCell>
                 </TableRow>
@@ -177,6 +189,15 @@ export function MyBookingsList() {
               }}
           />
       )}
+      <ReviewDialog
+        booking={reviewingBooking}
+        isOpen={!!reviewingBooking}
+        onOpenChange={(isOpen) => {
+            if (!isOpen) {
+                setReviewingBooking(null);
+            }
+        }}
+      />
     </>
   );
 }

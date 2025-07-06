@@ -77,6 +77,7 @@ export type Booking = {
   paymentMethod: 'Credit Card' | 'PayPal';
   status: BookingStatus;
   createdAt: string;
+  reviewed?: boolean;
 };
 
 export type Inquiry = {

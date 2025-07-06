@@ -15,7 +15,8 @@ import {
   getDocs,
   writeBatch,
   query,
-  orderBy
+  orderBy,
+  runTransaction
 } from 'firebase/firestore';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -31,6 +32,7 @@ interface PropertyContextType {
   inquiries: Inquiry[];
   addInquiry: (inquiryData: Omit<Inquiry, 'id' | 'status' | 'createdAt'>) => Promise<void>;
   updateInquiryStatus: (id: string, status: InquiryStatus) => void;
+  addReviewAndRating: (bookingId: string, propertyId: string, rating: number, comment: string) => Promise<void>;
   loading: boolean;
 }
 
@@ -202,6 +204,39 @@ export function PropertyProvider({ children }: { children: ReactNode }) {
         console.error("Error updating inquiry status: ", error);
     }
   }, []);
+  
+  const addReviewAndRating = useCallback(async (bookingId: string, propertyId: string, rating: number, comment: string) => {
+    const propertyDocRef = doc(db, 'properties', propertyId);
+    const bookingDocRef = doc(db, 'bookings', bookingId);
+
+    // The 'comment' is available if you want to store it, e.g., in a subcollection.
+    // For this prototype, we'll just update the aggregate rating.
+    try {
+      await runTransaction(db, async (transaction) => {
+        const propertyDoc = await transaction.get(propertyDocRef);
+        if (!propertyDoc.exists()) {
+          throw new Error("Property does not exist!");
+        }
+        
+        const propertyData = propertyDoc.data();
+        const currentRating = propertyData.rating || 0;
+        const reviewsCount = propertyData.reviewsCount || 0;
+
+        const newReviewsCount = reviewsCount + 1;
+        const newAverageRating = ((currentRating * reviewsCount) + rating) / newReviewsCount;
+        
+        transaction.update(propertyDocRef, {
+          rating: parseFloat(newAverageRating.toFixed(2)),
+          reviewsCount: newReviewsCount,
+        });
+
+        transaction.update(bookingDocRef, { reviewed: true });
+      });
+    } catch (e) {
+      console.error("Review transaction failed: ", e);
+      throw e;
+    }
+  }, []);
 
 
   const value = {
@@ -215,6 +250,7 @@ export function PropertyProvider({ children }: { children: ReactNode }) {
       inquiries,
       addInquiry,
       updateInquiryStatus,
+      addReviewAndRating,
       loading,
   }
 
