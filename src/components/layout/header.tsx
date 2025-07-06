@@ -124,7 +124,7 @@ export function Header({ className }: { className?: string }) {
                         </>
                       )}
 
-                      {user.role === 'user' && (
+                      {(user.role === 'user' || user.role === 'host') && (
                         <DropdownMenuItem onClick={() => router.push('/my-bookings')} className="cursor-pointer">
                           <LayoutDashboard className="mr-2 h-4 w-4" />
                           <span>My Bookings</span>
