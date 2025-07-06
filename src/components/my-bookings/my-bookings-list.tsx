@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useMemo, useState } from 'react';
@@ -81,7 +80,7 @@ export function MyBookingsList() {
      return (
         <div className="border rounded-lg">
             <Tabs defaultValue="upcoming" className="mb-6">
-                <TabsList className="grid w-full grid-cols-3 max-w-md mx-auto bg-primary/5 p-1 rounded-full">
+                <TabsList className="grid w-full grid-cols-3 max-w-md mx-auto bg-primary/5 p-1 rounded-xl">
                     <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
                     <TabsTrigger value="completed">Completed</TabsTrigger>
                     <TabsTrigger value="cancelled">Cancelled</TabsTrigger>
@@ -107,7 +106,7 @@ export function MyBookingsList() {
   return (
     <>
       <Tabs defaultValue="upcoming" onValueChange={setActiveTab} className="mb-6">
-          <TabsList className="grid w-full grid-cols-3 max-w-md mx-auto bg-primary/5 p-1 rounded-full h-auto" style={{ background: '#155e63'}}>
+          <TabsList className="grid w-full grid-cols-3 max-w-md mx-auto bg-primary/5 p-1 rounded-xl h-auto" style={{ background: '#155e63'}}>
               <TabsTrigger value="upcoming" className="data-[state=active]:bg-background data-[state=inactive]:text-white data-[state=active]:text-foreground">Upcoming</TabsTrigger>
               <TabsTrigger value="completed" className="data-[state=active]:bg-background data-[state=inactive]:text-white data-[state=active]:text-foreground">Completed</TabsTrigger>
               <TabsTrigger value="cancelled" className="data-[state=active]:bg-background data-[state=inactive]:text-white data-[state=active]:text-foreground">Cancelled</TabsTrigger>
