@@ -14,18 +14,38 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Check, X } from 'lucide-react';
+import { Check, X, Trash2, Ban } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 
 export function PropertyApprovalList() {
-  const { properties, updatePropertyStatus, loading } = useProperties();
+  const { properties, updatePropertyStatus, deleteProperty, loading } = useProperties();
   const { toast } = useToast();
 
-  const handleApproval = (id: string, newStatus: 'approved' | 'rejected') => {
+  const handleStatusChange = (id: string, newStatus: 'approved' | 'rejected') => {
+    const statusText = newStatus === 'approved' ? 'approved' : 'disabled';
     updatePropertyStatus(id, newStatus);
     toast({
-      title: `Property ${newStatus}`,
-      description: `The property listing has been ${newStatus}.`,
+      title: `Property ${newStatus === 'approved' ? 'Approved' : 'Disabled'}`,
+      description: `The property listing has been ${statusText}.`,
+    });
+  };
+  
+  const handleDelete = (id: string) => {
+    deleteProperty(id);
+    toast({
+        title: 'Property Deleted',
+        description: 'The property has been successfully removed.',
     });
   };
 
@@ -47,7 +67,12 @@ export function PropertyApprovalList() {
       <TableCell><Skeleton className="h-5 w-3/4" /></TableCell>
       <TableCell><Skeleton className="h-5 w-1/2" /></TableCell>
       <TableCell><Skeleton className="h-6 w-20 rounded-full" /></TableCell>
-      <TableCell className="text-right"><Skeleton className="h-8 w-24" /></TableCell>
+      <TableCell className="text-right">
+        <div className="flex justify-end gap-2">
+            <Skeleton className="h-8 w-24" />
+            <Skeleton className="h-8 w-8" />
+        </div>
+      </TableCell>
     </TableRow>
   )
 
@@ -75,26 +100,69 @@ export function PropertyApprovalList() {
                 </Badge>
               </TableCell>
               <TableCell className="text-right">
-                {property.status === 'pending' && (
-                  <div className="flex gap-2 justify-end">
+                <div className="flex gap-2 justify-end">
+                  {property.status === 'pending' && (
+                    <>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleStatusChange(property.id, 'approved')}
+                      >
+                        <Check className="mr-2 h-4 w-4" />
+                        Approve
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => handleStatusChange(property.id, 'rejected')}
+                      >
+                        <X className="mr-2 h-4 w-4" />
+                        Reject
+                      </Button>
+                    </>
+                  )}
+                  {property.status === 'approved' && (
+                     <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => handleStatusChange(property.id, 'rejected')}
+                    >
+                      <Ban className="mr-2 h-4 w-4" />
+                      Disable
+                    </Button>
+                  )}
+                  {property.status === 'rejected' && (
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => handleApproval(property.id, 'approved')}
+                      onClick={() => handleStatusChange(property.id, 'approved')}
                     >
                       <Check className="mr-2 h-4 w-4" />
-                      Approve
+                      Enable
                     </Button>
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      onClick={() => handleApproval(property.id, 'rejected')}
-                    >
-                      <X className="mr-2 h-4 w-4" />
-                      Reject
-                    </Button>
-                  </div>
-                )}
+                  )}
+                   <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="destructive" size="icon" className="h-8 w-8">
+                            <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                          <AlertDialogHeader>
+                              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                              <AlertDialogDescription>
+                              This action cannot be undone. This will permanently delete this property listing.
+                              </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction onClick={() => handleDelete(property.id)}>
+                                Delete
+                              </AlertDialogAction>
+                          </AlertDialogFooter>
+                      </AlertDialogContent>
+                  </AlertDialog>
+                </div>
               </TableCell>
             </TableRow>
           ))}

@@ -28,6 +28,7 @@ interface AuthContextType {
   toggleWishlist: (propertyId: string) => void;
   isInWishlist: (propertyId: string) => boolean;
   switchToHostRole: (userId: string) => void;
+  toggleUserStatus: (userId: string) => void;
 }
 
 export const AuthContext = createContext<AuthContextType>({
@@ -43,6 +44,7 @@ export const AuthContext = createContext<AuthContextType>({
   toggleWishlist: () => {},
   isInWishlist: () => false,
   switchToHostRole: () => {},
+  toggleUserStatus: () => {},
 });
 
 const USERS_STORAGE_KEY = 'allUsers';
@@ -129,6 +131,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       throw new Error("No user found with that email address.");
     }
     
+    if (userToLogin.isDisabled) {
+        throw new Error("This account has been disabled by an administrator.");
+    }
+
     if (userToLogin.password !== password) {
       throw new Error("Incorrect password.");
     }
@@ -152,6 +158,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         avatar: `https://placehold.co/100x100.png?text=${userData.name.charAt(0)}`,
         verificationStatus: 'unverified',
         wishlist: [],
+        isDisabled: false,
     };
 
     const updatedUsers = [...allUsers, newUser];
@@ -247,7 +254,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [user]);
 
-  const value = { user, loading, users, login, signup, logout, deleteUser, submitForVerification, updateVerificationStatus, toggleWishlist, isInWishlist, switchToHostRole };
+  const toggleUserStatus = useCallback((userId: string) => {
+    const currentUsers = JSON.parse(localStorage.getItem(USERS_STORAGE_KEY) || '[]');
+    const userToToggle = currentUsers.find((u: User) => u.id === userId);
+
+    if (userToToggle && userToToggle.role === 'super-admin') {
+      console.error("Cannot disable super-admin.");
+      return;
+    }
+
+    let toggledUser: User | null = null;
+    const updatedUsers = currentUsers.map((u: User) => {
+      if (u.id === userId) {
+        toggledUser = { ...u, isDisabled: !u.isDisabled };
+        return toggledUser;
+      }
+      return u;
+    });
+    
+    const newCurrentUser = user?.id === userId ? toggledUser : user;
+    persistUsers(updatedUsers, newCurrentUser);
+  }, [user]);
+
+  const value = { user, loading, users, login, signup, logout, deleteUser, submitForVerification, updateVerificationStatus, toggleWishlist, isInWishlist, switchToHostRole, toggleUserStatus };
 
   return (
     <AuthContext.Provider value={value}>

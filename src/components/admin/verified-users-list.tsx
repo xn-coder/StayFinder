@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Eye, ShieldCheck, ShieldAlert, ShieldQuestion, Trash2 } from 'lucide-react';
+import { Eye, ShieldCheck, ShieldAlert, ShieldQuestion, Trash2, Ban, UserCheck } from 'lucide-react';
 import { Badge } from '../ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '../ui/dialog';
 import {
@@ -47,7 +47,7 @@ const VerificationStatusBadge = ({ status }: { status: UserVerificationStatus })
 };
 
 export function AllUsersList() {
-  const { users, deleteUser } = useAuth();
+  const { users, deleteUser, toggleUserStatus } = useAuth();
   const { toast } = useToast();
   const [viewingDocumentUrl, setViewingDocumentUrl] = useState<string | null>(null);
 
@@ -68,6 +68,14 @@ export function AllUsersList() {
     });
   };
 
+  const handleToggleStatus = (userId: string, isDisabled: boolean | undefined) => {
+    toggleUserStatus(userId);
+    toast({
+      title: `User ${isDisabled ? 'Enabled' : 'Disabled'}`,
+      description: `The user account has been ${isDisabled ? 'enabled' : 'disabled'}.`,
+    });
+  };
+
   return (
     <>
       <div className="border rounded-lg">
@@ -76,7 +84,6 @@ export function AllUsersList() {
             <TableRow>
               <TableHead>User</TableHead>
               <TableHead>Email</TableHead>
-              <TableHead>Password</TableHead>
               <TableHead>Role</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Document</TableHead>
@@ -86,7 +93,7 @@ export function AllUsersList() {
           <TableBody>
             {sortedUsers.length > 0 ? (
               sortedUsers.map(user => (
-                <TableRow key={user.id}>
+                <TableRow key={user.id} className={user.isDisabled ? 'bg-muted/50' : ''}>
                   <TableCell>
                     <div className="flex items-center gap-2">
                       <Avatar className="h-8 w-8">
@@ -97,12 +104,18 @@ export function AllUsersList() {
                     </div>
                   </TableCell>
                   <TableCell>{user.email}</TableCell>
-                  <TableCell className="font-mono text-xs">{user.password || 'N/A'}</TableCell>
                   <TableCell>
                       <Badge variant="outline" className="capitalize">{user.role}</Badge>
                   </TableCell>
                   <TableCell>
-                    <VerificationStatusBadge status={user.verificationStatus} />
+                    <div className="flex flex-col gap-1.5">
+                        <VerificationStatusBadge status={user.verificationStatus} />
+                        {user.isDisabled ? (
+                           <Badge variant="destructive" className="gap-1.5 pl-1.5"><Ban className="h-4 w-4" />Disabled</Badge>
+                        ) : (
+                           <Badge variant="default" className="gap-1.5 pl-1.5 bg-green-600"><UserCheck className="h-4 w-4" />Enabled</Badge>
+                        )}
+                    </div>
                   </TableCell>
                   <TableCell>
                     {user.identityDocumentUrl ? (
@@ -119,34 +132,44 @@ export function AllUsersList() {
                   </TableCell>
                    <TableCell className="text-right">
                     {user.role !== 'super-admin' && (
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button variant="destructive" size="icon" className="h-8 w-8">
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              This action cannot be undone. This will permanently delete the user account.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction onClick={() => handleDeleteUser(user.id)}>
-                              Delete User
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
+                      <div className="flex gap-2 justify-end">
+                        <Button 
+                            variant={user.isDisabled ? 'secondary' : 'destructive'} 
+                            size="icon" 
+                            className="h-8 w-8"
+                            onClick={() => handleToggleStatus(user.id, user.isDisabled)}
+                        >
+                            {user.isDisabled ? <UserCheck className="h-4 w-4" /> : <Ban className="h-4 w-4" />}
+                        </Button>
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button variant="destructive" size="icon" className="h-8 w-8">
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                This action cannot be undone. This will permanently delete the user account.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction onClick={() => handleDeleteUser(user.id)}>
+                                Delete User
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </div>
                     )}
                   </TableCell>
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={7} className="h-24 text-center">
+                <TableCell colSpan={6} className="h-24 text-center">
                   No users found.
                 </TableCell>
               </TableRow>

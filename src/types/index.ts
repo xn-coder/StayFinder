@@ -25,6 +25,7 @@ export type User = {
   verificationStatus: UserVerificationStatus;
   identityDocumentUrl?: string;
   wishlist?: string[];
+  isDisabled?: boolean;
 };
 
 export type Property = {
