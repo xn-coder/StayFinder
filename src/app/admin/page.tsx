@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useEffect } from 'react';
@@ -9,6 +8,7 @@ import { PropertyApprovalList } from '@/components/admin/property-approval-list'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AllBookingsList } from '@/components/admin/all-bookings-list';
 import { IdentityVerificationList } from '@/components/admin/identity-verification-list';
+import { VerifiedUsersList } from '@/components/admin/verified-users-list';
 
 export default function AdminDashboardPage() {
     const { user } = useAuth();
@@ -41,10 +41,11 @@ export default function AdminDashboardPage() {
                     </p>
                 </div>
                 <Tabs defaultValue="properties">
-                    <TabsList className="grid w-full grid-cols-3 max-w-lg">
+                    <TabsList className="grid w-full grid-cols-4 max-w-2xl">
                         <TabsTrigger value="properties">Property Approvals</TabsTrigger>
                         <TabsTrigger value="bookings">All Bookings</TabsTrigger>
                         <TabsTrigger value="verification">Identity Verification</TabsTrigger>
+                        <TabsTrigger value="verified-users">Verified Users</TabsTrigger>
                     </TabsList>
                     <TabsContent value="properties" className="mt-6">
                         <PropertyApprovalList />
@@ -54,6 +55,9 @@ export default function AdminDashboardPage() {
                     </TabsContent>
                     <TabsContent value="verification" className="mt-6">
                         <IdentityVerificationList />
+                    </TabsContent>
+                    <TabsContent value="verified-users" className="mt-6">
+                        <VerifiedUsersList />
                     </TabsContent>
                 </Tabs>
             </main>
