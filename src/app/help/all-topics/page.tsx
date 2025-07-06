@@ -64,7 +64,7 @@ export default function AllTopicsPage() {
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground h-5 w-5" />
                     <Input 
                       placeholder="Search how-tos and more" 
-                      className="h-12 pl-12 rounded-full text-base shadow-sm hover:shadow-md transition-shadow focus-visible:ring-1 focus-visible:ring-ring"
+                      className="h-12 pl-12 rounded-full text-base border-border shadow-sm hover:shadow-md transition-shadow focus-visible:ring-1 focus-visible:ring-ring"
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                     />
