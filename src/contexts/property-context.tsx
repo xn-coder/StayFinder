@@ -43,33 +43,38 @@ export function PropertyProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const seedProperties = async () => {
-        const propertiesCollection = collection(db, 'properties');
-        const snapshot = await getDocs(propertiesCollection);
-        if (snapshot.empty) {
-            console.log('No properties found, seeding database...');
-            const batch = writeBatch(db);
-            initialProperties.forEach(property => {
-                const docRef = doc(collection(db, 'properties'));
-                batch.set(docRef, property);
-            });
-            await batch.commit();
-        }
-    };
-    
-    seedProperties();
-
-    const propertiesQuery = query(collection(db, 'properties'));
-    const unsubscribeProperties = onSnapshot(propertiesQuery, (snapshot) => {
-        const props: Property[] = [];
-        snapshot.forEach(doc => {
-            props.push({ id: doc.id, ...doc.data() } as Property);
+    const initializeProperties = async () => {
+      const propertiesCollection = collection(db, 'properties');
+      const snapshot = await getDocs(propertiesCollection);
+      if (snapshot.empty) {
+        console.log('No properties found, seeding database...');
+        const batch = writeBatch(db);
+        initialProperties.forEach(property => {
+          const docRef = doc(db, 'properties', property.id);
+          batch.set(docRef, property);
         });
-        setProperties(props);
-        setLoading(false);
-    }, (error) => {
-        console.error("Error fetching properties: ", error);
-        setLoading(false);
+        await batch.commit();
+      }
+
+      const propertiesQuery = query(collection(db, 'properties'));
+      const unsubscribe = onSnapshot(propertiesQuery, (snapshot) => {
+          const props: Property[] = [];
+          snapshot.forEach(doc => {
+              props.push({ id: doc.id, ...doc.data() } as Property);
+          });
+          setProperties(props);
+          setLoading(false);
+      }, (error) => {
+          console.error("Error fetching properties: ", error);
+          setLoading(false);
+      });
+      return unsubscribe;
+    };
+
+    let unsubscribeProperties: (() => void) | undefined;
+    
+    initializeProperties().then(unsub => {
+      unsubscribeProperties = unsub;
     });
 
     const bookingsQuery = query(collection(db, 'bookings'), orderBy('createdAt', 'desc'));
@@ -110,7 +115,9 @@ export function PropertyProvider({ children }: { children: ReactNode }) {
 
 
     return () => {
-        unsubscribeProperties();
+        if (unsubscribeProperties) {
+          unsubscribeProperties();
+        }
         unsubscribeBookings();
         unsubscribeInquiries();
     };
