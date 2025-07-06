@@ -78,7 +78,7 @@ export default function HelpPage() {
               <div className="mt-8 max-w-xl mx-auto relative">
                 <Input 
                   placeholder="Search for answers..." 
-                  className="h-14 pl-6 pr-16 text-base bg-background rounded-full border border-border shadow-sm hover:shadow-md transition-shadow"
+                  className="h-14 pl-6 pr-16 text-base bg-background rounded-full border border-border shadow-sm"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
