@@ -20,12 +20,13 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
-import type { UserRole } from "@/types";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 const signupSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
   email: z.string().email("Invalid email address."),
   password: z.string().min(6, "Password must be at least 6 characters."),
+  role: z.enum(['user', 'host']),
 });
 
 type SignupFormValues = z.infer<typeof signupSchema>;
@@ -42,18 +43,19 @@ export function SignupForm({ initialRole = 'user' }: { initialRole: 'user' | 'ho
       name: "",
       email: "",
       password: "",
+      role: initialRole,
     },
   });
 
   const onSubmit = async (data: SignupFormValues) => {
     setLoading(true);
     try {
-      await signup({ ...data, role: initialRole });
+      await signup(data);
       toast({
         title: "Account Created",
         description: "You have successfully signed up and are now logged in.",
       });
-      router.push(initialRole === 'host' ? '/list-property' : '/');
+      router.push(data.role === 'host' ? '/list-property' : '/');
     } catch (error) {
       toast({
         variant: 'destructive',
@@ -68,12 +70,46 @@ export function SignupForm({ initialRole = 'user' }: { initialRole: 'user' | 'ho
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Enter Your Details</CardTitle>
-        <CardDescription>Create your {initialRole} account to get started.</CardDescription>
+        <CardTitle>Create Your Account</CardTitle>
+        <CardDescription>Enter your details to get started.</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+             <FormField
+              control={form.control}
+              name="role"
+              render={({ field }) => (
+                <FormItem className="space-y-3">
+                  <FormLabel>I want to...</FormLabel>
+                  <FormControl>
+                    <RadioGroup
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      className="flex flex-col space-y-1"
+                    >
+                      <FormItem className="flex items-center space-x-3 space-y-0">
+                        <FormControl>
+                          <RadioGroupItem value="user" />
+                        </FormControl>
+                        <FormLabel className="font-normal">
+                          Book unique stays as a guest
+                        </FormLabel>
+                      </FormItem>
+                      <FormItem className="flex items-center space-x-3 space-y-0">
+                        <FormControl>
+                          <RadioGroupItem value="host" />
+                        </FormControl>
+                        <FormLabel className="font-normal">
+                          Host my property and earn money
+                        </FormLabel>
+                      </FormItem>
+                    </RadioGroup>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name="name"

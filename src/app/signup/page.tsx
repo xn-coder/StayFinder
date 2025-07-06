@@ -13,10 +13,10 @@ export default function SignupPage({
        <div className="w-full max-w-md">
         <div className="text-center mb-8">
             <h1 className="text-3xl font-bold font-headline">
-              {role === 'host' ? 'Become a Host' : 'Create an Account'}
+              Join StayFinder
             </h1>
             <p className="text-muted-foreground">
-              {role === 'host' ? 'Join our community of hosts and start earning.' : 'Join StayFinder to discover amazing places.'}
+              Create an account to book unique stays or host your own property.
             </p>
         </div>
         <SignupForm initialRole={role} />
