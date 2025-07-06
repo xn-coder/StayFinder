@@ -75,7 +75,7 @@ export function BookingForm({ property }: { property: Property }) {
   });
 
   const watchDateRange = form.watch("dateRange");
-  const numberOfNights = watchDateRange.from && watchDateRange.to ? differenceInDays(watchDateRange.to, watchDateRange.from) : 0;
+  const numberOfNights = watchDateRange?.from && watchDateRange?.to ? differenceInDays(watchDateRange.to, watchDateRange.from) : 0;
   const totalCost = numberOfNights * property.pricePerNight;
   const serviceFee = totalCost * 0.1;
 
