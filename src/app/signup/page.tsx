@@ -1,13 +1,7 @@
 import { SignupForm } from '@/components/auth/signup-form';
 import Link from 'next/link';
 
-export default function SignupPage({
-  searchParams,
-}: {
-  searchParams?: { role?: 'user' | 'host' };
-}) {
-  const role = searchParams?.role || 'user';
-
+export default function SignupPage() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background p-4">
        <div className="w-full max-w-md">
@@ -16,10 +10,10 @@ export default function SignupPage({
               Join StayFinder
             </h1>
             <p className="text-muted-foreground">
-              Create an account to book unique stays or host your own property.
+              Create an account to book unique stays and experiences.
             </p>
         </div>
-        <SignupForm initialRole={role} />
+        <SignupForm />
         <p className="mt-4 text-center text-sm text-muted-foreground">
           Already have an account?{' '}
           <Link href="/login" className="font-semibold text-primary hover:underline">

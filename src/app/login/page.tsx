@@ -18,13 +18,8 @@ const LoginFormSkeleton = () => (
   </Card>
 );
 
-export default function LoginPage({
-  searchParams,
-}: {
-  searchParams?: { [key: string]: string | string[] | undefined };
-}) {
-  const isListingProperty = searchParams?.redirect === '/list-property';
-  const signupHref = isListingProperty ? '/signup?role=host' : '/signup';
+export default function LoginPage() {
+  const signupHref = '/signup';
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background p-4">
