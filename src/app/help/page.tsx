@@ -3,6 +3,8 @@ import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import Image from 'next/image';
+import { Input } from '@/components/ui/input';
+import { Search } from 'lucide-react';
 
 export default function HelpPage() {
   const faqs = [
@@ -32,7 +34,7 @@ export default function HelpPage() {
     <div className="flex flex-col min-h-screen">
       <Header />
       <main className="flex-grow">
-        <section className="relative h-80 flex items-center justify-center text-white text-center px-4">
+        <section className="relative h-96 flex items-center justify-center text-white text-center px-4">
           <Image
               src="https://placehold.co/1600x600.png"
               alt="Person on a laptop looking for help"
@@ -42,16 +44,24 @@ export default function HelpPage() {
               priority
           />
           <div className="absolute inset-0 bg-black/50" />
-          <div className="relative z-10">
+          <div className="relative z-10 w-full max-w-2xl">
               <h1 className="text-5xl font-bold font-headline">Help Center</h1>
               <p className="mt-4 text-lg max-w-2xl mx-auto">
-                  Have questions? We're here to help. Find answers to common questions below.
+                  Have questions? We're here to help.
               </p>
+              <div className="mt-8 max-w-xl mx-auto relative">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                <Input 
+                  placeholder="Search for answers..." 
+                  className="h-14 pl-12 text-base bg-background/90 text-foreground backdrop-blur-sm" 
+                />
+              </div>
           </div>
         </section>
 
         <div className="container mx-auto px-4 py-16">
             <div className="max-w-3xl mx-auto">
+                <h2 className="text-3xl font-bold text-center mb-8">Frequently Asked Questions</h2>
                 <Accordion type="single" collapsible className="w-full">
                     {faqs.map((faq, index) => (
                         <AccordionItem value={`item-${index}`} key={index}>
