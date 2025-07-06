@@ -8,7 +8,7 @@ import { useAuth } from '@/hooks/use-auth';
 import { useProperties } from '@/hooks/use-properties';
 import { Button } from '@/components/ui/button';
 import { 
-  Home, LogOut, Crown, LifeBuoy, PlusCircle, Settings, Globe, LayoutDashboard, MessageSquare, Heart
+  Home, LogOut, Crown, LifeBuoy, PlusCircle, Settings, Globe, LayoutDashboard, MessageSquare, Heart, CalendarCheck, BookOpenCheck, UserPlus
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
@@ -77,9 +77,11 @@ export function Header({ className }: { className?: string }) {
           <div className="flex flex-1 items-center justify-end space-x-4">
             {user ? (
               <>
-                {user.role === 'host' && (
+                {(user.role === 'host' || user.role === 'user') && (
                   <Link href="/list-property">
-                    <Button variant="ghost" className="text-base font-semibold">List your property</Button>
+                    <Button variant="ghost" className="text-base font-semibold">
+                      {user.role === 'host' ? 'List your property' : 'Become a Host'}
+                    </Button>
                   </Link>
                 )}
                 <DropdownMenu>
@@ -106,9 +108,17 @@ export function Header({ className }: { className?: string }) {
                       
                       {user.role === 'host' && (
                         <>
+                          <DropdownMenuSeparator />
                           <DropdownMenuItem onClick={() => router.push('/my-properties')} className="cursor-pointer">
-                            <Home className="mr-2 h-4 w-4" />
-                            <span>Hosting home</span>
+                            <LayoutDashboard className="mr-2 h-4 w-4" />
+                            <span>Host Dashboard</span>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => router.push('/bookings')} className="cursor-pointer">
+                            <BookOpenCheck className="mr-2 h-4 w-4" />
+                            <span>Bookings</span>
+                             {pendingBookingsCount > 0 && (
+                              <Badge variant="destructive" className="ml-auto">{pendingBookingsCount}</Badge>
+                             )}
                           </DropdownMenuItem>
                            <DropdownMenuItem onClick={() => router.push('/inquiries')} className="cursor-pointer">
                             <MessageSquare className="mr-2 h-4 w-4" />
@@ -121,13 +131,14 @@ export function Header({ className }: { className?: string }) {
                             <PlusCircle className="mr-2 h-4 w-4" />
                             <span>Create new listing</span>
                           </DropdownMenuItem>
+                          <DropdownMenuSeparator />
                         </>
                       )}
 
                       {(user.role === 'user' || user.role === 'host') && (
                         <>
                           <DropdownMenuItem onClick={() => router.push('/my-bookings')} className="cursor-pointer">
-                            <LayoutDashboard className="mr-2 h-4 w-4" />
+                            <CalendarCheck className="mr-2 h-4 w-4" />
                             <span>My Bookings</span>
                           </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => router.push('/wishlist')} className="cursor-pointer">
@@ -135,6 +146,13 @@ export function Header({ className }: { className?: string }) {
                             <span>Wishlist</span>
                           </DropdownMenuItem>
                         </>
+                      )}
+
+                      {user.role === 'user' && (
+                         <DropdownMenuItem onClick={() => router.push('/list-property')} className="cursor-pointer">
+                            <UserPlus className="mr-2 h-4 w-4" />
+                            <span>Become a Host</span>
+                          </DropdownMenuItem>
                       )}
 
                       {user.role === 'super-admin' && (
@@ -161,7 +179,7 @@ export function Header({ className }: { className?: string }) {
             ) : (
               <>
                 <Link href="/list-property">
-                  <Button variant="ghost" className="text-base font-semibold">List your property</Button>
+                  <Button variant="ghost" className="text-base font-semibold">Become a Host</Button>
                 </Link>
                 <Link href="/login">
                   <Button variant="outline" className="px-5">Log in</Button>
