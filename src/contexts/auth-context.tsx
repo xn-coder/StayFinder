@@ -22,6 +22,7 @@ interface AuthContextType {
   login: (credentials: LoginCredentials) => Promise<User>;
   signup: (userData: SignupData) => Promise<User>;
   logout: () => void;
+  deleteUser: (userId: string) => void;
   submitForVerification: (userId: string, documentUrl: string) => void;
   updateVerificationStatus: (userId: string, status: UserVerificationStatus) => void;
   toggleWishlist: (propertyId: string) => void;
@@ -36,6 +37,7 @@ export const AuthContext = createContext<AuthContextType>({
   login: async () => { throw new Error('login not implemented'); },
   signup: async () => { throw new Error('signup not implemented'); },
   logout: () => {},
+  deleteUser: () => {},
   submitForVerification: () => {},
   updateVerificationStatus: () => {},
   toggleWishlist: () => {},
@@ -162,6 +164,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem(CURRENT_USER_STORAGE_KEY);
     setUser(null);
   }, []);
+  
+  const deleteUser = useCallback((userId: string) => {
+    const currentUsers = JSON.parse(localStorage.getItem(USERS_STORAGE_KEY) || '[]');
+    const userToDelete = currentUsers.find((u: User) => u.id === userId);
+    
+    if (userToDelete && userToDelete.role === 'super-admin') {
+      console.error("Cannot delete super-admin.");
+      return;
+    }
+
+    const updatedUsers = currentUsers.filter((u: User) => u.id !== userId);
+    persistUsers(updatedUsers);
+  }, []);
 
   const submitForVerification = useCallback((userId: string, documentUrl: string) => {
     const currentUsers = JSON.parse(localStorage.getItem(USERS_STORAGE_KEY) || '[]');
@@ -232,7 +247,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [user]);
 
-  const value = { user, loading, users, login, signup, logout, submitForVerification, updateVerificationStatus, toggleWishlist, isInWishlist, switchToHostRole };
+  const value = { user, loading, users, login, signup, logout, deleteUser, submitForVerification, updateVerificationStatus, toggleWishlist, isInWishlist, switchToHostRole };
 
   return (
     <AuthContext.Provider value={value}>

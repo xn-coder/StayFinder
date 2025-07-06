@@ -15,9 +15,21 @@ import {
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Eye, ShieldCheck, ShieldAlert, ShieldQuestion } from 'lucide-react';
+import { Eye, ShieldCheck, ShieldAlert, ShieldQuestion, Trash2 } from 'lucide-react';
 import { Badge } from '../ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '../ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
+import { useToast } from '@/hooks/use-toast';
 
 const VerificationStatusBadge = ({ status }: { status: UserVerificationStatus }) => {
   switch (status) {
@@ -35,7 +47,8 @@ const VerificationStatusBadge = ({ status }: { status: UserVerificationStatus })
 };
 
 export function AllUsersList() {
-  const { users } = useAuth();
+  const { users, deleteUser } = useAuth();
+  const { toast } = useToast();
   const [viewingDocumentUrl, setViewingDocumentUrl] = useState<string | null>(null);
 
   const sortedUsers = useMemo(() => {
@@ -46,6 +59,14 @@ export function AllUsersList() {
         return a.name.localeCompare(b.name);
     });
   }, [users]);
+  
+  const handleDeleteUser = (userId: string) => {
+    deleteUser(userId);
+    toast({
+      title: 'User Deleted',
+      description: 'The user has been successfully removed.',
+    });
+  };
 
   return (
     <>
@@ -58,7 +79,8 @@ export function AllUsersList() {
               <TableHead>Password</TableHead>
               <TableHead>Role</TableHead>
               <TableHead>Status</TableHead>
-              <TableHead className="text-right">Document</TableHead>
+              <TableHead>Document</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -82,7 +104,7 @@ export function AllUsersList() {
                   <TableCell>
                     <VerificationStatusBadge status={user.verificationStatus} />
                   </TableCell>
-                  <TableCell className="text-right">
+                  <TableCell>
                     {user.identityDocumentUrl ? (
                       <Button
                         variant="link"
@@ -95,11 +117,36 @@ export function AllUsersList() {
                         <span className="text-muted-foreground text-sm">N/A</span>
                     )}
                   </TableCell>
+                   <TableCell className="text-right">
+                    {user.role !== 'super-admin' && (
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button variant="destructive" size="icon" className="h-8 w-8">
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              This action cannot be undone. This will permanently delete the user account.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction onClick={() => handleDeleteUser(user.id)}>
+                              Delete User
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    )}
+                  </TableCell>
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={6} className="h-24 text-center">
+                <TableCell colSpan={7} className="h-24 text-center">
                   No users found.
                 </TableCell>
               </TableRow>
