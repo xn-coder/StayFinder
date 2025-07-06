@@ -9,7 +9,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import Image from 'next/image';
 import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
-import { helpTopics } from '@/lib/dummy-data';
+import { helpTopics, homeHostHelpTopics, experienceHostHelpTopics, serviceHostHelpTopics, travelAdminHelpTopics } from '@/lib/dummy-data';
 
 const faqs = [
     {
@@ -37,7 +37,11 @@ const faqs = [
 // Combine all searchable content
 const allSearchableContent = [
   ...faqs.map(faq => ({ title: faq.question, content: faq.answer, href: `/help#${faq.question.replace(/\s+/g, '-')}` })),
-  ...helpTopics.flatMap(category => category.links.map(link => ({ title: link.title, content: category.category, href: link.href })))
+  ...helpTopics.flatMap(category => category.links.map(link => ({ title: link.title, content: category.category, href: link.href }))),
+  ...homeHostHelpTopics.flatMap(category => category.links.map(link => ({ title: link.title, content: category.category, href: link.href }))),
+  ...experienceHostHelpTopics.flatMap(category => category.links.map(link => ({ title: link.title, content: category.category, href: link.href }))),
+  ...serviceHostHelpTopics.flatMap(category => category.links.map(link => ({ title: link.title, content: category.category, href: link.href }))),
+  ...travelAdminHelpTopics.flatMap(category => category.links.map(link => ({ title: link.title, content: category.category, href: link.href })))
 ];
 
 

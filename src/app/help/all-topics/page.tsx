@@ -5,10 +5,29 @@ import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
-import { helpTopics } from '@/lib/dummy-data';
+import { helpTopics, homeHostHelpTopics, experienceHostHelpTopics, serviceHostHelpTopics, travelAdminHelpTopics } from '@/lib/dummy-data';
 import Link from 'next/link';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+
+const TopicCategoryGrid = ({ topics }: { topics: { category: string; links: { title: string; href: string }[] }[] }) => (
+    <div className="grid md:grid-cols-3 gap-x-8 gap-y-12 py-12">
+        {topics.map((category) => (
+            <div key={category.category}>
+                <h2 className="text-xl font-semibold mb-4">{category.category}</h2>
+                <ul className="space-y-3">
+                    {category.links.map((link) => (
+                        <li key={link.title}>
+                            <Link href={link.href} className="text-muted-foreground hover:text-primary hover:underline">
+                                {link.title}
+                            </Link>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        ))}
+    </div>
+);
 
 export default function AllTopicsPage() {
   return (
@@ -43,32 +62,23 @@ export default function AllTopicsPage() {
                     <TabsTrigger value="guest">Guest</TabsTrigger>
                     <TabsTrigger value="host">Home host</TabsTrigger>
                     <TabsTrigger value="experience-host">Experience host</TabsTrigger>
-                    <TabsTrigger value="service-host" disabled>Service host</TabsTrigger>
-                    <TabsTrigger value="travel-admin" disabled>Travel admin</TabsTrigger>
+                    <TabsTrigger value="service-host">Service host</TabsTrigger>
+                    <TabsTrigger value="travel-admin">Travel admin</TabsTrigger>
                 </TabsList>
                 <TabsContent value="guest">
-                   <div className="grid md:grid-cols-3 gap-x-8 gap-y-12 py-12">
-                      {helpTopics.map((category) => (
-                        <div key={category.category}>
-                          <h2 className="text-xl font-semibold mb-4">{category.category}</h2>
-                          <ul className="space-y-3">
-                            {category.links.map((link) => (
-                              <li key={link.title}>
-                                <Link href={link.href} className="text-muted-foreground hover:text-primary hover:underline">
-                                  {link.title}
-                                </Link>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      ))}
-                    </div>
+                   <TopicCategoryGrid topics={helpTopics} />
                 </TabsContent>
                 <TabsContent value="host">
-                    <div className="py-12 text-center text-muted-foreground">Host-specific topics would be displayed here.</div>
+                    <TopicCategoryGrid topics={homeHostHelpTopics} />
                 </TabsContent>
                 <TabsContent value="experience-host">
-                    <div className="py-12 text-center text-muted-foreground">Experience host topics would be displayed here.</div>
+                    <TopicCategoryGrid topics={experienceHostHelpTopics} />
+                </TabsContent>
+                 <TabsContent value="service-host">
+                    <TopicCategoryGrid topics={serviceHostHelpTopics} />
+                </TabsContent>
+                 <TabsContent value="travel-admin">
+                    <TopicCategoryGrid topics={travelAdminHelpTopics} />
                 </TabsContent>
             </Tabs>
           </div>

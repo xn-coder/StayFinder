@@ -436,3 +436,294 @@ export const helpTopics = [
     ],
   },
 ];
+
+export const homeHostHelpTopics = [
+  {
+    category: 'About hosting',
+    links: [
+      { title: 'Hosting your home', href: '#' },
+      { title: 'Ways to host', href: '#' },
+      { title: 'Protection and insurance', href: '#' },
+      { title: 'Regulations and standards', href: '#' },
+      { title: 'Airbnb.org', href: '#' },
+      { title: 'Airbnb Luxe', href: '#' },
+    ],
+  },
+  {
+    category: 'Calendar and bookings',
+    links: [
+      { title: 'Booking enquiries', href: '#' },
+      { title: 'Your booking requirements', href: '#' },
+      { title: 'Managing your calendar', href: '#' },
+      { title: 'Pre-approvals and special offers', href: '#' },
+    ],
+  },
+  {
+    category: 'Payouts and taxes',
+    links: [
+      { title: 'How payouts work', href: '#' },
+      { title: 'Payout methods', href: '#' },
+      { title: 'Payout details and preferences', href: '#' },
+      { title: 'Fixing payout issues', href: '#' },
+      { title: 'Taxes', href: '#' },
+      { title: 'Donations', href: '#' },
+    ],
+  },
+  {
+    category: 'Managing your listing',
+    links: [
+      { title: 'Listing details', href: '#' },
+      { title: 'Pricing', href: '#' },
+      { title: 'Listing availability', href: '#' },
+      { title: 'Booking settings and Instant Book', href: '#' },
+      { title: 'Marketing and promoting your listing', href: '#' },
+    ],
+  },
+  {
+    category: 'Professional hosting tools',
+    links: [{ title: 'Using other hosting software', href: '#' }],
+  },
+  {
+    category: 'Your reservations',
+    links: [
+      { title: 'How reservations work', href: '#' },
+      { title: 'Cancellations', href: '#' },
+      { title: 'Changes', href: '#' },
+      { title: 'Guest refunds and reimbursements', href: '#' },
+      { title: 'Issues with a reservation', href: '#' },
+      { title: 'Messaging with guests', href: '#' },
+    ],
+  },
+  {
+    category: 'About Airbnb',
+    links: [
+      { title: 'Getting started', href: '#' },
+      { title: 'How Airbnb works', href: '#' },
+      { title: 'Our community policies', href: '#' },
+      { title: 'Partnerships', href: '#' },
+    ],
+  },
+  {
+    category: 'Your account and reviews',
+    links: [
+      { title: 'Creating an account', href: '#' },
+      { title: 'Managing your account', href: '#' },
+      { title: 'ID and verification', href: '#' },
+      { title: 'Account security', href: '#' },
+      { title: 'Reviews', href: '#' },
+    ],
+  },
+  {
+    category: 'Safety and accessibility',
+    links: [
+      { title: 'Safety concerns', href: '#' },
+      { title: 'Safety tips and guidelines', href: '#' },
+      { title: 'Reporting issues', href: '#' },
+      { title: 'Government travel restrictions and advisories', href: '#' },
+    ],
+  },
+  {
+    category: 'Local rules and regulations',
+    links: [
+      { title: 'Asia-Pacific', href: '#' },
+      { title: 'Responsible hosting for places to stay in Europe', href: '#' },
+      { title: 'North America', href: '#' },
+      { title: 'South America', href: '#' },
+      { title: 'Africa', href: '#' },
+    ],
+  },
+];
+
+export const experienceHostHelpTopics = [
+    {
+      category: 'About hosting',
+      links: [
+        { title: 'Experience hosting basics', href: '#' },
+        { title: 'Preparing to host an experience', href: '#' },
+        { title: 'Experience categories', href: '#' },
+        { title: 'Co-hosting experiences', href: '#' },
+        { title: 'Protection and insurance', href: '#' },
+      ],
+    },
+    {
+      category: 'Managing your experience',
+      links: [
+        { title: 'Calendar and bookings', href: '#' },
+        { title: 'Updating your experience page', href: '#' },
+        { title: 'Pricing your experience', href: '#' },
+        { title: 'Marketing and promotion', href: '#' },
+      ],
+    },
+    {
+      category: 'Your reservations',
+      links: [
+        { title: 'Changes and cancellations', href: '#' },
+        { title: 'Refunds and reimbursements', href: '#' },
+        { title: 'Communicating with guests', href: '#' },
+        { title: 'Issues with a reservation', href: '#' },
+      ],
+    },
+    {
+        category: 'Payouts and taxes',
+        links: [
+            { title: 'Payouts', href: '#' },
+            { title: 'Taxes', href: '#' }
+        ]
+    },
+    {
+        category: 'About Airbnb',
+        links: [
+            { title: 'Getting started', href: '#' },
+            { title: 'How Airbnb works', href: '#' },
+            { title: 'Our community policies', href: '#' },
+            { title: 'Partnerships', href: '#' },
+        ]
+    },
+    {
+        category: 'Your account and reviews',
+        links: [
+            { title: 'Creating an account', href: '#' },
+            { title: 'Managing your account', href: '#' },
+            { title: 'ID and verification', href: '#' },
+            { title: 'Account security', href: '#' },
+            { title: 'Reviews', href: '#' },
+        ]
+    },
+    {
+        category: 'Safety and accessibility',
+        links: [
+            { title: 'Safety concerns', href: '#' },
+            { title: 'Safety tips and guidelines', href: '#' },
+            { title: 'Reporting issues', href: '#' },
+            { title: 'Government travel restrictions and advisories', href: '#' },
+        ]
+    },
+    {
+        category: 'Local rules and regulations for Airbnb Experiences',
+        links: [
+            { title: 'General info', href: '#' },
+            { title: 'Asia-Pacific', href: '#' },
+        ]
+    }
+];
+
+export const serviceHostHelpTopics = [
+    {
+        category: 'About hosting',
+        links: [
+            { title: 'Service hosting basics', href: '#' },
+            { title: 'Preparing to host a service', href: '#' },
+            { title: 'Protection and insurance', href: '#' },
+            { title: 'Service categories and guidelines', href: '#' },
+        ]
+    },
+    {
+        category: 'Managing your service',
+        links: [
+            { title: 'Calendar and bookings', href: '#' },
+            { title: 'Updating your service page', href: '#' },
+            { title: 'Pricing your service', href: '#' },
+        ]
+    },
+    {
+        category: 'Your reservations',
+        links: [
+            { title: 'Changes and cancellations', href: '#' },
+            { title: 'Refunds and reimbursements', href: '#' },
+            { title: 'Communicating with guests', href: '#' },
+            { title: 'Issues with a reservation', href: '#' },
+        ]
+    },
+    {
+        category: 'Payouts and taxes',
+        links: [
+            { title: 'Payouts', href: '#' },
+            { title: 'Taxes', href: '#' }
+        ]
+    },
+    {
+        category: 'About Airbnb',
+        links: [
+            { title: 'Getting started', href: '#' },
+            { title: 'How Airbnb works', href: '#' },
+            { title: 'Our community policies', href: '#' },
+            { title: 'Partnerships', href: '#' },
+        ]
+    },
+    {
+        category: 'Your account and reviews',
+        links: [
+            { title: 'Creating an account', href: '#' },
+            { title: 'Managing your account', href: '#' },
+            { title: 'ID and verification', href: '#' },
+            { title: 'Account security', href: '#' },
+            { title: 'Reviews', href: '#' },
+        ]
+    },
+    {
+        category: 'Safety and accessibility',
+        links: [
+            { title: 'Safety concerns', href: '#' },
+            { title: 'Safety tips and guidelines', href: '#' },
+            { title: 'Reporting issues', href: '#' },
+            { title: 'Government travel restrictions and advisories', href: '#' },
+        ]
+    },
+    {
+        category: 'Local rules and regulations for Airbnb Services',
+        links: [
+            { title: 'General info', href: '#' },
+            { title: 'Service categories and guidelines', href: '#' },
+        ]
+    }
+];
+
+export const travelAdminHelpTopics = [
+    {
+        category: 'Airbnb for Work basics',
+        links: [
+            { title: 'Airbnb for Work basics', href: '#' },
+            { title: 'Signing up', href: '#' },
+            { title: 'Your company\'s Airbnb for Work account', href: '#' },
+        ]
+    },
+    {
+        category: 'Managing employees',
+        links: [
+            { title: 'Using the Airbnb for Work dashboard', href: '#' },
+            { title: 'Account settings', href: '#' },
+        ]
+    },
+    {
+        category: 'Booking and reservations',
+        links: [
+            { title: 'Booking travel for employees', href: '#' },
+            { title: 'Managing reservations', href: '#' },
+        ]
+    },
+    {
+        category: 'Billing and receipts',
+        links: [
+            { title: 'Billing', href: '#' },
+            { title: 'Receipts', href: '#' },
+        ]
+    },
+    {
+        category: 'About Airbnb',
+        links: [
+            { title: 'Getting started', href: '#' },
+            { title: 'How Airbnb works', href: '#' },
+            { title: 'Our community policies', href: '#' },
+            { title: 'Partnerships', href: '#' },
+        ]
+    },
+    {
+        category: 'Safety and accessibility',
+        links: [
+            { title: 'Safety concerns', href: '#' },
+            { title: 'Safety tips and guidelines', href: '#' },
+            { title: 'Reporting issues', href: '#' },
+            { title: 'Government travel restrictions and advisories', href: '#' },
+        ]
+    }
+];
