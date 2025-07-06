@@ -18,7 +18,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Check, X, FileText, ClipboardUser } from 'lucide-react';
+import { Check, X, FileText, Contact } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { InvoiceDialog } from './invoice-dialog';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '../ui/dialog';
@@ -116,7 +116,7 @@ export function BookingsList() {
                               size="sm"
                               onClick={() => setViewingDocumentUrl(booking.guest.identityDocumentUrl!)}
                             >
-                                <ClipboardUser className="mr-2 h-4 w-4" />
+                                <Contact className="mr-2 h-4 w-4" />
                                 View Guest ID
                             </Button>
                         )}
