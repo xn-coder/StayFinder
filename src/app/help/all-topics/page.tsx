@@ -110,7 +110,7 @@ export default function AllTopicsPage() {
                 <p className="text-muted-foreground mb-8 text-lg">Browse our full library of help topics.</p>
                 
                 <Tabs defaultValue="guest">
-                    <TabsList>
+                    <TabsList className="w-full justify-start overflow-x-auto scrollbar-hide sm:w-auto sm:justify-center">
                         <TabsTrigger value="guest">Guest</TabsTrigger>
                         <TabsTrigger value="host">Home host</TabsTrigger>
                         <TabsTrigger value="experience-host">Experience host</TabsTrigger>
