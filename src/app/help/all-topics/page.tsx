@@ -1,13 +1,13 @@
 
 'use client';
 
+import { useState, useMemo } from 'react';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
 import { helpTopics, homeHostHelpTopics, experienceHostHelpTopics, serviceHostHelpTopics, travelAdminHelpTopics } from '@/lib/dummy-data';
 import Link from 'next/link';
-import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 
 const TopicCategoryGrid = ({ topics }: { topics: { category: string; links: { title: string; href: string }[] }[] }) => (
@@ -29,7 +29,30 @@ const TopicCategoryGrid = ({ topics }: { topics: { category: string; links: { ti
     </div>
 );
 
+const allHelpContent = [
+  ...helpTopics.flatMap(category => category.links.map(link => ({ title: link.title, content: category.category, href: link.href }))),
+  ...homeHostHelpTopics.flatMap(category => category.links.map(link => ({ title: link.title, content: category.category, href: link.href }))),
+  ...experienceHostHelpTopics.flatMap(category => category.links.map(link => ({ title: link.title, content: category.category, href: link.href }))),
+  ...serviceHostHelpTopics.flatMap(category => category.links.map(link => ({ title: link.title, content: category.category, href: link.href }))),
+  ...travelAdminHelpTopics.flatMap(category => category.links.map(link => ({ title: link.title, content: category.category, href: link.href })))
+];
+
+
 export default function AllTopicsPage() {
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const filteredResults = useMemo(() => {
+    if (!searchTerm) {
+      return [];
+    }
+    const lowercasedTerm = searchTerm.toLowerCase();
+    return allHelpContent.filter(item => 
+      item.title.toLowerCase().includes(lowercasedTerm) ||
+      item.content.toLowerCase().includes(lowercasedTerm)
+    );
+  }, [searchTerm]);
+
+
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
@@ -39,7 +62,12 @@ export default function AllTopicsPage() {
                 <h1 className="text-2xl font-semibold">Help Centre</h1>
                  <div className="relative w-full max-w-sm">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                    <Input placeholder="Search how-tos and more" className="h-10 pl-10" />
+                    <Input 
+                      placeholder="Search how-tos and more" 
+                      className="h-10 pl-10"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                    />
                 </div>
             </div>
         </div>
@@ -54,33 +82,59 @@ export default function AllTopicsPage() {
                 <span>All topics</span>
             </div>
 
-            <h2 className="text-4xl font-bold font-headline mb-2">All topics</h2>
-            <p className="text-muted-foreground mb-8 text-lg">Browse our full library of help topics.</p>
-            
-            <Tabs defaultValue="guest">
-                <TabsList>
-                    <TabsTrigger value="guest">Guest</TabsTrigger>
-                    <TabsTrigger value="host">Home host</TabsTrigger>
-                    <TabsTrigger value="experience-host">Experience host</TabsTrigger>
-                    <TabsTrigger value="service-host">Service host</TabsTrigger>
-                    <TabsTrigger value="travel-admin">Travel admin</TabsTrigger>
-                </TabsList>
-                <TabsContent value="guest">
-                   <TopicCategoryGrid topics={helpTopics} />
-                </TabsContent>
-                <TabsContent value="host">
-                    <TopicCategoryGrid topics={homeHostHelpTopics} />
-                </TabsContent>
-                <TabsContent value="experience-host">
-                    <TopicCategoryGrid topics={experienceHostHelpTopics} />
-                </TabsContent>
-                 <TabsContent value="service-host">
-                    <TopicCategoryGrid topics={serviceHostHelpTopics} />
-                </TabsContent>
-                 <TabsContent value="travel-admin">
-                    <TopicCategoryGrid topics={travelAdminHelpTopics} />
-                </TabsContent>
-            </Tabs>
+            {searchTerm ? (
+              <div>
+                <h2 className="text-3xl font-bold text-center mb-8">
+                  {filteredResults.length > 0 ? `Search results for "${searchTerm}"` : 'No results found'}
+                </h2>
+                {filteredResults.length > 0 ? (
+                  <div className="space-y-4">
+                    {filteredResults.map((item, index) => (
+                      <Link href={item.href} key={index}>
+                        <div className="p-4 border rounded-lg hover:bg-accent transition-colors">
+                          <h3 className="font-semibold text-lg">{item.title}</h3>
+                          <p className="text-muted-foreground text-sm">{item.content}</p>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                ) : (
+                   <p className="text-center text-muted-foreground">
+                      We couldn't find any articles for your search. Try different keywords.
+                   </p>
+                )}
+              </div>
+            ) : (
+              <>
+                <h2 className="text-4xl font-bold font-headline mb-2">All topics</h2>
+                <p className="text-muted-foreground mb-8 text-lg">Browse our full library of help topics.</p>
+                
+                <Tabs defaultValue="guest">
+                    <TabsList>
+                        <TabsTrigger value="guest">Guest</TabsTrigger>
+                        <TabsTrigger value="host">Home host</TabsTrigger>
+                        <TabsTrigger value="experience-host">Experience host</TabsTrigger>
+                        <TabsTrigger value="service-host">Service host</TabsTrigger>
+                        <TabsTrigger value="travel-admin">Travel admin</TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="guest">
+                      <TopicCategoryGrid topics={helpTopics} />
+                    </TabsContent>
+                    <TabsContent value="host">
+                        <TopicCategoryGrid topics={homeHostHelpTopics} />
+                    </TabsContent>
+                    <TabsContent value="experience-host">
+                        <TopicCategoryGrid topics={experienceHostHelpTopics} />
+                    </TabsContent>
+                    <TabsContent value="service-host">
+                        <TopicCategoryGrid topics={serviceHostHelpTopics} />
+                    </TabsContent>
+                    <TabsContent value="travel-admin">
+                        <TopicCategoryGrid topics={travelAdminHelpTopics} />
+                    </TabsContent>
+                </Tabs>
+              </>
+            )}
           </div>
         </div>
       </main>
