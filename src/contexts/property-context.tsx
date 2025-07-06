@@ -43,83 +43,84 @@ export function PropertyProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const initializeProperties = async () => {
-      const propertiesCollection = collection(db, 'properties');
-      const snapshot = await getDocs(propertiesCollection);
-      if (snapshot.empty) {
-        console.log('No properties found, seeding database...');
-        const batch = writeBatch(db);
-        initialProperties.forEach(property => {
-          const docRef = doc(db, 'properties', property.id);
-          batch.set(docRef, property);
-        });
-        await batch.commit();
-      }
-
-      const propertiesQuery = query(collection(db, 'properties'));
-      const unsubscribe = onSnapshot(propertiesQuery, (snapshot) => {
-          const props: Property[] = [];
-          snapshot.forEach(doc => {
-              props.push({ id: doc.id, ...doc.data() } as Property);
+    const setupFirestore = async () => {
+      try {
+        const propertiesCollection = collection(db, 'properties');
+        const snapshot = await getDocs(propertiesCollection);
+        if (snapshot.empty) {
+          console.log('No properties found, seeding database...');
+          const batch = writeBatch(db);
+          initialProperties.forEach(property => {
+            const docRef = doc(db, 'properties', property.id);
+            batch.set(docRef, property);
           });
-          setProperties(props);
-          setLoading(false);
-      }, (error) => {
-          console.error("Error fetching properties: ", error);
-          setLoading(false);
-      });
-      return unsubscribe;
+          await batch.commit();
+          console.log('Database seeded.');
+        }
+
+        const unsubscribeProperties = onSnapshot(query(collection(db, 'properties')), (snapshot) => {
+            const props: Property[] = [];
+            snapshot.forEach(doc => {
+                props.push({ id: doc.id, ...doc.data() } as Property);
+            });
+            setProperties(props);
+            setLoading(false);
+        }, (error) => {
+            console.error("Error fetching properties: ", error);
+            setLoading(false);
+        });
+
+        const unsubscribeBookings = onSnapshot(query(collection(db, 'bookings'), orderBy('createdAt', 'desc')), (snapshot) => {
+            const newBookings: Booking[] = [];
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                newBookings.push({
+                    id: doc.id,
+                    ...data,
+                    dateRange: {
+                        from: (data.dateRange.from as Timestamp).toDate(),
+                        to: (data.dateRange.to as Timestamp).toDate(),
+                    },
+                    createdAt: (data.createdAt as Timestamp).toDate().toISOString(),
+                } as Booking);
+            });
+            setBookings(newBookings);
+        }, (error) => {
+            console.error("Error fetching bookings: ", error);
+        });
+
+        const unsubscribeInquiries = onSnapshot(query(collection(db, 'inquiries'), orderBy('createdAt', 'desc')), (snapshot) => {
+            const newInquiries: Inquiry[] = [];
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                newInquiries.push({
+                    id: doc.id,
+                    ...data,
+                    createdAt: (data.createdAt as Timestamp).toDate().toISOString(),
+                } as Inquiry);
+            });
+            setInquiries(newInquiries);
+        }, (error) => {
+            console.error("Error fetching inquiries: ", error);
+        });
+
+        return () => {
+          unsubscribeProperties();
+          unsubscribeBookings();
+          unsubscribeInquiries();
+        };
+
+      } catch (error) {
+        console.error("Error during Firestore setup: ", error);
+        setLoading(false);
+        return () => {};
+      }
     };
-
-    let unsubscribeProperties: (() => void) | undefined;
     
-    initializeProperties().then(unsub => {
-      unsubscribeProperties = unsub;
-    });
-
-    const bookingsQuery = query(collection(db, 'bookings'), orderBy('createdAt', 'desc'));
-    const unsubscribeBookings = onSnapshot(bookingsQuery, (snapshot) => {
-        const newBookings: Booking[] = [];
-        snapshot.forEach(doc => {
-            const data = doc.data();
-            newBookings.push({
-                id: doc.id,
-                ...data,
-                dateRange: {
-                    from: (data.dateRange.from as Timestamp).toDate(),
-                    to: (data.dateRange.to as Timestamp).toDate(),
-                },
-                createdAt: (data.createdAt as Timestamp).toDate().toISOString(),
-            } as Booking);
-        });
-        setBookings(newBookings);
-    }, (error) => {
-        console.error("Error fetching bookings: ", error);
-    });
-    
-    const inquiriesQuery = query(collection(db, 'inquiries'), orderBy('createdAt', 'desc'));
-    const unsubscribeInquiries = onSnapshot(inquiriesQuery, (snapshot) => {
-        const newInquiries: Inquiry[] = [];
-        snapshot.forEach(doc => {
-            const data = doc.data();
-            newInquiries.push({
-                id: doc.id,
-                ...data,
-                createdAt: (data.createdAt as Timestamp).toDate().toISOString(),
-            } as Inquiry);
-        });
-        setInquiries(newInquiries);
-    }, (error) => {
-        console.error("Error fetching inquiries: ", error);
-    });
-
+    let cleanupPromise = setupFirestore();
 
     return () => {
-        if (unsubscribeProperties) {
-          unsubscribeProperties();
-        }
-        unsubscribeBookings();
-        unsubscribeInquiries();
+      cleanupPromise.then(cleanup => cleanup());
     };
   }, []);
   
