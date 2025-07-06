@@ -12,7 +12,6 @@ import { Search } from 'lucide-react';
 import { helpTopics, homeHostHelpTopics, experienceHostHelpTopics, serviceHostHelpTopics, travelAdminHelpTopics } from '@/lib/dummy-data';
 import { useAuth } from '@/hooks/use-auth';
 import { Button } from '@/components/ui/button';
-import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 
 const faqs = [
@@ -170,16 +169,9 @@ export default function HelpPage() {
               )}
                 <div className="mt-16">
                     <h2 className="text-3xl font-bold text-center mb-8">Quick Guides</h2>
-                    <Carousel
-                        opts={{
-                        align: "start",
-                        loop: true,
-                        }}
-                        className="w-full"
-                    >
-                        <CarouselContent>
-                        {guides.map((guide, index) => (
-                            <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
+                    <div className="flex space-x-4 overflow-x-auto pb-4 scrollbar-hide -mx-4 px-4">
+                      {guides.map((guide, index) => (
+                          <div key={index} className="w-80 flex-shrink-0">
                             <div className="p-1 h-full">
                                 <Link href={guide.href} className="block h-full">
                                 <Card className="h-full overflow-hidden group flex flex-col">
@@ -199,10 +191,9 @@ export default function HelpPage() {
                                 </Card>
                                 </Link>
                             </div>
-                            </CarouselItem>
-                        ))}
-                        </CarouselContent>
-                    </Carousel>
+                          </div>
+                      ))}
+                    </div>
                 </div>
                <div className="text-center mt-12">
                     <p className="text-muted-foreground">Can't find what you're looking for?</p>
