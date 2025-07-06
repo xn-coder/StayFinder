@@ -16,7 +16,8 @@ import {
   writeBatch,
   query,
   orderBy,
-  runTransaction
+  runTransaction,
+  deleteDoc
 } from 'firebase/firestore';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -24,6 +25,8 @@ import { v4 as uuidv4 } from 'uuid';
 interface PropertyContextType {
   properties: Property[];
   addProperty: (data: Omit<Property, 'id'>) => Promise<void>;
+  updateProperty: (id: string, data: Partial<Property>) => Promise<void>;
+  deleteProperty: (id: string) => Promise<void>;
   updatePropertyStatus: (id: string, status: PropertyStatus) => void;
   getPropertyById: (id: string) => Property | undefined;
   bookings: Booking[];
@@ -143,6 +146,24 @@ export function PropertyProvider({ children }: { children: ReactNode }) {
     }
   }, []);
   
+  const updateProperty = useCallback(async (id: string, data: Partial<Property>) => {
+    const propertyDocRef = doc(db, 'properties', id);
+    try {
+      await updateDoc(propertyDocRef, data);
+    } catch (error) {
+      console.error("Error updating property: ", error);
+    }
+  }, []);
+  
+  const deleteProperty = useCallback(async (id: string) => {
+    const propertyDocRef = doc(db, 'properties', id);
+    try {
+      await deleteDoc(propertyDocRef);
+    } catch (error) {
+      console.error("Error deleting property: ", error);
+    }
+  }, []);
+  
   const updatePropertyStatus = useCallback(async (id: string, status: PropertyStatus) => {
     const propertyDocRef = doc(db, 'properties', id);
     try {
@@ -242,6 +263,8 @@ export function PropertyProvider({ children }: { children: ReactNode }) {
   const value = {
       properties,
       addProperty,
+      updateProperty,
+      deleteProperty,
       updatePropertyStatus,
       getPropertyById,
       bookings,

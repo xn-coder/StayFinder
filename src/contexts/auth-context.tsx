@@ -26,6 +26,7 @@ interface AuthContextType {
   updateVerificationStatus: (userId: string, status: UserVerificationStatus) => void;
   toggleWishlist: (propertyId: string) => void;
   isInWishlist: (propertyId: string) => boolean;
+  switchToHostRole: (userId: string) => void;
 }
 
 export const AuthContext = createContext<AuthContextType>({
@@ -39,6 +40,7 @@ export const AuthContext = createContext<AuthContextType>({
   updateVerificationStatus: () => {},
   toggleWishlist: () => {},
   isInWishlist: () => false,
+  switchToHostRole: () => {},
 });
 
 const USERS_STORAGE_KEY = 'allUsers';
@@ -214,7 +216,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const value = { user, loading, users, login, signup, logout, submitForVerification, updateVerificationStatus, toggleWishlist, isInWishlist };
+  const switchToHostRole = useCallback((userId: string) => {
+    const currentUsers = JSON.parse(localStorage.getItem(USERS_STORAGE_KEY) || '[]');
+    let updatedUser: User | null = null;
+    const updatedUsers = currentUsers.map((u: User) => {
+        if (u.id === userId) {
+            updatedUser = { ...u, role: 'host' as UserRole };
+            return updatedUser;
+        }
+        return u;
+    });
+
+    if (updatedUser) {
+        persistUsers(updatedUsers, updatedUser);
+    }
+  }, [user]);
+
+  const value = { user, loading, users, login, signup, logout, submitForVerification, updateVerificationStatus, toggleWishlist, isInWishlist, switchToHostRole };
 
   return (
     <AuthContext.Provider value={value}>

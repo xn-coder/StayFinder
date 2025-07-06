@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/hooks/use-auth';
 import type { Property } from '@/types';
@@ -16,12 +16,25 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { PlusCircle, Eye } from 'lucide-react';
+import { PlusCircle, Eye, Pencil, Trash2 } from 'lucide-react';
 import { useProperties } from '@/hooks/use-properties';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
+import { useToast } from '@/hooks/use-toast';
 
 export function MyPropertiesList({ searchTerm }: { searchTerm: string }) {
   const { user } = useAuth();
-  const { properties, loading } = useProperties();
+  const { properties, loading, deleteProperty } = useProperties();
+  const { toast } = useToast();
   
   const hostProperties = useMemo(() => {
     if (!user) return [];
@@ -36,6 +49,14 @@ export function MyPropertiesList({ searchTerm }: { searchTerm: string }) {
       p.location.toLowerCase().includes(searchTerm.toLowerCase())
     );
   }, [user, properties, searchTerm]);
+  
+  const handleDelete = async (id: string) => {
+    await deleteProperty(id);
+    toast({
+      title: 'Property Deleted',
+      description: 'The property has been successfully removed.',
+    });
+  };
 
   const statusVariant = (status: Property['status']) => {
     switch (status) {
@@ -78,7 +99,7 @@ export function MyPropertiesList({ searchTerm }: { searchTerm: string }) {
                 <TableHead>Property Name</TableHead>
                 <TableHead>Location</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead className="text-right">View</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
             </TableRow>
             </TableHeader>
             <TableBody>
@@ -95,12 +116,42 @@ export function MyPropertiesList({ searchTerm }: { searchTerm: string }) {
                     </Badge>
                     </TableCell>
                     <TableCell className="text-right">
-                         <Link href={`/property/${property.id}`}>
-                            <Button variant="outline" size="sm">
-                                <Eye className="mr-2 h-4 w-4" />
-                                View Listing
-                            </Button>
-                        </Link>
+                        <div className="flex gap-2 justify-end">
+                            <Link href={`/property/${property.id}`}>
+                                <Button variant="outline" size="sm">
+                                    <Eye className="mr-2 h-4 w-4" />
+                                    View
+                                </Button>
+                            </Link>
+                             <Link href={`/my-properties/edit/${property.id}`}>
+                                <Button variant="outline" size="sm">
+                                    <Pencil className="mr-2 h-4 w-4" />
+                                    Edit
+                                </Button>
+                            </Link>
+                             <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                <Button variant="destructive" size="sm">
+                                    <Trash2 className="mr-2 h-4 w-4" />
+                                    Delete
+                                </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                <AlertDialogHeader>
+                                    <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                    This action cannot be undone. This will permanently delete your property listing.
+                                    </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction onClick={() => handleDelete(property.id)}>
+                                    Delete
+                                    </AlertDialogAction>
+                                </AlertDialogFooter>
+                                </AlertDialogContent>
+                            </AlertDialog>
+                        </div>
                     </TableCell>
                 </TableRow>
                 ))

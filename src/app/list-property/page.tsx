@@ -7,7 +7,7 @@ import { useAuth } from '@/hooks/use-auth';
 import { ListPropertyForm } from '@/components/list-property-form';
 import { Header } from '@/components/layout/header';
 import { Button } from '@/components/ui/button';
-import { ShieldCheck, ListChecks, Star, CircleDollarSign, PartyPopper } from 'lucide-react';
+import { ShieldCheck, ListChecks, Star, CircleDollarSign, PartyPopper, Building } from 'lucide-react';
 
 const ListPropertyIntro = ({ onGetStarted }: { onGetStarted: () => void }) => {
   return (
@@ -63,7 +63,7 @@ const ListPropertyIntro = ({ onGetStarted }: { onGetStarted: () => void }) => {
 
 
 export default function ListPropertyPage() {
-  const { user } = useAuth();
+  const { user, switchToHostRole } = useAuth();
   const router = useRouter();
   const [isFormStarted, setIsFormStarted] = useState(false);
 
@@ -72,17 +72,48 @@ export default function ListPropertyPage() {
 
     if (!user) {
       router.push('/login?redirect=/list-property');
-    } else if (user.role !== 'host') {
-      router.push('/');
     }
   }, [user, router]);
+  
+  const BecomeAHostPrompt = () => (
+    <div className="text-center p-8 max-w-lg">
+      <Building className="mx-auto h-16 w-16 text-primary mb-4" />
+      <h1 className="text-3xl font-bold font-headline mb-4">Want to start hosting?</h1>
+      <p className="text-muted-foreground mb-6">
+        It's easy to get started. By becoming a host, you can list your properties and earn money. Click the button below to update your account to a host role.
+      </p>
+      <Button onClick={() => switchToHostRole(user!.id)} size="lg">
+        Become a Host
+      </Button>
+    </div>
+  );
 
-  if (!user || user.role !== 'host') {
+  if (user === undefined || !user) {
     return (
       <div className="flex h-screen items-center justify-center">
         <p>Loading or redirecting...</p>
       </div>
     );
+  }
+
+  if (user.role === 'user') {
+    return (
+      <div className="flex flex-col h-screen bg-background">
+        <Header />
+        <main className="flex-grow flex items-center justify-center">
+          <BecomeAHostPrompt />
+        </main>
+      </div>
+    );
+  }
+
+  if (user.role === 'super-admin') {
+      router.push('/admin');
+      return (
+        <div className="flex h-screen items-center justify-center">
+          <p>Redirecting...</p>
+        </div>
+      );
   }
 
   if (user.verificationStatus !== 'verified') {
