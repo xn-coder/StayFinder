@@ -61,10 +61,10 @@ export default function AllTopicsPage() {
             <div className="container mx-auto px-4 py-4 flex justify-between items-center">
                 <h1 className="text-2xl font-semibold">Help Centre</h1>
                  <div className="relative w-full max-w-sm">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground h-5 w-5" />
                     <Input 
                       placeholder="Search how-tos and more" 
-                      className="h-10 pl-10"
+                      className="h-12 pl-12 rounded-full text-base"
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                     />
