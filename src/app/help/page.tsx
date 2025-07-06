@@ -53,7 +53,7 @@ export default function HelpPage() {
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
                 <Input 
                   placeholder="Search for answers..." 
-                  className="h-14 pl-12 text-base bg-background/90 text-foreground backdrop-blur-sm" 
+                  className="h-14 pl-12 text-base bg-background/90 text-foreground backdrop-blur-sm rounded-full" 
                 />
               </div>
           </div>
