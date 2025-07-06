@@ -12,7 +12,7 @@ import { Search } from 'lucide-react';
 import { helpTopics, homeHostHelpTopics, experienceHostHelpTopics, serviceHostHelpTopics, travelAdminHelpTopics } from '@/lib/dummy-data';
 import { useAuth } from '@/hooks/use-auth';
 import { Button } from '@/components/ui/button';
-import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from '@/components/ui/carousel';
+import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 
 const faqs = [
@@ -202,8 +202,6 @@ export default function HelpPage() {
                             </CarouselItem>
                         ))}
                         </CarouselContent>
-                        <CarouselPrevious />
-                        <CarouselNext />
                     </Carousel>
                 </div>
                <div className="text-center mt-12">
