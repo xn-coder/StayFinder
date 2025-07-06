@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useMemo, useState } from 'react';
@@ -32,6 +33,7 @@ export function VerifiedUsersList() {
           <TableHeader>
             <TableRow>
               <TableHead>User</TableHead>
+              <TableHead>Email</TableHead>
               <TableHead>Role</TableHead>
               <TableHead>Status</TableHead>
               <TableHead className="text-right">Document</TableHead>
@@ -50,6 +52,7 @@ export function VerifiedUsersList() {
                       <span className="font-medium">{user.name}</span>
                     </div>
                   </TableCell>
+                  <TableCell>{user.email}</TableCell>
                   <TableCell>
                       <Badge variant="outline" className="capitalize">{user.role}</Badge>
                   </TableCell>
@@ -73,7 +76,7 @@ export function VerifiedUsersList() {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={4} className="h-24 text-center">
+                <TableCell colSpan={5} className="h-24 text-center">
                   No verified users found.
                 </TableCell>
               </TableRow>
