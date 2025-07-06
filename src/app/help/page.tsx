@@ -13,6 +13,7 @@ import { helpTopics, homeHostHelpTopics, experienceHostHelpTopics, serviceHostHe
 import { useAuth } from '@/hooks/use-auth';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { cn } from '@/lib/utils';
 
 const faqs = [
     {
@@ -205,12 +206,18 @@ export default function HelpPage() {
                     </div>
                 </div>
                  <div className="mt-16">
-                    <h2 className="text-3xl font-bold text-center mb-8">Top Articles</h2>
-                    <div className="grid md:grid-cols-2 gap-6">
-                        {topArticles.map((article) => (
-                        <Link href={article.href} key={article.title} className="block">
-                            <div className="p-6 border rounded-lg hover:bg-accent hover:shadow-md transition-all h-full flex items-center">
-                              <h3 className="font-semibold text-lg">{article.title}</h3>
+                    <h2 className="text-3xl font-bold text-center mb-8 font-headline">Top Articles</h2>
+                    <div className="border-t border-gray-200">
+                        {topArticles.map((article, index) => (
+                        <Link href={article.href} key={article.title} className="block group">
+                            <div className="py-6 border-b border-gray-200">
+                              <h3 className={cn(
+                                  "font-headline font-semibold group-hover:underline",
+                                   index === 0 ? "text-2xl" : "text-xl"
+                                )}>
+                                  {article.title}
+                                </h3>
+                              {index === 0 && <p className="text-muted-foreground mt-1">The most important reads to get you started and solve common issues.</p>}
                             </div>
                         </Link>
                         ))}
