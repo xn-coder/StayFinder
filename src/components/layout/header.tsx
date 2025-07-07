@@ -55,7 +55,7 @@ export function Header({ className }: { className?: string }) {
           </Link>
 
           <div className="hidden md:flex flex-1 items-center justify-center">
-            <span className="font-semibold text-base">Stays</span>
+            
           </div>
           
           <div className="hidden md:flex flex-shrink-0 items-center justify-end space-x-2">
