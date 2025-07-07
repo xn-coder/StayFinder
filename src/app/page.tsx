@@ -35,10 +35,6 @@ const PropertySection = ({ title, properties, loading }: { title: string; proper
     );
   }
 
-  if (properties.length === 0) {
-    return null;
-  }
-
   return (
     <section className="py-8">
       <div className="container mx-auto px-4">
@@ -96,10 +92,10 @@ export default function Home() {
     <div className="flex flex-col min-h-screen">
       <Header />
       <main className="flex-grow pt-8">
-        <PropertySection title="Featured Stays" properties={featuredProperties} loading={loading} />
-        <PropertySection title="Top-Rated Homes" properties={topRatedProperties} loading={loading} />
-        <PropertySection title="Unique Stays" properties={uniqueStays} loading={loading} />
-        <PropertySection title="City Getaways" properties={cityGetaways} loading={loading} />
+        {(loading || featuredProperties.length > 0) && <PropertySection title="Featured Stays" properties={featuredProperties} loading={loading} />}
+        {(loading || topRatedProperties.length > 0) && <PropertySection title="Top-Rated Homes" properties={topRatedProperties} loading={loading} />}
+        {(loading || uniqueStays.length > 0) && <PropertySection title="Unique Stays" properties={uniqueStays} loading={loading} />}
+        {(loading || cityGetaways.length > 0) && <PropertySection title="City Getaways" properties={cityGetaways} loading={loading} />}
       </main>
       <Footer />
     </div>
