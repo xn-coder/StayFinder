@@ -96,8 +96,6 @@ export default function Home() {
   
   const approvedProperties = properties.filter(p => p.status === 'approved');
 
-  const featuredProperties = approvedProperties.slice(0, 10);
-  
   const petFriendlyStays = approvedProperties.filter(
     p => p.amenities.includes('Pet friendly')
   ).slice(0, 10);
@@ -108,12 +106,10 @@ export default function Home() {
       <main className="flex-grow space-y-12 py-8">
         {loading ? (
           <>
-            <PropertySectionSkeleton title="Featured Stays" />
             <PropertySectionSkeleton title="Perfect for Pets" />
           </>
         ) : (
             <>
-                <PropertySection title="Featured Stays" properties={featuredProperties} />
                 <PropertySection title="Perfect for Pets" properties={petFriendlyStays} />
                 <AllPropertiesGrid title="Explore All Stays" properties={approvedProperties} />
             </>
