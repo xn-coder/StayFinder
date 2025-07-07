@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { addDays, format, isValid, parseISO } from 'date-fns';
 import { Calendar as CalendarIcon, MapPin, Users, Search as SearchIcon, Plus, Minus } from 'lucide-react';
 
@@ -18,62 +18,38 @@ import {
 } from '@/components/ui/popover';
 
 interface SearchBarProps {
-    initialLocation?: string;
-    initialCheckIn?: string;
-    initialCheckOut?: string;
-    initialGuests?: number;
     className?: string;
 }
 
-export function SearchBar({
-    initialLocation = '',
-    initialCheckIn,
-    initialCheckOut,
-    initialGuests = 2,
-    className
-}: SearchBarProps) {
+export function SearchBar({ className }: SearchBarProps) {
   const router = useRouter();
-  const [location, setLocation] = useState(initialLocation);
-  const [guests, setGuests] = useState(initialGuests);
-  const [checkIn, setCheckIn] = useState<Date | undefined>(undefined);
-  const [checkOut, setCheckOut] = useState<Date | undefined>(undefined);
+  const searchParams = useSearchParams();
 
-  useEffect(() => {
-    const getValidDate = (dateString: string | undefined) => {
+  const getValidDate = (dateString: string | null) => {
       if (!dateString) return undefined;
       const parsed = parseISO(dateString);
       return isValid(parsed) ? parsed : undefined;
-    };
+  };
 
-    setLocation(initialLocation);
-    setGuests(initialGuests);
+  const [location, setLocation] = useState('');
+  const [guests, setGuests] = useState(2);
+  const [checkIn, setCheckIn] = useState<Date | undefined>();
+  const [checkOut, setCheckOut] = useState<Date | undefined>();
 
-    const checkInDate = getValidDate(initialCheckIn);
-    const checkOutDate = getValidDate(initialCheckOut);
-
-    const defaultCheckIn = new Date();
-    
-    setCheckIn(checkInDate || defaultCheckIn);
-    setCheckOut(checkOutDate || addDays(checkInDate || defaultCheckIn, 7));
-  }, [initialLocation, initialCheckIn, initialCheckOut, initialGuests]);
-
+  useEffect(() => {
+      setLocation(searchParams.get('location') || '');
+      setGuests(searchParams.get('guests') ? Number(searchParams.get('guests')) : 2);
+      setCheckIn(getValidDate(searchParams.get('from')));
+      setCheckOut(getValidDate(searchParams.get('to')));
+  }, [searchParams]);
 
   const handleSearch = () => {
     const params = new URLSearchParams();
     if (location) params.append('location', location);
     if (checkIn) params.append('from', format(checkIn, 'yyyy-MM-dd'));
     if (checkOut) params.append('to', format(checkOut, 'yyyy-MM-dd'));
-    params.append('guests', String(guests));
+    if (guests > 0) params.append('guests', String(guests));
     router.push(`/search?${params.toString()}`);
-  };
-
-  const handleCheckInSelect = (date: Date | undefined) => {
-    setCheckIn(date);
-    if (date && checkOut && date >= checkOut) {
-      setCheckOut(addDays(date, 1));
-    } else if (!checkOut && date) {
-      setCheckOut(addDays(date, 7));
-    }
   };
 
   return (
@@ -98,11 +74,15 @@ export function SearchBar({
                 <button className="flex-1 px-4 py-2 flex items-center gap-3 text-left hover:bg-muted/50 rounded-full">
                     <div className="flex-1">
                         <div className="text-xs font-semibold">Check in</div>
-                        <div className="text-sm text-muted-foreground">Add dates</div>
+                        <div className="text-sm text-muted-foreground">
+                          {checkIn ? format(checkIn, "MMM d") : 'Add dates'}
+                        </div>
                     </div>
                     <div className="flex-1">
                         <div className="text-xs font-semibold">Check out</div>
-                        <div className="text-sm text-muted-foreground">Add dates</div>
+                        <div className="text-sm text-muted-foreground">
+                          {checkOut ? format(checkOut, "MMM d") : 'Add dates'}
+                        </div>
                     </div>
                 </button>
             </PopoverTrigger>
@@ -117,6 +97,7 @@ export function SearchBar({
                   setCheckOut(range?.to);
                 }}
                 numberOfMonths={2}
+                disabled={(date: Date) => date < new Date(new Date().setHours(0,0,0,0))}
               />
             </PopoverContent>
           </Popover>
@@ -127,7 +108,9 @@ export function SearchBar({
                     <PopoverTrigger asChild>
                         <button className="text-left w-full">
                             <div className="text-xs font-semibold text-foreground">Who</div>
-                            <div className="text-sm text-muted-foreground">Add guests</div>
+                            <div className="text-sm text-muted-foreground">
+                              {guests > 0 ? `${guests} guest${guests > 1 ? 's' : ''}` : 'Add guests'}
+                            </div>
                         </button>
                     </PopoverTrigger>
                     <PopoverContent className="w-64">
