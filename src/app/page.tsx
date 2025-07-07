@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Header } from "@/components/layout/header";
@@ -77,11 +76,6 @@ export default function Home() {
 
   const featuredProperties = approvedProperties.slice(0, 10);
   
-  const topRatedProperties = approvedProperties
-    .filter(p => p.rating >= 4.9)
-    .sort((a, b) => b.rating - a.rating)
-    .slice(0, 10);
-
   const petFriendlyStays = approvedProperties.filter(
     p => p.amenities.includes('Pet friendly')
   ).slice(0, 10);
@@ -100,13 +94,17 @@ export default function Home() {
     <div className="flex flex-col min-h-screen">
       <Header />
       <main className="flex-grow space-y-12 py-8">
-        {loading && <PropertySectionSkeleton title="Featured Stays" />}
-        
-        {!loading && (
+        {loading ? (
+          <>
+            <PropertySectionSkeleton title="Featured Stays" />
+            <PropertySectionSkeleton title="Perfect for Pets" />
+            <PropertySectionSkeleton title="Unique Stays" />
+            <PropertySectionSkeleton title="City Getaways" />
+          </>
+        ) : (
             <>
                 <PropertySection title="Featured Stays" properties={featuredProperties} />
                 <PropertySection title="Perfect for Pets" properties={petFriendlyStays} />
-                <PropertySection title="Top-Rated Homes" properties={topRatedProperties} />
                 <PropertySection title="Unique Stays" properties={uniqueStays} />
                 <PropertySection title="City Getaways" properties={cityGetaways} />
                 <AllPropertiesGrid title="Explore All Stays" properties={approvedProperties} />
