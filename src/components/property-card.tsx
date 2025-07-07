@@ -40,8 +40,8 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
   };
 
   return (
-    <Link href={`/property/${property.id}`} className={cn("group block text-sm", className)}>
-      <div className="relative mb-2 overflow-hidden rounded-xl">
+    <Link href={`/property/${property.id}`} className={cn("group block", className)}>
+      <div className="relative mb-2 overflow-hidden rounded-2xl">
         {property.rating >= 4.9 && <Badge className="absolute top-3 left-3 z-10">Guest Favourite</Badge>}
         <Image
           src={property.image1}
@@ -61,15 +61,15 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
         </Button>
       </div>
       
-       <div className="flex justify-between font-semibold">
+       <div className="flex justify-between font-semibold text-sm">
         <h3 className="truncate pr-2">{property.name}</h3>
         <div className="flex items-center gap-1 shrink-0">
             <Star className="h-4 w-4" />
             <span>{property.rating > 0 ? property.rating.toFixed(1) : "New"}</span>
         </div>
       </div>
-       <p className="text-muted-foreground truncate">{property.location}</p>
-      <p className="mt-1">
+       <p className="text-muted-foreground truncate text-xs">{property.location}</p>
+      <p className="mt-1 text-sm">
           <span className="font-semibold text-foreground">{currencySymbol}{property.pricePerNight.toLocaleString()}</span>
           <span className="text-muted-foreground"> / night</span>
       </p>

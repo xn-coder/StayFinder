@@ -14,7 +14,7 @@ const PropertySectionSkeleton = ({ title }: { title: string }) => (
       <Skeleton className="h-8 w-64 mb-6" />
       <div className="flex space-x-6 overflow-x-auto pb-4 scrollbar-hide -mx-4 px-4">
         {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 flex-shrink-0">
+          <div key={i} className="w-72 flex-shrink-0">
             <div className="space-y-2">
               <Skeleton className="aspect-square w-full rounded-xl" />
               <Skeleton className="h-4 w-3/4" />
@@ -41,7 +41,7 @@ const PropertySection = ({ title, properties }: { title: string; properties: Pro
                 <PropertyCard 
                     key={property.id} 
                     property={property} 
-                    className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 flex-shrink-0"
+                    className="w-72 flex-shrink-0"
                 />
             ))}
         </div>
@@ -59,7 +59,7 @@ const AllPropertiesGrid = ({ title, properties }: { title: string; properties: P
     <section>
       <div className="container mx-auto px-4">
         <h2 className="text-2xl font-bold font-headline mb-4">{title}</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
           {properties.map((property) => (
             <PropertyCard key={property.id} property={property} />
           ))}
