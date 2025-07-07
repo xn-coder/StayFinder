@@ -57,13 +57,7 @@ export function Header({ className }: { className?: string }) {
           </Link>
 
           <div className="hidden md:flex flex-1 items-center justify-center">
-            <Tabs defaultValue="homes">
-                <TabsList className="rounded-full h-12 p-1 border">
-                <TabsTrigger value="homes" className="rounded-full px-4 text-base"> Stays</TabsTrigger>
-                <TabsTrigger value="experiences" className="rounded-full px-4 text-base"> Experiences</TabsTrigger>
-                <TabsTrigger value="services" className="rounded-full px-4 text-base"> Services</TabsTrigger>
-                </TabsList>
-            </Tabs>
+            <span className="font-semibold text-base">Stays</span>
           </div>
           
           <div className="hidden md:flex flex-shrink-0 items-center justify-end space-x-2">
