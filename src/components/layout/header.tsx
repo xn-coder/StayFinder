@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from 'next/link';
@@ -7,7 +8,7 @@ import { useAuth } from '@/hooks/use-auth';
 import { useProperties } from '@/hooks/use-properties';
 import { Button } from '@/components/ui/button';
 import { 
-  Home, LogOut, Crown, LifeBuoy, PlusCircle, Settings, Globe, LayoutDashboard, MessageSquare, Heart, CalendarCheck, BookOpenCheck, UserPlus
+  Home, LogOut, Crown, LifeBuoy, PlusCircle, Settings, Globe, LayoutDashboard, MessageSquare, Heart, CalendarCheck, BookOpenCheck, UserPlus, PartyPopper, Briefcase
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
@@ -22,6 +23,8 @@ import {
   DropdownMenuGroup
 } from '@/components/ui/dropdown-menu';
 import { LanguageCurrencyDialog } from '../language-currency-dialog';
+import { SearchBar } from '../search-bar';
+import { Tabs, TabsList, TabsTrigger } from '../ui/tabs';
 
 export function Header({ className }: { className?: string }) {
   const { user, logout } = useAuth();
@@ -46,50 +49,44 @@ export function Header({ className }: { className?: string }) {
 
   return (
     <>
-      <header className={cn("sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60", className)}>
-        <div className="container mx-auto flex h-16 items-center px-4">
-          <Link href="/" className="flex items-center gap-2 mr-6">
-            <Home className="h-6 w-6 text-primary" />
-            <span className="font-bold font-headline text-lg">StayFinder</span>
+      <header className={cn("sticky top-0 z-50 w-full border-b bg-background", className)}>
+        <div className="container mx-auto flex h-20 items-center px-4">
+          <Link href="/" className="hidden md:flex items-center gap-2 mr-6 flex-shrink-0">
+            <Home className="h-8 w-8 text-primary" />
+            <span className="font-bold font-headline text-2xl text-primary">StayFinder</span>
           </Link>
-          <nav className="hidden md:flex items-center space-x-8 text-base font-medium">
-            <Link href="/search" className="transition-colors hover:text-primary">
-              Stays
-            </Link>
-            {user?.role === 'host' && (
-              <>
-                <Link href="/bookings" className="transition-colors hover:text-primary flex items-center gap-2">
-                  Bookings
-                  {pendingBookingsCount > 0 && (
-                      <Badge variant="destructive">{pendingBookingsCount}</Badge>
-                  )}
-                </Link>
-                <Link href="/inquiries" className="transition-colors hover:text-primary flex items-center gap-2">
-                  Inquiries
-                  {pendingInquiriesCount > 0 && (
-                      <Badge variant="destructive">{pendingInquiriesCount}</Badge>
-                  )}
-                </Link>
-              </>
-            )}
-          </nav>
-          <div className="flex flex-1 items-center justify-end space-x-4">
+
+          <div className="hidden md:flex flex-1 items-center justify-center">
+            <Tabs defaultValue="homes">
+                <TabsList className="rounded-full h-12 p-1 border">
+                <TabsTrigger value="homes" className="rounded-full px-4 text-base"> Stays</TabsTrigger>
+                <TabsTrigger value="experiences" className="rounded-full px-4 text-base"> Experiences</TabsTrigger>
+                <TabsTrigger value="services" className="rounded-full px-4 text-base"> Services</TabsTrigger>
+                </TabsList>
+            </Tabs>
+          </div>
+          
+          <div className="hidden md:flex flex-shrink-0 items-center justify-end space-x-2">
             {user ? (
               <>
                 {(user.role === 'host' || user.role === 'user') && (
                   <Link href="/list-property">
                     <Button variant="ghost" className="text-base font-semibold">
-                      {user.role === 'host' ? 'List your property' : 'Become a Host'}
+                      {user.role === 'host' ? 'Your Home' : 'Become a Host'}
                     </Button>
                   </Link>
                 )}
+                 <Button variant="ghost" size="icon" onClick={() => setIsLangCurrencyOpen(true)}>
+                    <Globe className="h-5 w-5" />
+                 </Button>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="relative h-10 w-10 rounded-full p-0">
-                      <Avatar className="h-10 w-10">
+                    <Button variant="outline" className="relative h-10 rounded-full px-2 gap-2">
+                      <Avatar className="h-8 w-8">
                           <AvatarImage src={user.avatar} alt={user.name} />
                           <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
                       </Avatar>
+                      <span>Menu</span>
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="w-56" align="end" forceMount>
@@ -177,9 +174,12 @@ export function Header({ className }: { className?: string }) {
               </>
             ) : (
               <>
-                <Link href="/list-property">
-                  <Button variant="ghost" className="text-base font-semibold">Become a Host</Button>
-                </Link>
+                 <Button variant="ghost" className="text-base font-semibold" onClick={() => router.push('/list-property')}>
+                    Become a Host
+                 </Button>
+                 <Button variant="ghost" size="icon" onClick={() => setIsLangCurrencyOpen(true)}>
+                    <Globe className="h-5 w-5" />
+                 </Button>
                 <Link href="/login">
                   <Button variant="outline" className="px-5">Log in</Button>
                 </Link>
@@ -189,6 +189,15 @@ export function Header({ className }: { className?: string }) {
               </>
             )}
           </div>
+          {/* Mobile menu could go here */}
+        </div>
+
+        <div className="container mx-auto px-4 pb-4 md:hidden">
+            <SearchBar />
+        </div>
+
+        <div className="container mx-auto px-4 pb-4 hidden md:block">
+            <SearchBar />
         </div>
       </header>
       <LanguageCurrencyDialog isOpen={isLangCurrencyOpen} onOpenChange={setIsLangCurrencyOpen} />

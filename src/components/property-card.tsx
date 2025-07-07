@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -9,6 +10,7 @@ import { useAuth } from '@/hooks/use-auth';
 import { useRouter } from 'next/navigation';
 import { Button } from './ui/button';
 import { cn } from '@/lib/utils';
+import { Badge } from './ui/badge';
 
 interface PropertyCardProps {
   property: Property;
@@ -36,6 +38,7 @@ export function PropertyCard({ property }: PropertyCardProps) {
   return (
     <Link href={`/property/${property.id}`} className="group block text-sm">
       <div className="relative mb-2 overflow-hidden rounded-xl">
+        {property.rating >= 4.9 && <Badge className="absolute top-3 left-3 z-10">Guest Favourite</Badge>}
         <Image
           src={property.image1}
           alt={`Photo of ${property.name}`}
@@ -56,20 +59,18 @@ export function PropertyCard({ property }: PropertyCardProps) {
         )}
       </div>
       
-       <div className="flex justify-between">
-        <h3 className="font-semibold truncate pr-2">{property.name}</h3>
+       <div className="flex justify-between font-semibold">
+        <h3 className="truncate pr-2">{property.name}</h3>
         <div className="flex items-center gap-1 shrink-0">
             <Star className="h-4 w-4" />
             <span>{property.rating > 0 ? property.rating.toFixed(1) : "New"}</span>
         </div>
       </div>
-      <div className="flex justify-between text-muted-foreground">
-        <p className="truncate">{property.location}</p>
-        <p>
-            <span className="font-semibold text-foreground">{currencySymbol}{property.pricePerNight.toLocaleString()}</span>
-            <span> / night</span>
-        </p>
-      </div>
+       <p className="text-muted-foreground truncate">{property.location}</p>
+      <p className="mt-1">
+          <span className="font-semibold text-foreground">{currencySymbol}{property.pricePerNight.toLocaleString()}</span>
+          <span className="text-muted-foreground"> / night</span>
+      </p>
     </Link>
   );
 }

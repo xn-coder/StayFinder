@@ -77,91 +77,58 @@ export function SearchBar({
   };
 
   return (
-    <div className={cn("bg-background/95 p-2 rounded-full shadow-2xl max-w-4xl mx-auto backdrop-blur-sm", className)}>
+    <div className={cn("bg-background p-1.5 rounded-full shadow-md border w-full max-w-2xl mx-auto", className)}>
       <div className="flex flex-col md:flex-row items-stretch md:divide-x md:divide-border">
         
-        <div className="flex-1 px-4 py-2 flex items-center gap-3">
-          <MapPin className="text-muted-foreground" />
-          <div className="flex flex-col text-left">
-            <Label htmlFor="location" className="text-xs font-semibold text-foreground">Location</Label>
+        <div className="flex-1 px-4 py-2 flex items-center gap-3 hover:bg-muted/50 rounded-full">
+          <div className="flex flex-col text-left w-full">
+            <Label htmlFor="location" className="text-xs font-semibold text-foreground px-1">Where</Label>
             <Input
               id="location"
-              placeholder="Where are you going?"
-              className="border-none bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 h-auto p-0 text-foreground placeholder:text-muted-foreground text-base"
+              placeholder="Search destinations"
+              className="border-none bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 h-auto p-1 text-foreground placeholder:text-muted-foreground text-sm"
               value={location}
               onChange={(e) => setLocation(e.target.value)}
             />
           </div>
         </div>
 
-        <div className="px-4 py-2 flex items-center">
-          <Popover>
+        <Popover>
             <PopoverTrigger asChild>
-              <Button
-                variant={'ghost'}
-                className="w-full justify-start text-left font-normal text-foreground h-auto p-0 hover:bg-transparent"
-              >
-                <div className="flex flex-col">
-                  <span className="text-xs font-semibold">Check-in</span>
-                  <span className={cn('text-base', !checkIn && 'text-muted-foreground')}>
-                    {checkIn ? format(checkIn, 'MMM dd') : 'Add date'}
-                  </span>
-                </div>
-              </Button>
+                <button className="flex-1 px-4 py-2 flex items-center gap-3 text-left hover:bg-muted/50 rounded-full">
+                    <div className="flex-1">
+                        <div className="text-xs font-semibold">Check in</div>
+                        <div className="text-sm text-muted-foreground">Add dates</div>
+                    </div>
+                    <div className="flex-1">
+                        <div className="text-xs font-semibold">Check out</div>
+                        <div className="text-sm text-muted-foreground">Add dates</div>
+                    </div>
+                </button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0" align="start">
               <Calendar
-                mode="single"
-                selected={checkIn}
-                onSelect={handleCheckInSelect}
-                disabled={{ before: new Date() }}
                 initialFocus
+                mode="range"
+                defaultMonth={checkIn}
+                selected={{ from: checkIn, to: checkOut }}
+                onSelect={(range) => {
+                  setCheckIn(range?.from);
+                  setCheckOut(range?.to);
+                }}
+                numberOfMonths={2}
               />
             </PopoverContent>
           </Popover>
-        </div>
 
-        <div className="px-4 py-2 flex items-center">
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant={'ghost'}
-                disabled={!checkIn}
-                className="w-full justify-start text-left font-normal text-foreground h-auto p-0 hover:bg-transparent"
-              >
-                <div className="flex flex-col">
-                  <span className="text-xs font-semibold">Check-out</span>
-                  <span className={cn('text-base', !checkOut && 'text-muted-foreground')}>
-                    {checkOut ? format(checkOut, 'MMM dd') : 'Add date'}
-                  </span>
-                </div>
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
-              <Calendar
-                mode="single"
-                selected={checkOut}
-                onSelect={setCheckOut}
-                disabled={{ before: checkIn ? addDays(checkIn, 1) : new Date() }}
-                initialFocus
-              />
-            </PopoverContent>
-          </Popover>
-        </div>
-
-        <div className="flex-1 pl-4 pr-2 py-2 flex items-center gap-3 justify-between">
+        <div className="flex-1 pl-4 pr-2 py-2 flex items-center gap-3 justify-between hover:bg-muted/50 rounded-full">
             <div className="flex items-center gap-3 flex-1">
-                <Users className="text-muted-foreground" />
                 <Popover>
                     <PopoverTrigger asChild>
-                        <Button variant="ghost" className="justify-start text-left font-normal text-foreground h-auto p-0 hover:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0">
-                            <div className="flex flex-col text-left">
-                                <Label className="text-xs font-semibold text-foreground">Guests</Label>
-                                <span className="text-base text-foreground">
-                                    {guests} guest{guests > 1 ? 's' : ''}
-                                </span>
-                            </div>
-                        </Button>
+                        <button className="text-left w-full">
+                            <div className="text-xs font-semibold text-foreground">Who</div>
+                            <div className="text-sm text-muted-foreground">Add guests</div>
+                        </button>
                     </PopoverTrigger>
                     <PopoverContent className="w-64">
                         <div className="grid gap-4">
@@ -202,7 +169,7 @@ export function SearchBar({
                     </PopoverContent>
                 </Popover>
             </div>
-            <Button size="icon" onClick={handleSearch} className="rounded-full h-12 w-12 flex-shrink-0">
+            <Button size="icon" onClick={handleSearch} className="rounded-full h-10 w-10 flex-shrink-0">
                 <SearchIcon className="h-5 w-5" />
                 <span className="sr-only">Search</span>
             </Button>
