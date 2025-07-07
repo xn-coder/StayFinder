@@ -28,6 +28,10 @@ const PropertySection = ({ title, properties, loading }: { title: string; proper
     );
   }
 
+  if (properties.length === 0) {
+      return null;
+  }
+
   return (
     <section className="py-8">
       <div className="container mx-auto px-4">
