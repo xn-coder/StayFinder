@@ -62,6 +62,10 @@ export default function Home() {
     .sort((a, b) => b.rating - a.rating)
     .slice(0, 10);
 
+  const petFriendlyStays = approvedProperties.filter(
+    p => p.amenities.includes('Pet friendly')
+  ).slice(0, 10);
+
   const uniqueStays = approvedProperties.filter(
     p =>
       [ 'Tree house', 'Riad', 'Castle', 'Boat', 'Yurt', 'Cave', 'Windmill', 'Dome', 'Barn', 'Tiny home' ].includes(p.type)
@@ -81,6 +85,7 @@ export default function Home() {
         {!loading && (
             <>
                 <PropertySection title="Featured Stays" properties={featuredProperties} />
+                <PropertySection title="Perfect for Pets" properties={petFriendlyStays} />
                 <PropertySection title="Top-Rated Homes" properties={topRatedProperties} />
                 <PropertySection title="Unique Stays" properties={uniqueStays} />
                 <PropertySection title="City Getaways" properties={cityGetaways} />
