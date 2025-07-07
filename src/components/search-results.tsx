@@ -13,7 +13,6 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { Property } from "@/types";
-import { SearchBar } from "./search-bar";
 
 export function SearchResults({
   searchParams,
@@ -131,15 +130,6 @@ export function SearchResults({
       </aside>
 
       <section className="w-full md:w-3/4 lg:w-4/5">
-         <div className="mb-8">
-            <SearchBar 
-                initialLocation={location as string | undefined}
-                initialCheckIn={from as string | undefined}
-                initialCheckOut={to as string | undefined}
-                initialGuests={initialGuests}
-                className="mt-0 shadow-md border"
-            />
-        </div>
         <h1 className="text-3xl font-headline font-bold mb-6">
           {location ? `Stays in ${location}` : 'Available Stays'}
         </h1>
