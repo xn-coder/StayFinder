@@ -16,8 +16,8 @@ const PropertySectionSkeleton = ({ title }: { title: string }) => (
     <div className="container mx-auto px-4">
       <Skeleton className="h-8 w-64 mb-6" />
       <div className="flex space-x-4 overflow-x-auto pb-4 scrollbar-hide -mx-4 px-4">
-        {Array.from({ length: 5 }).map((_, i) => (
-          <div key={i} className="w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/5 flex-shrink-0">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <div key={i} className="w-1/2 sm:w-1/3 md:w-1/5 lg:w-1/6 flex-shrink-0">
             <div className="space-y-2">
               <Skeleton className="aspect-square w-full rounded-xl" />
               <Skeleton className="h-4 w-3/4" />
@@ -58,7 +58,7 @@ const PropertySection = ({ title, properties }: { title: string; properties: Pro
                 </div>
                 <CarouselContent className="-ml-4">
                     {properties.map((property) => (
-                        <CarouselItem key={property.id} className="basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/5 pl-4">
+                        <CarouselItem key={property.id} className="basis-1/2 sm:basis-1/3 md:basis-1/5 lg:basis-1/6 pl-4">
                             <PropertyCard 
                                 property={property} 
                             />
@@ -80,7 +80,7 @@ const AllPropertiesGrid = ({ title, properties }: { title: string; properties: P
     <section>
       <div className="container mx-auto px-4">
         <h2 className="text-2xl font-bold font-headline mb-4">{title}</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
           {properties.map((property) => (
             <PropertyCard key={property.id} property={property} />
           ))}
