@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from 'next/link';
@@ -8,7 +7,7 @@ import { useAuth } from '@/hooks/use-auth';
 import { useProperties } from '@/hooks/use-properties';
 import { Button } from '@/components/ui/button';
 import { 
-  Home, LogOut, Crown, LifeBuoy, PlusCircle, Settings, Globe, LayoutDashboard, MessageSquare, Heart, CalendarCheck, BookOpenCheck, UserPlus, PartyPopper, Briefcase
+  Menu, Home, LogOut, Crown, LifeBuoy, PlusCircle, Settings, Globe, LayoutDashboard, MessageSquare, Heart, CalendarCheck, BookOpenCheck, UserPlus, PartyPopper, Briefcase
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
@@ -24,7 +23,6 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { LanguageCurrencyDialog } from '../language-currency-dialog';
 import { SearchBar } from '../search-bar';
-import { Tabs, TabsList, TabsTrigger } from '../ui/tabs';
 
 export function Header({ className }: { className?: string }) {
   const { user, logout } = useAuth();
@@ -80,7 +78,7 @@ export function Header({ className }: { className?: string }) {
                           <AvatarImage src={user.avatar} alt={user.name} />
                           <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
                       </Avatar>
-                      <span>Menu</span>
+                      <Menu className="h-5 w-5" />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="w-56" align="end" forceMount>
