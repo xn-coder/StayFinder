@@ -11,7 +11,7 @@ import type { Property } from "@/types";
 const PropertySection = ({ title, properties, loading }: { title: string; properties: Property[]; loading: boolean; }) => {
   if (loading) {
     return (
-      <section className="py-8">
+      <section>
         <div className="container mx-auto px-4">
           <Skeleton className="h-8 w-64 mb-8" />
            <div className="flex space-x-6 overflow-x-auto pb-4 scrollbar-hide -mx-4 px-4">
@@ -33,7 +33,7 @@ const PropertySection = ({ title, properties, loading }: { title: string; proper
   }
 
   return (
-    <section className="py-8">
+    <section>
       <div className="container mx-auto px-4">
         <h2 className="text-2xl font-bold font-headline mb-4">{title}</h2>
         <div className="flex space-x-6 overflow-x-auto pb-4 scrollbar-hide -mx-4 px-4">
@@ -74,7 +74,7 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
-      <main className="flex-grow pt-8">
+      <main className="flex-grow space-y-8 py-8">
         {(loading || featuredProperties.length > 0) && <PropertySection title="Featured Stays" properties={featuredProperties} loading={loading} />}
         {(loading || topRatedProperties.length > 0) && <PropertySection title="Top-Rated Homes" properties={topRatedProperties} loading={loading} />}
         {(loading || uniqueStays.length > 0) && <PropertySection title="Unique Stays" properties={uniqueStays} loading={loading} />}
