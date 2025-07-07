@@ -14,9 +14,10 @@ import { Badge } from './ui/badge';
 
 interface PropertyCardProps {
   property: Property;
+  className?: string;
 }
 
-export function PropertyCard({ property }: PropertyCardProps) {
+export function PropertyCard({ property, className }: PropertyCardProps) {
   const { currencySymbol } = useSettings();
   const { user, toggleWishlist, isInWishlist } = useAuth();
   const router = useRouter();
@@ -39,7 +40,7 @@ export function PropertyCard({ property }: PropertyCardProps) {
   };
 
   return (
-    <Link href={`/property/${property.id}`} className="group block text-sm">
+    <Link href={`/property/${property.id}`} className={cn("group block text-sm", className)}>
       <div className="relative mb-2 overflow-hidden rounded-xl">
         {property.rating >= 4.9 && <Badge className="absolute top-3 left-3 z-10">Guest Favourite</Badge>}
         <Image

@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Header } from "@/components/layout/header";
@@ -38,9 +37,11 @@ const PropertySection = ({ title, properties }: { title: string; properties: Pro
         <h2 className="text-2xl font-bold font-headline mb-4">{title}</h2>
         <div className="flex space-x-6 overflow-x-auto pb-4 scrollbar-hide -mx-4 px-4">
             {properties.map((property) => (
-              <div key={property.id} className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 flex-shrink-0">
-                  <PropertyCard property={property} />
-              </div>
+                <PropertyCard 
+                    key={property.id} 
+                    property={property} 
+                    className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 flex-shrink-0"
+                />
             ))}
         </div>
       </div>
