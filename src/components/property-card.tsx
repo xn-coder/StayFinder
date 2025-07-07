@@ -41,8 +41,8 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
 
   return (
     <Link href={`/property/${property.id}`} className={cn("group block", className)}>
-      <div className="relative mb-2 overflow-hidden rounded-2xl">
-        {property.rating >= 4.9 && <Badge className="absolute top-3 left-3 z-10">Guest Favourite</Badge>}
+      <div className="relative mb-2 overflow-hidden rounded-xl">
+        {property.rating >= 4.9 && <Badge variant="outline" className="absolute top-3 left-3 z-10 bg-white/95 border-transparent text-gray-900 text-xs font-semibold rounded-full shadow-md">Guest favourite</Badge>}
         <Image
           src={property.image1}
           alt={`Photo of ${property.name}`}
@@ -54,25 +54,27 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
         <Button
           size="icon"
           variant="ghost"
-          className="absolute top-2 right-2 h-8 w-8 rounded-full bg-black/30 hover:bg-black/50 text-white hover:text-white z-10"
+          className="absolute top-2 right-2 h-8 w-8 rounded-full hover:bg-white/20 z-10"
           onClick={handleWishlistToggle}
         >
-          <Heart className={cn("h-5 w-5 transition-colors", user && isInWishlist(property.id) ? 'fill-red-500 stroke-red-500' : 'fill-none stroke-white')} />
+          <Heart className={cn("h-6 w-6 transition-colors", user && isInWishlist(property.id) ? 'fill-red-500 stroke-red-500' : 'fill-none stroke-white [filter:drop-shadow(0_1px_2px_rgba(0,0,0,0.8))] stroke-2')} />
         </Button>
       </div>
       
-       <div className="flex justify-between font-semibold text-sm">
-        <h3 className="truncate pr-2">{property.name}</h3>
-        <div className="flex items-center gap-1 shrink-0">
-            <Star className="h-4 w-4" />
-            <span>{property.rating > 0 ? property.rating.toFixed(1) : "New"}</span>
+      <div className="text-sm space-y-0.5">
+        <div className="flex justify-between items-start">
+          <h3 className="font-semibold truncate pr-2">{property.name}</h3>
+          <div className="flex items-center gap-1 shrink-0">
+              <Star className="h-4 w-4" />
+              <span>{property.rating > 0 ? property.rating.toFixed(2) : "New"}</span>
+          </div>
         </div>
+        <p className="text-muted-foreground truncate">{property.location}</p>
+        <p className="mt-1">
+            <span className="font-semibold">{currencySymbol}{property.pricePerNight.toLocaleString()}</span>
+            <span className="text-muted-foreground"> night</span>
+        </p>
       </div>
-       <p className="text-muted-foreground truncate text-xs">{property.location}</p>
-      <p className="mt-1 text-sm">
-          <span className="font-semibold text-foreground">{currencySymbol}{property.pricePerNight.toLocaleString()}</span>
-          <span className="text-muted-foreground"> / night</span>
-      </p>
     </Link>
   );
 }
