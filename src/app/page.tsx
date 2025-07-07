@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Header } from "@/components/layout/header";
@@ -80,11 +81,6 @@ export default function Home() {
     p => p.amenities.includes('Pet friendly')
   ).slice(0, 10);
 
-  const uniqueStays = approvedProperties.filter(
-    p =>
-      [ 'Tree house', 'Riad', 'Castle', 'Boat', 'Yurt', 'Cave', 'Windmill', 'Dome', 'Barn', 'Tiny home' ].includes(p.type)
-  ).slice(0, 10);
-
   const cityGetaways = approvedProperties.filter(
     p =>
       [ 'New York, New York', 'Paris, France', 'London, United Kingdom', 'Shibuya, Tokyo, Japan', 'Sydney, Australia' ].includes(p.location)
@@ -98,14 +94,12 @@ export default function Home() {
           <>
             <PropertySectionSkeleton title="Featured Stays" />
             <PropertySectionSkeleton title="Perfect for Pets" />
-            <PropertySectionSkeleton title="Unique Stays" />
             <PropertySectionSkeleton title="City Getaways" />
           </>
         ) : (
             <>
                 <PropertySection title="Featured Stays" properties={featuredProperties} />
                 <PropertySection title="Perfect for Pets" properties={petFriendlyStays} />
-                <PropertySection title="Unique Stays" properties={uniqueStays} />
                 <PropertySection title="City Getaways" properties={cityGetaways} />
                 <AllPropertiesGrid title="Explore All Stays" properties={approvedProperties} />
             </>
