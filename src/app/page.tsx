@@ -81,11 +81,6 @@ export default function Home() {
     p => p.amenities.includes('Pet friendly')
   ).slice(0, 10);
 
-  const cityGetaways = approvedProperties.filter(
-    p =>
-      [ 'New York, New York', 'Paris, France', 'London, United Kingdom', 'Shibuya, Tokyo, Japan', 'Sydney, Australia' ].includes(p.location)
-  ).slice(0, 10);
-
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
@@ -94,13 +89,11 @@ export default function Home() {
           <>
             <PropertySectionSkeleton title="Featured Stays" />
             <PropertySectionSkeleton title="Perfect for Pets" />
-            <PropertySectionSkeleton title="City Getaways" />
           </>
         ) : (
             <>
                 <PropertySection title="Featured Stays" properties={featuredProperties} />
                 <PropertySection title="Perfect for Pets" properties={petFriendlyStays} />
-                <PropertySection title="City Getaways" properties={cityGetaways} />
                 <AllPropertiesGrid title="Explore All Stays" properties={approvedProperties} />
             </>
         )}
