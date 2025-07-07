@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Header } from "@/components/layout/header";
@@ -49,6 +50,25 @@ const PropertySection = ({ title, properties }: { title: string; properties: Pro
   );
 };
 
+const AllPropertiesGrid = ({ title, properties }: { title: string; properties: Property[] }) => {
+  if (properties.length === 0) {
+    return null;
+  }
+
+  return (
+    <section>
+      <div className="container mx-auto px-4">
+        <h2 className="text-2xl font-bold font-headline mb-4">{title}</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+          {properties.map((property) => (
+            <PropertyCard key={property.id} property={property} />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
 
 export default function Home() {
   const { properties, loading } = useProperties();
@@ -79,7 +99,7 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
-      <main className="flex-grow space-y-8 py-8">
+      <main className="flex-grow space-y-12 py-8">
         {loading && <PropertySectionSkeleton title="Featured Stays" />}
         
         {!loading && (
@@ -89,6 +109,7 @@ export default function Home() {
                 <PropertySection title="Top-Rated Homes" properties={topRatedProperties} />
                 <PropertySection title="Unique Stays" properties={uniqueStays} />
                 <PropertySection title="City Getaways" properties={cityGetaways} />
+                <AllPropertiesGrid title="Explore All Stays" properties={approvedProperties} />
             </>
         )}
       </main>
