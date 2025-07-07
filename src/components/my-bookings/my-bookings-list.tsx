@@ -1,7 +1,8 @@
+
 'use client';
 
 import { useMemo, useState } from 'react';
-import { format, isFuture, isPast } from 'date-fns';
+import { format, isPast } from 'date-fns';
 import { useAuth } from '@/hooks/use-auth';
 import { useProperties } from '@/hooks/use-properties';
 import type { Booking, BookingStatus } from '@/types';
@@ -39,10 +40,13 @@ export function MyBookingsList() {
   const filteredBookings = useMemo(() => {
     switch (activeTab) {
       case 'upcoming':
-        return userBookings.filter(b => (b.status === 'confirmed' || b.status === 'pending') && isFuture(b.dateRange.from));
+        // A booking is upcoming if it's pending, OR confirmed and not yet finished.
+        return userBookings.filter(b => b.status === 'pending' || (b.status === 'confirmed' && !isPast(b.dateRange.to)));
       case 'completed':
-        return userBookings.filter(b => isPast(b.dateRange.to) && b.status === 'confirmed');
+        // A booking is completed if it's confirmed and its end date is in the past.
+        return userBookings.filter(b => b.status === 'confirmed' && isPast(b.dateRange.to));
       case 'cancelled':
+        // A booking is cancelled if its status is 'cancelled'.
         return userBookings.filter(b => b.status === 'cancelled');
       default:
         return [];
