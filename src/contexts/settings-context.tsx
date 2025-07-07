@@ -1,7 +1,9 @@
+
 'use client';
 
 import React, { createContext, useState, ReactNode, useMemo, useEffect } from 'react';
 import type { Currency, Language } from '@/types';
+import { useAuth } from '@/hooks/use-auth';
 
 export const currencySymbols: Record<Currency, string> = {
   INR: '₹',
@@ -28,28 +30,47 @@ interface SettingsContextType {
 export const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
 
 export function SettingsProvider({ children }: { children: ReactNode }) {
+  const { user, updateUser } = useAuth();
+  
   const [language, setLanguage] = useState<Language>('en-IN');
   const [currency, setCurrency] = useState<Currency>('INR');
   
   useEffect(() => {
-    const storedLanguage = localStorage.getItem('appLanguage') as Language;
-    const storedCurrency = localStorage.getItem('appCurrency') as Currency;
-    if (storedLanguage && languageNames[storedLanguage]) {
-      setLanguage(storedLanguage);
+    if (user) {
+      if (user.language && languageNames[user.language]) {
+        setLanguage(user.language);
+      }
+      if (user.currency && currencySymbols[user.currency]) {
+        setCurrency(user.currency);
+      }
+    } else {
+      const storedLanguage = localStorage.getItem('appLanguage') as Language;
+      const storedCurrency = localStorage.getItem('appCurrency') as Currency;
+      if (storedLanguage && languageNames[storedLanguage]) {
+        setLanguage(storedLanguage);
+      }
+      if (storedCurrency && currencySymbols[storedCurrency]) {
+        setCurrency(storedCurrency);
+      }
     }
-    if (storedCurrency && currencySymbols[storedCurrency]) {
-      setCurrency(storedCurrency);
-    }
-  }, []);
+  }, [user]);
 
   const handleSetLanguage = (lang: Language) => {
-    localStorage.setItem('appLanguage', lang);
     setLanguage(lang);
+    if (user && updateUser) {
+      updateUser(user.id, { language: lang });
+    } else {
+      localStorage.setItem('appLanguage', lang);
+    }
   };
   
   const handleSetCurrency = (curr: Currency) => {
-    localStorage.setItem('appCurrency', curr);
     setCurrency(curr);
+    if (user && updateUser) {
+      updateUser(user.id, { currency: curr });
+    } else {
+      localStorage.setItem('appCurrency', curr);
+    }
   };
 
   const currencySymbol = useMemo(() => currencySymbols[currency], [currency]);

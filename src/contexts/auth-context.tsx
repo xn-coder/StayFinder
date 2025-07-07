@@ -5,6 +5,22 @@ import React, { createContext, useState, useEffect, useCallback, ReactNode } fro
 import type { User, UserRole, UserVerificationStatus } from '@/types';
 import { dummyUsers as initialUsers } from '@/lib/dummy-data';
 import { v4 as uuidv4 } from 'uuid';
+import { db } from '@/lib/firebase';
+import { 
+  collection, 
+  onSnapshot, 
+  addDoc, 
+  updateDoc, 
+  doc, 
+  deleteDoc,
+  getDocs,
+  getDoc,
+  setDoc,
+  writeBatch,
+  query,
+  where
+} from 'firebase/firestore';
+
 
 type LoginCredentials = {
   email: string;
@@ -22,13 +38,14 @@ interface AuthContextType {
   login: (credentials: LoginCredentials) => Promise<User>;
   signup: (userData: SignupData) => Promise<User>;
   logout: () => void;
-  deleteUser: (userId: string) => void;
-  submitForVerification: (userId: string, documentUrl: string) => void;
-  updateVerificationStatus: (userId: string, status: UserVerificationStatus) => void;
-  toggleWishlist: (propertyId: string) => void;
+  deleteUser: (userId: string) => Promise<void>;
+  submitForVerification: (userId: string, documentUrl: string) => Promise<void>;
+  updateVerificationStatus: (userId: string, status: UserVerificationStatus) => Promise<void>;
+  toggleWishlist: (propertyId: string) => Promise<void>;
   isInWishlist: (propertyId: string) => boolean;
-  switchToHostRole: (userId: string) => void;
-  toggleUserStatus: (userId: string) => void;
+  switchToHostRole: (userId: string) => Promise<void>;
+  toggleUserStatus: (userId: string) => Promise<void>;
+  updateUser: (userId: string, data: Partial<User>) => Promise<void>;
 }
 
 export const AuthContext = createContext<AuthContextType>({
@@ -38,245 +55,223 @@ export const AuthContext = createContext<AuthContextType>({
   login: async () => { throw new Error('login not implemented'); },
   signup: async () => { throw new Error('signup not implemented'); },
   logout: () => {},
-  deleteUser: () => {},
-  submitForVerification: () => {},
-  updateVerificationStatus: () => {},
-  toggleWishlist: () => {},
+  deleteUser: async () => {},
+  submitForVerification: async () => {},
+  updateVerificationStatus: async () => {},
+  toggleWishlist: async () => {},
   isInWishlist: () => false,
-  switchToHostRole: () => {},
-  toggleUserStatus: () => {},
+  switchToHostRole: async () => {},
+  toggleUserStatus: async () => {},
+  updateUser: async () => {},
 });
 
-const USERS_STORAGE_KEY = 'allUsers';
-const CURRENT_USER_STORAGE_KEY = 'currentUser';
+const CURRENT_USER_ID_STORAGE_KEY = 'currentUserId';
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null | undefined>(undefined);
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // Initialize and subscribe to users collection
   useEffect(() => {
-    setLoading(true);
-    // Load all users from storage, or initialize
-    try {
-      const storedUsers = localStorage.getItem(USERS_STORAGE_KEY);
-      if (storedUsers) {
-        setUsers(JSON.parse(storedUsers));
-      } else {
-        setUsers(initialUsers);
-        localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(initialUsers));
+    const usersCollection = collection(db, 'users');
+
+    const setupFirestore = async () => {
+      const snapshot = await getDocs(usersCollection);
+      if (snapshot.empty) {
+        console.log('No users found, seeding database...');
+        const batch = writeBatch(db);
+        initialUsers.forEach(u => {
+          const docRef = doc(db, 'users', u.id);
+          batch.set(docRef, u);
+        });
+        await batch.commit();
+        console.log('Users collection seeded.');
       }
-    } catch (error) {
-      console.error("Failed to parse users from localStorage", error);
-      setUsers(initialUsers);
-    }
+    };
     
-    // Load current user from storage
-    try {
-      const storedUser = localStorage.getItem(CURRENT_USER_STORAGE_KEY);
-      if (storedUser) {
-        setUser(JSON.parse(storedUser));
-      } else {
+    setupFirestore().then(() => {
+      const unsubscribe = onSnapshot(query(collection(db, 'users')), (snapshot) => {
+          const updatedUsers: User[] = [];
+          snapshot.forEach(doc => {
+              updatedUsers.push({ id: doc.id, ...doc.data() } as User);
+          });
+          setUsers(updatedUsers);
+
+          if (user) {
+              const freshUserData = updatedUsers.find(u => u.id === user.id);
+              if (freshUserData) {
+                setUser(freshUserData);
+              } else {
+                // User was deleted, log them out
+                logout();
+              }
+          }
+      }, (error) => {
+          console.error("Error fetching users snapshot: ", error);
+      });
+
+      return () => unsubscribe();
+    });
+
+  }, [user]);
+
+  // Check for logged-in user on initial load
+  useEffect(() => {
+    const checkCurrentUser = async () => {
+      setLoading(true);
+      try {
+        const storedUserId = localStorage.getItem(CURRENT_USER_ID_STORAGE_KEY);
+        if (storedUserId) {
+          const userDocRef = doc(db, "users", storedUserId);
+          const userDoc = await getDoc(userDocRef);
+          if (userDoc.exists()) {
+            setUser({ id: userDoc.id, ...userDoc.data() } as User);
+          } else {
+            setUser(null);
+            localStorage.removeItem(CURRENT_USER_ID_STORAGE_KEY);
+          }
+        } else {
+          setUser(null);
+        }
+      } catch (error) {
+        console.error("Failed to fetch current user:", error);
         setUser(null);
-      }
-    } catch (error) {
-      console.error("Failed to parse current user from localStorage", error);
-      setUser(null);
-    } finally {
+      } finally {
         setLoading(false);
-    }
+      }
+    };
+    checkCurrentUser();
   }, []);
 
-  const persistUsers = (updatedUsers: User[], newCurrentUser?: User | null) => {
-    setUsers(updatedUsers);
-    localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(updatedUsers));
-    
-    if (newCurrentUser !== undefined) {
-      setUser(newCurrentUser);
-      if (newCurrentUser) {
-        localStorage.setItem(CURRENT_USER_STORAGE_KEY, JSON.stringify(newCurrentUser));
-      } else {
-        localStorage.removeItem(CURRENT_USER_STORAGE_KEY);
-      }
-    } else if (user) {
-        const updatedCurrentUser = updatedUsers.find(u => u.id === user.id);
-        if (updatedCurrentUser) {
-            setUser(updatedCurrentUser);
-            localStorage.setItem(CURRENT_USER_STORAGE_KEY, JSON.stringify(updatedCurrentUser));
-        }
-    }
-  };
-
   const login = useCallback(async ({ email, password }: LoginCredentials): Promise<User> => {
-    const originalAdmin = initialUsers.find(u => u.role === 'super-admin');
+    const q = query(collection(db, "users"), where("email", "==", email.toLowerCase()));
+    const querySnapshot = await getDocs(q);
 
-    if (originalAdmin && email.toLowerCase() === originalAdmin.email.toLowerCase()) {
-      if (originalAdmin.password === password) {
-        const allUsers: User[] = JSON.parse(localStorage.getItem(USERS_STORAGE_KEY) || '[]');
-        const adminUserInStorage = allUsers.find(u => u.role === 'super-admin');
-        const adminUser = adminUserInStorage || originalAdmin;
-        
-        localStorage.setItem(CURRENT_USER_STORAGE_KEY, JSON.stringify(adminUser));
-        setUser(adminUser);
-        return adminUser;
-      } else {
-        throw new Error("Incorrect password for admin.");
-      }
+    if (querySnapshot.empty) {
+        throw new Error("No user found with that email address.");
     }
 
-    const allUsers: User[] = JSON.parse(localStorage.getItem(USERS_STORAGE_KEY) || '[]');
-    const userToLogin = allUsers.find((u) => u.email && u.email.toLowerCase() === email.toLowerCase());
-
-    if (!userToLogin) {
-      throw new Error("No user found with that email address.");
-    }
+    const userDoc = querySnapshot.docs[0];
+    const userToLogin = { id: userDoc.id, ...userDoc.data() } as User;
     
     if (userToLogin.isDisabled) {
         throw new Error("This account has been disabled by an administrator.");
     }
 
     if (userToLogin.password !== password) {
-      throw new Error("Incorrect password.");
+        throw new Error("Incorrect password.");
     }
 
-    localStorage.setItem(CURRENT_USER_STORAGE_KEY, JSON.stringify(userToLogin));
+    localStorage.setItem(CURRENT_USER_ID_STORAGE_KEY, userToLogin.id);
     setUser(userToLogin);
     return userToLogin;
   }, []);
 
   const signup = useCallback(async (userData: SignupData): Promise<User> => {
-    const allUsers: User[] = JSON.parse(localStorage.getItem(USERS_STORAGE_KEY) || '[]');
-    const emailExists = allUsers.some(u => u.email && u.email.toLowerCase() === userData.email.toLowerCase());
+    const q = query(collection(db, "users"), where("email", "==", userData.email.toLowerCase()));
+    const querySnapshot = await getDocs(q);
 
-    if (emailExists) {
+    if (!querySnapshot.empty) {
         throw new Error("An account with this email already exists.");
     }
-
+    
+    const newUserId = uuidv4();
     const newUser: User = {
         ...userData,
-        id: uuidv4(),
+        id: newUserId,
         avatar: `https://placehold.co/100x100.png?text=${userData.name.charAt(0)}`,
         verificationStatus: 'unverified',
         wishlist: [],
         isDisabled: false,
     };
+    
+    const userDocRef = doc(db, 'users', newUserId);
+    await setDoc(userDocRef, newUser);
 
-    const updatedUsers = [...allUsers, newUser];
-    persistUsers(updatedUsers, newUser);
+    localStorage.setItem(CURRENT_USER_ID_STORAGE_KEY, newUser.id);
+    setUser(newUser);
 
     return newUser;
   }, []);
 
   const logout = useCallback(() => {
-    localStorage.removeItem(CURRENT_USER_STORAGE_KEY);
+    localStorage.removeItem(CURRENT_USER_ID_STORAGE_KEY);
     setUser(null);
   }, []);
   
-  const deleteUser = useCallback((userId: string) => {
-    const currentUsers = JSON.parse(localStorage.getItem(USERS_STORAGE_KEY) || '[]');
-    const userToDelete = currentUsers.find((u: User) => u.id === userId);
-    
-    if (userToDelete && userToDelete.role === 'super-admin') {
+  const deleteUser = useCallback(async (userId: string) => {
+    const userDocRef = doc(db, 'users', userId);
+    const userDoc = await getDoc(userDocRef);
+
+    if (userDoc.exists() && userDoc.data().role === 'super-admin') {
       console.error("Cannot delete super-admin.");
       return;
     }
-
-    const updatedUsers = currentUsers.filter((u: User) => u.id !== userId);
-    persistUsers(updatedUsers);
+    await deleteDoc(userDocRef);
   }, []);
 
-  const submitForVerification = useCallback((userId: string, documentUrl: string) => {
-    const currentUsers = JSON.parse(localStorage.getItem(USERS_STORAGE_KEY) || '[]');
-    const updatedUsers = currentUsers.map((u: User) => {
-        if (u.id === userId) {
-            return { ...u, verificationStatus: 'pending' as UserVerificationStatus, identityDocumentUrl: documentUrl };
-        }
-        return u;
+  const submitForVerification = useCallback(async (userId: string, documentUrl: string) => {
+    const userDocRef = doc(db, 'users', userId);
+    await updateDoc(userDocRef, { 
+      verificationStatus: 'pending', 
+      identityDocumentUrl: documentUrl 
     });
-    persistUsers(updatedUsers);
   }, []);
 
-  const updateVerificationStatus = useCallback((userId: string, status: UserVerificationStatus) => {
-    const currentUsers = JSON.parse(localStorage.getItem(USERS_STORAGE_KEY) || '[]');
-    const updatedUsers = currentUsers.map((u: User) => {
-        if (u.id === userId) {
-            const updatedUser = { ...u, verificationStatus: status };
-            if (status === 'rejected') {
-              delete updatedUser.identityDocumentUrl;
-            }
-            return updatedUser;
-        }
-        return u;
-    });
-    persistUsers(updatedUsers);
+  const updateVerificationStatus = useCallback(async (userId: string, status: UserVerificationStatus) => {
+    const userDocRef = doc(db, 'users', userId);
+    const updateData: Partial<User> = { verificationStatus: status };
+    if (status === 'rejected') {
+      updateData.identityDocumentUrl = '';
+    }
+    await updateDoc(userDocRef, updateData);
   }, []);
   
   const isInWishlist = (propertyId: string): boolean => {
     return !!user?.wishlist?.includes(propertyId);
   };
 
-  const toggleWishlist = (propertyId: string) => {
+  const toggleWishlist = useCallback(async (propertyId: string) => {
     if (!user) return;
-
-    const currentUsers = JSON.parse(localStorage.getItem(USERS_STORAGE_KEY) || '[]');
-    let updatedUser: User | null = null;
-
-    const updatedUsers = currentUsers.map((u: User) => {
-        if (u.id === user.id) {
-            const currentWishlist = u.wishlist || [];
-            const newWishlist = currentWishlist.includes(propertyId)
-                ? currentWishlist.filter(id => id !== propertyId)
-                : [...currentWishlist, propertyId];
-            updatedUser = { ...u, wishlist: newWishlist };
-            return updatedUser;
-        }
-        return u;
-    });
-
-    if (updatedUser) {
-        persistUsers(updatedUsers, updatedUser);
-    }
-  };
-
-  const switchToHostRole = useCallback((userId: string) => {
-    const currentUsers = JSON.parse(localStorage.getItem(USERS_STORAGE_KEY) || '[]');
-    let updatedUser: User | null = null;
-    const updatedUsers = currentUsers.map((u: User) => {
-        if (u.id === userId) {
-            updatedUser = { ...u, role: 'host' as UserRole };
-            return updatedUser;
-        }
-        return u;
-    });
-
-    if (updatedUser) {
-        persistUsers(updatedUsers, updatedUser);
-    }
-  }, [user]);
-
-  const toggleUserStatus = useCallback((userId: string) => {
-    const currentUsers = JSON.parse(localStorage.getItem(USERS_STORAGE_KEY) || '[]');
-    const userToToggle = currentUsers.find((u: User) => u.id === userId);
-
-    if (userToToggle && userToToggle.role === 'super-admin') {
-      console.error("Cannot disable super-admin.");
-      return;
-    }
-
-    let toggledUser: User | null = null;
-    const updatedUsers = currentUsers.map((u: User) => {
-      if (u.id === userId) {
-        toggledUser = { ...u, isDisabled: !u.isDisabled };
-        return toggledUser;
-      }
-      return u;
-    });
     
-    const newCurrentUser = user?.id === userId ? toggledUser : user;
-    persistUsers(updatedUsers, newCurrentUser);
+    const userDocRef = doc(db, 'users', user.id);
+    const currentWishlist = user.wishlist || [];
+    const newWishlist = currentWishlist.includes(propertyId)
+        ? currentWishlist.filter(id => id !== propertyId)
+        : [...currentWishlist, propertyId];
+    
+    await updateDoc(userDocRef, { wishlist: newWishlist });
   }, [user]);
 
-  const value = { user, loading, users, login, signup, logout, deleteUser, submitForVerification, updateVerificationStatus, toggleWishlist, isInWishlist, switchToHostRole, toggleUserStatus };
+  const switchToHostRole = useCallback(async (userId: string) => {
+    const userDocRef = doc(db, 'users', userId);
+    await updateDoc(userDocRef, { role: 'host' as UserRole });
+  }, []);
+
+  const toggleUserStatus = useCallback(async (userId: string) => {
+    const userDocRef = doc(db, 'users', userId);
+    const userDoc = await getDoc(userDocRef);
+    
+    if (userDoc.exists()) {
+        const userData = userDoc.data();
+        if (userData.role === 'super-admin') {
+            console.error("Cannot disable super-admin.");
+            return;
+        }
+        await updateDoc(userDocRef, { isDisabled: !userData.isDisabled });
+        if (user?.id === userId && !userData.isDisabled) {
+            logout();
+        }
+    }
+  }, [user, logout]);
+
+  const updateUser = useCallback(async (userId: string, data: Partial<User>) => {
+    const userDocRef = doc(db, 'users', userId);
+    await updateDoc(userDocRef, data);
+  }, []);
+
+  const value = { user, loading, users, login, signup, logout, deleteUser, submitForVerification, updateVerificationStatus, toggleWishlist, isInWishlist, switchToHostRole, toggleUserStatus, updateUser };
 
   return (
     <AuthContext.Provider value={value}>

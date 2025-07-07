@@ -26,6 +26,8 @@ export type User = {
   identityDocumentUrl?: string;
   wishlist?: string[];
   isDisabled?: boolean;
+  language?: Language;
+  currency?: Currency;
 };
 
 export type Property = {
