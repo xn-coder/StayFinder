@@ -1,7 +1,8 @@
+
 'use client';
 
 import { useState } from "react";
-import { notFound, useRouter } from "next/navigation";
+import { notFound, useRouter, usePathname } from "next/navigation";
 import Image from "next/image";
 import { useProperties } from "@/hooks/use-properties";
 import { Header } from "@/components/layout/header";
@@ -48,6 +49,7 @@ function PropertyDetailsClient({ property }: { property: Property}) {
   const { user, toggleWishlist, isInWishlist } = useAuth();
   const [isİnquiryFormOpen, setIsInquiryFormOpen] = useState(false);
   const router = useRouter();
+  const pathname = usePathname();
 
   if (!property) {
     notFound();
@@ -55,7 +57,7 @@ function PropertyDetailsClient({ property }: { property: Property}) {
   
   const handleWishlistToggle = () => {
     if (!user) {
-      router.push('/login');
+      router.push(`/login?redirect=${pathname}`);
       return;
     }
     toggleWishlist(property.id);
@@ -82,17 +84,15 @@ function PropertyDetailsClient({ property }: { property: Property}) {
               </div>
             </div>
           </div>
-          {user && (
-            <Button
-              variant="outline"
-              size="lg"
-              onClick={handleWishlistToggle}
-              className="flex-shrink-0"
-            >
-              <Heart className={cn("mr-2 h-5 w-5", isInWishlist(property.id) ? 'text-red-500 fill-red-500' : 'text-foreground')} />
-              <span>{isInWishlist(property.id) ? 'Saved' : 'Save'}</span>
-            </Button>
-          )}
+          <Button
+            variant="outline"
+            size="lg"
+            onClick={handleWishlistToggle}
+            className="flex-shrink-0"
+          >
+            <Heart className={cn("mr-2 h-5 w-5", user && isInWishlist(property.id) ? 'text-red-500 fill-red-500' : 'text-foreground')} />
+            <span>{user && isInWishlist(property.id) ? 'Saved' : 'Save'}</span>
+          </Button>
         </div>
 
         <div className="mt-6 grid grid-cols-1 md:grid-cols-4 gap-2 h-[300px] md:h-[550px] rounded-2xl overflow-hidden">

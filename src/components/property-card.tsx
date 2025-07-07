@@ -7,7 +7,7 @@ import { Heart, Star } from 'lucide-react';
 import type { Property } from '@/types';
 import { useSettings } from '@/hooks/use-settings';
 import { useAuth } from '@/hooks/use-auth';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { Button } from './ui/button';
 import { cn } from '@/lib/utils';
 import { Badge } from './ui/badge';
@@ -20,6 +20,8 @@ export function PropertyCard({ property }: PropertyCardProps) {
   const { currencySymbol } = useSettings();
   const { user, toggleWishlist, isInWishlist } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   if (!property || !property.image1) {
     return null;
@@ -29,7 +31,8 @@ export function PropertyCard({ property }: PropertyCardProps) {
     e.preventDefault();
     e.stopPropagation();
     if (!user) {
-      router.push('/login');
+      const redirectPath = pathname + '?' + searchParams.toString();
+      router.push(`/login?redirect=${encodeURIComponent(redirectPath)}`);
       return;
     }
     toggleWishlist(property.id);
@@ -47,16 +50,14 @@ export function PropertyCard({ property }: PropertyCardProps) {
           height={800}
           className="aspect-square w-full object-cover transition-transform duration-300 group-hover:scale-105"
         />
-        {user && (
-          <Button
-            size="icon"
-            variant="ghost"
-            className="absolute top-2 right-2 h-8 w-8 rounded-full bg-black/30 hover:bg-black/50 text-white hover:text-white z-10"
-            onClick={handleWishlistToggle}
-          >
-            <Heart className={cn("h-5 w-5 transition-colors", isInWishlist(property.id) ? 'fill-red-500 stroke-red-500' : 'fill-none stroke-white')} />
-          </Button>
-        )}
+        <Button
+          size="icon"
+          variant="ghost"
+          className="absolute top-2 right-2 h-8 w-8 rounded-full bg-black/30 hover:bg-black/50 text-white hover:text-white z-10"
+          onClick={handleWishlistToggle}
+        >
+          <Heart className={cn("h-5 w-5 transition-colors", user && isInWishlist(property.id) ? 'fill-red-500 stroke-red-500' : 'fill-none stroke-white')} />
+        </Button>
       </div>
       
        <div className="flex justify-between font-semibold">
