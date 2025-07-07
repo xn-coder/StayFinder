@@ -112,6 +112,7 @@ export default function Home() {
             <>
                 <PropertySection title="Perfect for Pets" properties={petFriendlyStays} />
                 <AllPropertiesGrid title="Explore All Stays" properties={approvedProperties} />
+                <AllPropertiesGrid title="Explore All Stays" properties={approvedProperties} />
             </>
         )}
       </main>
