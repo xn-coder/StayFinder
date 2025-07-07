@@ -7,13 +7,6 @@ import { PropertyCard } from "@/components/property-card";
 import { useProperties } from "@/hooks/use-properties";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { Property } from "@/types";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel"
 
 const PropertySection = ({ title, properties, loading }: { title: string; properties: Property[]; loading: boolean; }) => {
   if (loading) {
@@ -21,9 +14,9 @@ const PropertySection = ({ title, properties, loading }: { title: string; proper
       <section className="py-8">
         <div className="container mx-auto px-4">
           <Skeleton className="h-8 w-64 mb-8" />
-          <div className="flex space-x-4">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <div key={i} className="w-60 flex-shrink-0 space-y-2">
+           <div className="flex space-x-6 overflow-x-auto pb-4 scrollbar-hide -mx-4 px-4">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="w-80 flex-shrink-0 space-y-2">
                 <Skeleton className="aspect-square w-full rounded-xl" />
                 <Skeleton className="h-4 w-3/4" />
                 <Skeleton className="h-4 w-1/2" />
@@ -38,28 +31,14 @@ const PropertySection = ({ title, properties, loading }: { title: string; proper
   return (
     <section className="py-8">
       <div className="container mx-auto px-4">
-        <Carousel
-          opts={{
-            align: "start",
-            loop: true,
-          }}
-          className="w-full"
-        >
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-bold font-headline">{title}</h2>
-            <div className="flex gap-2">
-              <CarouselPrevious className="static -translate-y-0" />
-              <CarouselNext className="static -translate-y-0" />
+        <h2 className="text-2xl font-bold font-headline mb-4">{title}</h2>
+        <div className="flex space-x-6 overflow-x-auto pb-4 scrollbar-hide -mx-4 px-4">
+          {properties.map((property) => (
+            <div key={property.id} className="w-80 flex-shrink-0">
+              <PropertyCard property={property} />
             </div>
-          </div>
-          <CarouselContent className="-ml-4">
-            {properties.map((property) => (
-              <CarouselItem key={property.id} className="pl-4 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
-                <PropertyCard property={property} />
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-        </Carousel>
+          ))}
+        </div>
       </div>
     </section>
   );
