@@ -49,15 +49,18 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
           data-ai-hint="hotel room"
           width={800}
           height={800}
-          className="aspect-square w-full object-cover transition-transform duration-300 group-hover:scale-105"
+          className="aspect-square w-full object-cover transition-transform duration-300 group-hover:scale-105 rounded-xl"
         />
         <Button
           size="icon"
           variant="ghost"
-          className="absolute top-2 right-2 h-8 w-8 rounded-full hover:bg-white/20 z-10"
+          className="absolute top-3 right-3 h-8 w-8 rounded-full bg-black/20 hover:bg-black/40 z-10"
           onClick={handleWishlistToggle}
         >
-          <Heart className={cn("h-6 w-6 transition-colors", user && isInWishlist(property.id) ? 'fill-red-500 stroke-red-500' : 'fill-none stroke-white [filter:drop-shadow(0_1px_2px_rgba(0,0,0,0.8))] stroke-2')} />
+          <Heart className={cn(
+              "h-5 w-5 text-white",
+              user && isInWishlist(property.id) ? 'fill-red-500 stroke-red-500' : 'fill-none'
+          )} />
         </Button>
       </div>
       
