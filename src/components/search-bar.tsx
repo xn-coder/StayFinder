@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Suspense } from 'react';
 import {
   Popover,
   PopoverContent,
@@ -21,7 +22,7 @@ interface SearchBarProps {
     className?: string;
 }
 
-export function SearchBar({ className }: SearchBarProps) {
+function SearchBarWrapper({ className }: SearchBarProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -161,4 +162,10 @@ export function SearchBar({ className }: SearchBarProps) {
       </div>
     </div>
   );
+}
+
+export function SearchBar({ className }: SearchBarProps) {
+  <Suspense fallback={<div>Loading...</div>}>
+      <SearchBarWrapper className={className} />
+  </Suspense>
 }

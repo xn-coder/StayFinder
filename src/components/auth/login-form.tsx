@@ -8,6 +8,7 @@ import { z } from "zod";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, LogIn } from "lucide-react";
+import { Suspense } from 'react';
 
 import { Button } from "@/components/ui/button";
 import {
@@ -28,7 +29,7 @@ const loginSchema = z.object({
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 
-export function LoginForm() {
+function LoginFormWrapper() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { login } = useAuth();
@@ -114,4 +115,10 @@ export function LoginForm() {
         </CardContent>
       </Card>
   );
+}
+
+export function LoginForm() {
+  <Suspense fallback={<div>Loading...</div>}>
+      <LoginFormWrapper />
+  </Suspense>
 }
