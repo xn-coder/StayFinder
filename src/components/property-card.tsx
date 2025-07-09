@@ -11,13 +11,14 @@ import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { Button } from './ui/button';
 import { cn } from '@/lib/utils';
 import { Badge } from './ui/badge';
+import { Suspense } from 'react';
 
 interface PropertyCardProps {
   property: Property;
   className?: string;
 }
 
-export function PropertyCard({ property, className }: PropertyCardProps) {
+function PropertyCardWrapper({ property, className }: PropertyCardProps) {
   const { currencySymbol } = useSettings();
   const { user, toggleWishlist, isInWishlist } = useAuth();
   const router = useRouter();
@@ -80,4 +81,10 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
       </div>
     </Link>
   );
+}
+
+export function PropertyCard({ property, className }: PropertyCardProps) {
+  <Suspense fallback={<div>Loading...</div>}>
+      <PropertyCardWrapper className={className} property={property} />
+  </Suspense>
 }
