@@ -58,7 +58,7 @@ const PropertySection = ({ title, properties }: { title: string; properties: Pro
                 </div>
                 <CarouselContent className="-ml-4">
                     {properties.map((property) => (
-                        <CarouselItem key={property.id} className="basis-1/2 sm:basis-1/3 md:basis-1/5 lg:basis-1/6 pl-4">
+                        <CarouselItem key={property.id} className="basis-[45%] sm:basis-1/3 md:basis-1/4 lg:basis-1/5 xl:basis-[12.5%] pl-4">
                             <PropertyCard 
                                 property={property} 
                             />
@@ -80,7 +80,7 @@ const AllPropertiesGrid = ({ title, properties }: { title: string; properties: P
     <section>
       <div className="container mx-auto px-4">
         <h2 className="text-2xl font-bold font-headline mb-4">{title}</h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-8 gap-x-4 gap-y-8">
           {properties.map((property) => (
             <PropertyCard key={property.id} property={property} />
           ))}
@@ -111,7 +111,6 @@ export default function Home() {
         ) : (
             <>
                 <PropertySection title="Perfect for Pets" properties={petFriendlyStays} />
-                <AllPropertiesGrid title="Explore All Stays" properties={approvedProperties} />
                 <AllPropertiesGrid title="Explore All Stays" properties={approvedProperties} />
             </>
         )}
