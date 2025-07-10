@@ -17,24 +17,28 @@ export default function NewsroomPage() {
     <div className="flex flex-col min-h-screen bg-background">
       <Header />
       <main className="flex-grow">
-        <div className="container mx-auto px-4 py-16">
-          <div className="max-w-2xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl font-bold font-headline">
-              StayFinder Newsroom: Stories and updates
-            </h1>
-            <p className="mt-4 text-lg text-muted-foreground">
-              Subscribe to learn about new product features, the latest in travel technology, and updates from our team.
-            </p>
-            <div className="mt-8 max-w-sm mx-auto flex gap-2">
-              <Input
-                type="email"
-                placeholder="Enter your email"
-                className="h-11 text-base"
-              />
-              <Button type="submit" size="lg">Subscribe</Button>
+        <section className="bg-muted/40 py-16">
+          <div className="container mx-auto px-4">
+            <div className="max-w-2xl mx-auto text-center">
+              <h1 className="text-4xl md:text-5xl font-bold font-headline">
+                StayFinder Newsroom: Stories and updates
+              </h1>
+              <p className="mt-4 text-lg text-muted-foreground">
+                Subscribe to learn about new product features, the latest in travel technology, and updates from our team.
+              </p>
+              <div className="mt-8 max-w-sm mx-auto flex gap-2">
+                <Input
+                  type="email"
+                  placeholder="Enter your email"
+                  className="h-11 text-base"
+                />
+                <Button type="submit" size="lg">Subscribe</Button>
+              </div>
             </div>
           </div>
+        </section>
 
+        <div className="container mx-auto px-4 py-16">
           <div className="mt-16">
             <h2 className="text-3xl font-bold font-headline mb-8">Recent blog posts</h2>
             <div className="grid lg:grid-cols-2 gap-12 items-start">
