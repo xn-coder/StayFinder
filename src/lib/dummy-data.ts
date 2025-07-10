@@ -795,7 +795,7 @@ export const newsArticles = [
     author: 'Olivia Rhye',
     date: '20 Jan 2024',
     description: "We sat down with London's fast-growing brand and product design studio, Makr & Co. to find out how they've used StayFinder to 2x their corporate travel efficiency.",
-    image: 'https://placehold.co/800x600.png',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ2CRkmPfbgJ09cITKB91pHn_jEaRoN_q8N4g&s',
     hint: 'business meeting',
     tags: ['Business', 'Travel', 'Interviews'],
     href: '#',
