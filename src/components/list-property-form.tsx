@@ -377,11 +377,30 @@ export function ListPropertyForm() {
       case 1:
         return (
           <StepContainer title="Which of these best describes your place?">
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 max-h-[50vh] overflow-y-auto pr-2">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 max-h-[60vh] overflow-y-auto pr-3">
               {propertyTypes.map(({ type, icon: Icon }) => (
-                <button key={type} onClick={() => { handleUpdateData({ type: type as any}); nextStep(); }} className={cn("p-4 border-2 rounded-lg transition-all duration-200 flex flex-col items-center gap-3 h-28 justify-center hover:shadow-md hover:-translate-y-0.5", formData.type === type ? 'border-primary bg-primary text-primary-foreground shadow-lg' : 'border-border bg-background hover:border-primary')}>
-                    <Icon className={cn("w-7 h-7", formData.type === type ? "text-primary-foreground" : "text-primary")} />
-                    <span className="text-sm font-semibold text-center">{type}</span>
+                <button
+                  key={type}
+                  onClick={() => {
+                    handleUpdateData({ type: type as any });
+                    nextStep();
+                  }}
+                  className={cn(
+                    "p-4 border rounded-lg transition-all duration-200 flex flex-col items-start gap-3 h-28 justify-end hover:shadow-md hover:border-primary/80",
+                    formData.type === type
+                      ? "border-primary bg-primary/5 shadow-md ring-2 ring-primary"
+                      : "border-border bg-card hover:bg-muted/50"
+                  )}
+                >
+                  <Icon
+                    className={cn(
+                      "w-7 h-7",
+                      formData.type === type
+                        ? "text-primary"
+                        : "text-muted-foreground"
+                    )}
+                  />
+                  <span className="font-semibold text-left">{type}</span>
                 </button>
               ))}
             </div>
