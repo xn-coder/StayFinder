@@ -27,7 +27,7 @@ const footerLinks = {
     { title: 'Hosting responsibly', href: '#' },
   ],
   StayFinder: [
-    { title: 'Newsroom', href: '#' },
+    { title: 'Newsroom', href: '/newsroom' },
     { title: 'New features', href: '#' },
     { title: 'Careers', href: '#' },
     { title: 'Investors', href: '#' },
