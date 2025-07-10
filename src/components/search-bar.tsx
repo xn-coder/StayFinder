@@ -165,7 +165,9 @@ function SearchBarWrapper({ className }: SearchBarProps) {
 }
 
 export function SearchBar({ className }: SearchBarProps) {
-  <Suspense fallback={<div>Loading...</div>}>
-      <SearchBarWrapper className={className} />
-  </Suspense>
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+        <SearchBarWrapper className={className} />
+    </Suspense>
+  );
 }
