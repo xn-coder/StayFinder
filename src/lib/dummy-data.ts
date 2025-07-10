@@ -9,7 +9,7 @@ export const dummyUsers: User[] = [
 
 export const properties: Property[] = [
   {
-    id: '1',
+    id: 'prop-1',
     name: 'Serene Beachfront Villa',
     location: 'Malibu, California',
     pricePerNight: 70000,
@@ -39,7 +39,7 @@ export const properties: Property[] = [
     bookingPolicy: 'review-first',
   },
   {
-    id: '2',
+    id: 'prop-2',
     name: 'Cozy Mountain Cabin',
     location: 'Aspen, Colorado',
     pricePerNight: 25000,
@@ -69,7 +69,7 @@ export const properties: Property[] = [
     bookingPolicy: 'review-first',
   },
   {
-    id: '3',
+    id: 'prop-3',
     name: 'Modern Downtown Loft',
     location: 'New York, New York',
     pricePerNight: 35000,
@@ -99,7 +99,7 @@ export const properties: Property[] = [
     bookingPolicy: 'review-first',
   },
   {
-    id: '4',
+    id: 'prop-4',
     name: 'Luxury Penthouse with Rooftop',
     location: 'Miami, Florida',
     pricePerNight: 90000,
@@ -129,7 +129,7 @@ export const properties: Property[] = [
     bookingPolicy: 'review-first',
   },
   {
-    id: '5',
+    id: 'prop-5',
     name: 'Rustic Countryside Farmhouse',
     location: 'Tuscany, Italy',
     pricePerNight: 22000,
@@ -159,7 +159,7 @@ export const properties: Property[] = [
     bookingPolicy: 'review-first',
   },
   {
-    id: '6',
+    id: 'prop-6',
     name: 'Chic Parisian Apartment',
     location: 'Paris, France',
     pricePerNight: 30000,
@@ -189,7 +189,7 @@ export const properties: Property[] = [
     bookingPolicy: 'review-first',
   },
   {
-    id: '7',
+    id: 'prop-7',
     name: 'Lakeside Retreat',
     location: 'Lake Tahoe, California',
     pricePerNight: 45000,
@@ -219,7 +219,7 @@ export const properties: Property[] = [
     bookingPolicy: 'review-first',
   },
   {
-    id: '8',
+    id: 'prop-8',
     name: 'Urban Oasis with Garden',
     location: 'London, United Kingdom',
     pricePerNight: 32000,
@@ -249,7 +249,7 @@ export const properties: Property[] = [
     bookingPolicy: 'review-first',
   },
   {
-    id: '9',
+    id: 'prop-9',
     name: 'Tokyo Tech Flat',
     location: 'Shibuya, Tokyo, Japan',
     pricePerNight: 28000,
@@ -279,7 +279,7 @@ export const properties: Property[] = [
     bookingPolicy: 'review-first',
   },
   {
-    id: '10',
+    id: 'prop-10',
     name: 'Sydney Harbour View Studio',
     location: 'Sydney, Australia',
     pricePerNight: 31000,
@@ -309,7 +309,7 @@ export const properties: Property[] = [
     bookingPolicy: 'review-first',
   },
   {
-    id: '11',
+    id: 'prop-11',
     name: 'Historic Riad in Marrakech',
     location: 'Marrakech, Morocco',
     pricePerNight: 18000,
@@ -339,7 +339,7 @@ export const properties: Property[] = [
     bookingPolicy: 'review-first',
   },
   {
-    id: '12',
+    id: 'prop-12',
     name: 'Eco Treehouse in Costa Rica',
     location: 'Monteverde, Costa Rica',
     pricePerNight: 20000,
@@ -348,7 +348,7 @@ export const properties: Property[] = [
     image2: 'https://placehold.co/600x400.png',
     image3: 'https://placehold.co/600x400.png',
     image4: 'https://placehold.co/600x400.png',
-    amenities: ['WiFi', 'Kitchen', 'Free parking', 'Garden'],
+    amenities: ['WiFi', 'Kitchen', 'Free parking', 'Garden', 'Pet friendly'],
     rating: 5.0,
     reviewsCount: 95,
     host: {
