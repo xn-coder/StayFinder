@@ -59,8 +59,8 @@ const PropertySection = ({ title, properties }: { title: string; properties: Pro
                 <CarouselContent className="-ml-4">
                     {properties.map((property) => (
                         <CarouselItem key={property.id} className="basis-[45%] sm:basis-1/3 md:basis-1/4 lg:basis-1/5 xl:basis-1/6 pl-4">
-                            <PropertyCard 
-                                property={property} 
+                            <PropertyCard
+                                property={property}
                             />
                         </CarouselItem>
                     ))}
@@ -93,7 +93,7 @@ const AllPropertiesGrid = ({ title, properties }: { title: string; properties: P
 
 export default function Home() {
   const { properties, loading } = useProperties();
-  
+
   const approvedProperties = properties.filter(p => p.status === 'approved');
 
   const petFriendlyStays = approvedProperties.filter(
@@ -102,6 +102,7 @@ export default function Home() {
 
   const petFriendlyIds = new Set(petFriendlyStays.map(p => p.id));
   const otherStays = approvedProperties.filter(p => !petFriendlyIds.has(p.id));
+
 
   return (
     <div className="flex flex-col min-h-screen">
