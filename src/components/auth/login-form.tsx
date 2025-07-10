@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -118,7 +119,9 @@ function LoginFormWrapper() {
 }
 
 export function LoginForm() {
-  <Suspense fallback={<div>Loading...</div>}>
-      <LoginFormWrapper />
-  </Suspense>
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+        <LoginFormWrapper />
+    </Suspense>
+  );
 }
