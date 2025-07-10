@@ -27,10 +27,20 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
+import { useMemo } from 'react';
 
 export function PropertyApprovalList() {
   const { properties, updatePropertyStatus, deleteProperty, loading } = useProperties();
   const { toast } = useToast();
+
+  const uniqueProperties = useMemo(() => {
+    const seen = new Set();
+    return properties.filter(prop => {
+      const duplicate = seen.has(prop.id);
+      seen.add(prop.id);
+      return !duplicate;
+    });
+  }, [properties]);
 
   const handleStatusChange = (id: string, newStatus: 'approved' | 'rejected') => {
     const statusText = newStatus === 'approved' ? 'approved' : 'disabled';
@@ -90,7 +100,7 @@ export function PropertyApprovalList() {
         <TableBody>
           {loading ? (
             Array.from({ length: 5 }).map((_, i) => <SkeletonRow key={i} />)
-          ) : properties.map(property => (
+          ) : uniqueProperties.map(property => (
             <TableRow key={property.id}>
               <TableCell className="font-medium">{property.name}</TableCell>
               <TableCell>{property.host?.name || 'Unknown Host'}</TableCell>
