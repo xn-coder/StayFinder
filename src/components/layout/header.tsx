@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from 'next/link';
@@ -64,7 +65,7 @@ export function Header({ className }: { className?: string }) {
                 {(user.role === 'host' || user.role === 'user') && (
                   <Link href="/list-property">
                     <Button variant="ghost" className="text-base font-semibold">
-                      {user.role === 'host' ? 'Your Home' : 'Become a Host'}
+                      {user.role === 'host' ? 'List ur Property' : 'Become a Host'}
                     </Button>
                   </Link>
                 )}
