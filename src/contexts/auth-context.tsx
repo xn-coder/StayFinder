@@ -98,12 +98,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           });
           setUsers(updatedUsers);
 
-          if (user) {
-              const freshUserData = updatedUsers.find(u => u.id === user.id);
+          // This logic ensures that if the current user's data changes in Firestore,
+          // the local user state is updated. This handles real-time updates for the logged-in user.
+          const currentUserId = localStorage.getItem(CURRENT_USER_ID_STORAGE_KEY);
+          if (currentUserId) {
+              const freshUserData = updatedUsers.find(u => u.id === currentUserId);
               if (freshUserData) {
-                setUser(freshUserData);
+                // If user becomes disabled while logged in, log them out.
+                if (freshUserData.isDisabled) {
+                  logout();
+                } else {
+                  setUser(freshUserData);
+                }
               } else {
-                // User was deleted, log them out
+                // User was deleted from DB, log them out
                 logout();
               }
           }
@@ -113,8 +121,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       return () => unsubscribe();
     });
-
-  }, [user]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Check for logged-in user on initial load
   useEffect(() => {
@@ -125,7 +133,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (storedUserId) {
           const userDocRef = doc(db, "users", storedUserId);
           const userDoc = await getDoc(userDocRef);
-          if (userDoc.exists()) {
+          if (userDoc.exists() && !userDoc.data().isDisabled) {
             setUser({ id: userDoc.id, ...userDoc.data() } as User);
           } else {
             setUser(null);
