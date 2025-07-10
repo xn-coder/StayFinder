@@ -15,6 +15,14 @@ import { Badge } from '@/components/ui/badge';
 import { ShieldCheck, ShieldAlert, ShieldQuestion, UploadCloud, Loader2, Send } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from '@/components/ui/dialog';
 
 export default function SettingsPage() {
   const { user, submitForVerification } = useAuth();
@@ -23,6 +31,7 @@ export default function SettingsPage() {
   const imageInputRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
 
   useEffect(() => {
     if (user === undefined) return;
@@ -72,7 +81,7 @@ export default function SettingsPage() {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!imagePreview) {
       toast({
         variant: 'destructive',
@@ -83,13 +92,10 @@ export default function SettingsPage() {
     }
     
     setIsUploading(true);
-    submitForVerification(user.id, imagePreview);
-    toast({
-      title: 'Document Submitted!',
-      description: 'Your identity document is now pending review.',
-    });
+    await submitForVerification(user.id, imagePreview);
     setIsUploading(false);
     setImagePreview(null);
+    setShowSuccessDialog(true);
   };
 
   const VerificationStatus = () => {
@@ -109,108 +115,124 @@ export default function SettingsPage() {
   const isUnverifiedOrRejected = user.verificationStatus === 'unverified' || user.verificationStatus === 'rejected';
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <Header />
-      <main className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-            <h2 className="text-xl text-muted-foreground">Welcome back, {user.name.split(' ')[0]}!</h2>
-            <h1 className="text-4xl font-bold font-headline">Account Settings</h1>
-            <p className="text-muted-foreground mt-2">
-                Manage your account and preferences.
-            </p>
-        </div>
-        <div className="grid md:grid-cols-2 gap-8">
-          <Card>
+    <>
+      <div className="flex flex-col min-h-screen">
+        <Header />
+        <main className="container mx-auto px-4 py-8">
+          <div className="mb-8">
+              <h2 className="text-xl text-muted-foreground">Welcome back, {user.name.split(' ')[0]}!</h2>
+              <h1 className="text-4xl font-bold font-headline">Account Settings</h1>
+              <p className="text-muted-foreground mt-2">
+                  Manage your account and preferences.
+              </p>
+          </div>
+          <div className="grid md:grid-cols-2 gap-8">
+            <Card>
+                <CardHeader>
+                    <CardTitle>Profile</CardTitle>
+                    <CardDescription>Update your personal information.</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                    <div className="flex items-center gap-4">
+                        <Avatar className="h-20 w-20">
+                            <AvatarImage src={user.avatar} alt={user.name} />
+                            <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                        </Avatar>
+                        <Button variant="outline">Change Photo</Button>
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="name">Name</Label>
+                        <Input id="name" defaultValue={user.name} />
+                    </div>
+                     <div className="space-y-2">
+                        <Label htmlFor="email">Email</Label>
+                        <Input id="email" type="email" defaultValue={`${user.name.split(' ')[0].toLowerCase()}@stayfinder.com`} disabled />
+                    </div>
+                    <Button>Save Changes</Button>
+                </CardContent>
+            </Card>
+            <Card>
               <CardHeader>
-                  <CardTitle>Profile</CardTitle>
-                  <CardDescription>Update your personal information.</CardDescription>
+                  <CardTitle>Identity Verification</CardTitle>
+                  <CardDescription>To protect our community, we require all users to be verified.</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-6">
-                  <div className="flex items-center gap-4">
-                      <Avatar className="h-20 w-20">
-                          <AvatarImage src={user.avatar} alt={user.name} />
-                          <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
-                      </Avatar>
-                      <Button variant="outline">Change Photo</Button>
-                  </div>
-                  <div className="space-y-2">
-                      <Label htmlFor="name">Name</Label>
-                      <Input id="name" defaultValue={user.name} />
-                  </div>
-                   <div className="space-y-2">
-                      <Label htmlFor="email">Email</Label>
-                      <Input id="email" type="email" defaultValue={`${user.name.split(' ')[0].toLowerCase()}@stayfinder.com`} disabled />
-                  </div>
-                  <Button>Save Changes</Button>
-              </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-                <CardTitle>Identity Verification</CardTitle>
-                <CardDescription>To protect our community, we require all users to be verified.</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center justify-between rounded-lg border p-4">
-                <p className="font-medium">Verification Status</p>
-                <VerificationStatus />
-              </div>
-              {user.verificationStatus === 'rejected' && (
-                  <Alert variant="destructive">
-                    <AlertTitle>Verification Rejected</AlertTitle>
-                    <AlertDescription>Your previous submission was rejected. Please upload a clear, valid government-issued ID.</AlertDescription>
-                  </Alert>
-              )}
-              {isUnverifiedOrRejected && (
-                <div className="space-y-4">
-                  <div className="text-center p-4 border-2 border-dashed rounded-lg">
-                    <p className="text-sm text-muted-foreground mb-4">
-                      {imagePreview ? 'Selected Document Preview:' : 'Please upload a government-issued ID to get verified.'}
-                    </p>
-                    {imagePreview ? (
-                      <div className="mb-4 relative w-full h-48">
-                        <Image src={imagePreview} alt="ID Preview" layout="fill" objectFit="contain" />
-                      </div>
-                    ) : (
-                      <UploadCloud className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+              <CardContent className="space-y-4">
+                <div className="flex items-center justify-between rounded-lg border p-4">
+                  <p className="font-medium">Verification Status</p>
+                  <VerificationStatus />
+                </div>
+                {user.verificationStatus === 'rejected' && (
+                    <Alert variant="destructive">
+                      <AlertTitle>Verification Rejected</AlertTitle>
+                      <AlertDescription>Your previous submission was rejected. Please upload a clear, valid government-issued ID.</AlertDescription>
+                    </Alert>
+                )}
+                {isUnverifiedOrRejected && (
+                  <div className="space-y-4">
+                    <div className="text-center p-4 border-2 border-dashed rounded-lg">
+                      <p className="text-sm text-muted-foreground mb-4">
+                        {imagePreview ? 'Selected Document Preview:' : 'Please upload a government-issued ID to get verified.'}
+                      </p>
+                      {imagePreview ? (
+                        <div className="mb-4 relative w-full h-48">
+                          <Image src={imagePreview} alt="ID Preview" layout="fill" objectFit="contain" />
+                        </div>
+                      ) : (
+                        <UploadCloud className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+                      )}
+                      <input
+                        type="file"
+                        ref={imageInputRef}
+                        onChange={handleImageFileChange}
+                        accept="image/png, image/jpeg, image/webp"
+                        className="hidden"
+                      />
+                      <Button variant="outline" onClick={() => imageInputRef.current?.click()} disabled={isUploading}>
+                        {imagePreview ? 'Change File' : 'Choose File'}
+                      </Button>
+                    </div>
+                    {imagePreview && (
+                      <Button onClick={handleSubmit} disabled={isUploading} className="w-full">
+                        {isUploading ? <Loader2 className="mr-2 animate-spin" /> : <Send className="mr-2"/>}
+                        Submit for Verification
+                      </Button>
                     )}
-                    <input
-                      type="file"
-                      ref={imageInputRef}
-                      onChange={handleImageFileChange}
-                      accept="image/png, image/jpeg, image/webp"
-                      className="hidden"
-                    />
-                    <Button variant="outline" onClick={() => imageInputRef.current?.click()} disabled={isUploading}>
-                      {imagePreview ? 'Change File' : 'Choose File'}
-                    </Button>
                   </div>
-                  {imagePreview && (
-                    <Button onClick={handleSubmit} disabled={isUploading} className="w-full">
-                      {isUploading ? <Loader2 className="mr-2 animate-spin" /> : <Send className="mr-2"/>}
-                      Submit for Verification
-                    </Button>
-                  )}
-                </div>
-              )}
-               {user.verificationStatus === 'pending' && (
-                <div className="text-center p-6 bg-accent rounded-lg">
-                  <p className="text-accent-foreground">
-                    Your document has been submitted and is currently under review. We'll notify you once the process is complete.
-                  </p>
-                </div>
-              )}
-              {user.verificationStatus === 'verified' && (
-                 <div className="text-center p-6 bg-accent rounded-lg flex items-center justify-center gap-4">
-                  <ShieldCheck className="h-8 w-8 text-green-600" />
-                  <p className="text-accent-foreground font-semibold">
-                    You're all set! Your identity has been verified.
-                  </p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-      </main>
-    </div>
+                )}
+                 {user.verificationStatus === 'pending' && (
+                  <div className="text-center p-6 bg-accent rounded-lg">
+                    <p className="text-accent-foreground">
+                      Your document has been submitted and is currently under review. We'll notify you once the process is complete.
+                    </p>
+                  </div>
+                )}
+                {user.verificationStatus === 'verified' && (
+                   <div className="text-center p-6 bg-accent rounded-lg flex items-center justify-center gap-4">
+                    <ShieldCheck className="h-8 w-8 text-green-600" />
+                    <p className="text-accent-foreground font-semibold">
+                      You're all set! Your identity has been verified.
+                    </p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        </main>
+      </div>
+
+      <Dialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Successfully Applied!</DialogTitle>
+            <DialogDescription>
+              Your identity document has been submitted for verification. We will get back to you soon once it has been reviewed by an admin.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button onClick={() => setShowSuccessDialog(false)}>Close</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
