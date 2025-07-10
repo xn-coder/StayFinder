@@ -84,7 +84,9 @@ function PropertyCardWrapper({ property, className }: PropertyCardProps) {
 }
 
 export function PropertyCard({ property, className }: PropertyCardProps) {
-  <Suspense fallback={<div>Loading...</div>}>
-      <PropertyCardWrapper className={className} property={property} />
-  </Suspense>
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+        <PropertyCardWrapper className={className} property={property} />
+    </Suspense>
+  )
 }
