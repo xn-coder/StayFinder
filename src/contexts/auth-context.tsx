@@ -68,7 +68,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Initialize and subscribe to users collection
   useEffect(() => {
     if (!db || !auth) {
       console.log("Firebase config keys are not all defined or are placeholders. Authentication will be disabled.");
@@ -92,12 +91,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (firebaseUser) {
         const userDocRef = doc(db, "users", firebaseUser.uid);
         const userDoc = await getDoc(userDocRef);
+
         if (userDoc.exists()) {
           const userData = { id: userDoc.id, ...userDoc.data() } as User;
+
           if (userData.isDisabled) {
             await signOut(auth);
             setUser(null);
           } else {
+            // Check if the user is the designated super admin
+            const superAdminEmail = process.env.NEXT_PUBLIC_SUPER_ADMIN_EMAIL;
+            if (userData.email === superAdminEmail && userData.role !== 'super-admin') {
+              // Elevate to super admin
+              userData.role = 'super-admin';
+              await updateDoc(userDocRef, { role: 'super-admin' });
+            }
             setUser(userData);
           }
         } else {
@@ -117,60 +125,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, []);
   
-  const createSuperAdmin = async (email: string, password?: string): Promise<FirebaseUser> => {
-      if (!auth || !db || !password) {
-        throw new Error("Firebase configuration is missing for super admin creation.");
-      }
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const firebaseUser = userCredential.user;
-
-      const adminUserData: Omit<User, 'id'> = {
-        name: 'Super Admin',
-        email: firebaseUser.email!,
-        phone: '0000000000',
-        dob: '1970-01-01',
-        avatar: `https://placehold.co/100x100.png?text=A`,
-        role: 'super-admin',
-        verificationStatus: 'verified',
-        wishlist: [],
-        isDisabled: false,
-      };
-      
-      await setDoc(doc(db, 'users', firebaseUser.uid), adminUserData);
-      console.log('Super admin account created successfully.');
-      return firebaseUser;
-  }
-
   const loginWithEmail = useCallback(async (email: string, password?: string): Promise<FirebaseUser> => {
     if (!auth || !password) {
       throw new Error("Firebase configuration is missing. Please add your Firebase project keys to the .env file.");
     }
-    
-    const superAdminEmail = process.env.NEXT_PUBLIC_SUPER_ADMIN_EMAIL;
-    const superAdminPassword = process.env.NEXT_PUBLIC_SUPER_ADMIN_PASSWORD;
 
-    // Special flow for super admin
-    if (email === superAdminEmail) {
-      if (password !== superAdminPassword) {
-        throw new Error("Invalid super admin password.");
-      }
-      try {
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        return userCredential.user;
-      } catch (error) {
-        const authError = error as AuthError;
-        // The 'auth/invalid-credential' error can mean user not found OR bad password.
-        // For the super admin flow, we'll assume it means the user doesn't exist and try to create it.
-        if (authError.code === AuthErrorCodes.INVALID_CREDENTIAL) {
-          console.log("Super admin not found in Firebase Auth, creating...");
-          return await createSuperAdmin(email, password);
-        }
-        // Rethrow other errors
-        throw error;
-      }
-    }
-
-    // Normal user login
     try {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         return userCredential.user;
@@ -191,7 +150,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     
     const superAdminEmail = process.env.NEXT_PUBLIC_SUPER_ADMIN_EMAIL;
     if (userData.email === superAdminEmail) {
-      throw new Error("This email is reserved for the super admin account. Please use a different email to sign up.");
+      throw new Error("This email is reserved. Please use a different email to sign up.");
     }
 
     try {
