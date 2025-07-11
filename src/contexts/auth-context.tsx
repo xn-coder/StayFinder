@@ -22,9 +22,6 @@ import {
   setDoc,
   updateDoc,
   query,
-  where,
-  getDocs,
-  limit
 } from 'firebase/firestore';
 
 
@@ -162,8 +159,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return userCredential.user;
       } catch (error) {
         const authError = error as AuthError;
-        if (authError.code === AuthErrorCodes.USER_DELETED) {
-          // User does not exist in Auth, create it.
+        // The 'auth/invalid-credential' error can mean user not found OR bad password.
+        // For the super admin flow, we'll assume it means the user doesn't exist and try to create it.
+        if (authError.code === AuthErrorCodes.INVALID_CREDENTIAL) {
           console.log("Super admin not found in Firebase Auth, creating...");
           return await createSuperAdmin(email, password);
         }
@@ -178,7 +176,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return userCredential.user;
     } catch(error) {
         const authError = error as AuthError;
-        if (authError.code === AuthErrorCodes.INVALID_LOGIN_CREDENTIALS || authError.code === AuthErrorCodes.USER_DELETED) {
+        if (authError.code === AuthErrorCodes.INVALID_CREDENTIAL) {
             throw new Error("Invalid email or password. Please try again.");
         }
         console.error("Firebase login error:", error);
