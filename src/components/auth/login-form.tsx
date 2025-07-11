@@ -7,9 +7,9 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Mail } from "lucide-react";
+import { Loader2, Mail, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { useSettings } from "@/hooks/use-settings";
@@ -20,16 +20,29 @@ const phoneLoginSchema = z.object({
   phone: z.string().min(10, "Phone number must be at least 10 digits."),
 });
 
+const emailLoginSchema = z.object({
+  email: z.string().email("Please enter a valid email address."),
+  password: z.string().min(1, "Password is required."),
+});
+
 type PhoneLoginFormValues = z.infer<typeof phoneLoginSchema>;
+type EmailLoginFormValues = z.infer<typeof emailLoginSchema>;
 
 function LoginFormWrapper() {
   const { toast } = useToast();
   const { setAuthModalState } = useSettings();
+  const { loginWithEmail, loginWithGoogle } = useAuth();
   const [loading, setLoading] = useState(false);
+  const [view, setView] = useState<'default' | 'email'>('default');
 
   const phoneForm = useForm<PhoneLoginFormValues>({
     resolver: zodResolver(phoneLoginSchema),
     defaultValues: { phone: "" },
+  });
+
+  const emailForm = useForm<EmailLoginFormValues>({
+    resolver: zodResolver(emailLoginSchema),
+    defaultValues: { email: "", password: "" },
   });
 
   const onPhoneSubmit = (data: PhoneLoginFormValues) => {
@@ -43,6 +56,26 @@ function LoginFormWrapper() {
       setLoading(false);
     }, 1500);
   };
+
+  const onEmailSubmit = async (data: EmailLoginFormValues) => {
+    setLoading(true);
+    try {
+      await loginWithEmail(data.email, data.password);
+      toast({
+        title: "Logged In",
+        description: "Welcome back!",
+      });
+      setAuthModalState({ isOpen: false, view: 'login' });
+    } catch (error) {
+       toast({
+        variant: "destructive",
+        title: "Login Failed",
+        description: (error as Error).message,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
   
   const handleSocialLogin = (provider: 'Google' | 'Facebook' | 'Apple') => {
     toast({
@@ -50,6 +83,51 @@ function LoginFormWrapper() {
         description: `You will be redirected to ${provider}. (Demo only)`,
     });
   };
+
+  if (view === 'email') {
+    return (
+      <div className="space-y-4">
+        <Button variant="ghost" size="sm" onClick={() => setView('default')} className="mb-2">
+            <ArrowLeft className="mr-2 h-4 w-4" /> Back
+        </Button>
+        <h2 className="text-xl font-semibold">Log in with email</h2>
+        <Form {...emailForm}>
+          <form onSubmit={emailForm.handleSubmit(onEmailSubmit)} className="space-y-4">
+            <FormField
+              control={emailForm.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input placeholder="you@example.com" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={emailForm.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Password</FormLabel>
+                  <FormControl>
+                    <Input type="password" placeholder="••••••••" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button type="submit" className="w-full h-12 text-base" disabled={loading}>
+              {loading ? <Loader2 className="mr-2 animate-spin" /> : null}
+              Continue
+            </Button>
+          </form>
+        </Form>
+      </div>
+    );
+  }
 
   return (
       <div className="space-y-6">
@@ -108,7 +186,7 @@ function LoginFormWrapper() {
                  <svg className="mr-4 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M17.6 3.4c-1.7-2-4.1-2.1-5.9-2.1s-4.2.1-5.9 2.1C3.3 5.5 2.5 9.1 4.1 11.8c.8 1.4 1.9 2.9 3.2 2.9s2-.9 3.2-1c1.2-.1 2.3.9 3.2 1c1.3 0 2.4-1.5 3.2-2.9C21.5 9.1 20.7 5.5 17.6 3.4zM12.1 2.6c.1-.1 1.7-1.2 3.5-.8c.6.1 1.2.4 1.7.9c-.6.9-1.5 2.2-1.5 3.5c0 1.6 1.1 2.4 1.8 2.4c.1 0 .2 0 .2-.1c-.9 2.2-2.8 3.5-4.8 3.5c-1.5 0-2.8-.9-3.7-2.1c-1.3-1.8-1.5-4.5.3-6.3z"/></svg>
                 Continue with Apple
             </Button>
-            <Button variant="outline" className="w-full h-12 justify-center text-base" onClick={() => setAuthModalState({ isOpen: true, view: 'signup' })}>
+            <Button variant="outline" className="w-full h-12 justify-center text-base" onClick={() => setView('email')}>
                 <Mail className="mr-4 h-5 w-5" />
                 Continue with email
             </Button>
