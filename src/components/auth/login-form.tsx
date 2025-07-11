@@ -53,13 +53,13 @@ function LoginFormWrapper() {
 
   return (
       <div className="space-y-6">
-        <h2 className="text-2xl font-semibold">Welcome to StayFinder</h2>
+        <h2 className="text-xl font-semibold">Welcome to StayFinder</h2>
         <Form {...phoneForm}>
-          <form onSubmit={phoneForm.handleSubmit(onPhoneSubmit)} className="space-y-3">
-            <div className="border rounded-lg">
+          <form onSubmit={phoneForm.handleSubmit(onPhoneSubmit)} className="space-y-4">
+            <div className="border border-input rounded-lg overflow-hidden">
                 <div className="p-2 border-b">
                     <Select defaultValue="IN">
-                        <SelectTrigger className="border-none focus:ring-0 focus:ring-offset-0">
+                        <SelectTrigger className="border-none focus:ring-0 focus:ring-offset-0 h-auto p-0 bg-transparent">
                             <SelectValue placeholder="Country/Region" />
                         </SelectTrigger>
                         <SelectContent>
@@ -73,11 +73,11 @@ function LoginFormWrapper() {
                     control={phoneForm.control}
                     name="phone"
                     render={({ field }) => (
-                    <FormItem className="p-2">
+                    <FormItem>
                         <FormControl>
-                          <Input placeholder="Phone number" className="border-none p-0 h-auto focus-visible:ring-0 focus-visible:ring-offset-0" {...field} />
+                          <Input placeholder="Phone number" className="border-none focus-visible:ring-0 focus-visible:ring-offset-0 h-auto p-2" {...field} />
                         </FormControl>
-                        <FormMessage />
+                        <FormMessage className="px-2 pb-1" />
                     </FormItem>
                     )}
                 />
@@ -96,19 +96,19 @@ function LoginFormWrapper() {
             <span className="absolute left-1/2 -translate-x-1/2 -top-3 bg-background px-2 text-sm text-muted-foreground">or</span>
         </div>
         <div className="space-y-3">
-            <Button variant="outline" className="w-full h-12 justify-start text-base" onClick={() => handleSocialLogin('Facebook')}>
+            <Button variant="outline" className="w-full h-12 justify-center text-base" onClick={() => handleSocialLogin('Facebook')}>
                 <svg className="mr-4 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="#1877F2" d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-1.5c-1 0-1.5.5-1.5 1.5V12h3l-.5 3h-2.5v6.8c4.56-.93 8-4.96 8-9.8z"/></svg>
                 Continue with Facebook
             </Button>
-            <Button variant="outline" className="w-full h-12 justify-start text-base" onClick={() => handleSocialLogin('Google')}>
+            <Button variant="outline" className="w-full h-12 justify-center text-base" onClick={() => handleSocialLogin('Google')}>
                 <svg className="mr-4 h-5 w-5" aria-hidden="true" focusable="false" data-prefix="fab" data-icon="google" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512"><path fill="currentColor" d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 126 23.4 172.9 61.9l-72.2 72.2C297.1 114.5 273.5 104 248 104 177.1 104 116.1 165.1 116.1 236H116.1v-.2c0-.2 0-.4 0-.6 0-70.9 61-132 132-132s132 61.1 132 132c0 1.2 0 2.4-.1 3.6H248v84.1h152.2c-15.5 61.5-64.8 111.9-128.3 129.5-12.2 3.4-24.9 5.2-37.9 5.2-61.5 0-115.3-33.1-142.2-82.2 27.3-21.4 60.5-35.3 97.5-35.3 4.3 0 8.5.3 12.7.9l69.2-69.2c-39.2-22.1-85-34.8-134.1-34.8-106.1 0-192.8 76.6-214.3 176.6h428.6z"></path></svg>
                 Continue with Google
             </Button>
-            <Button variant="outline" className="w-full h-12 justify-start text-base" onClick={() => handleSocialLogin('Apple')}>
+            <Button variant="outline" className="w-full h-12 justify-center text-base" onClick={() => handleSocialLogin('Apple')}>
                  <svg className="mr-4 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M17.6 3.4c-1.7-2-4.1-2.1-5.9-2.1s-4.2.1-5.9 2.1C3.3 5.5 2.5 9.1 4.1 11.8c.8 1.4 1.9 2.9 3.2 2.9s2-.9 3.2-1c1.2-.1 2.3.9 3.2 1c1.3 0 2.4-1.5 3.2-2.9C21.5 9.1 20.7 5.5 17.6 3.4zM12.1 2.6c.1-.1 1.7-1.2 3.5-.8c.6.1 1.2.4 1.7.9c-.6.9-1.5 2.2-1.5 3.5c0 1.6 1.1 2.4 1.8 2.4c.1 0 .2 0 .2-.1c-.9 2.2-2.8 3.5-4.8 3.5c-1.5 0-2.8-.9-3.7-2.1c-1.3-1.8-1.5-4.5.3-6.3z"/></svg>
                 Continue with Apple
             </Button>
-            <Button variant="outline" className="w-full h-12 justify-start text-base" onClick={() => setAuthModalState({ isOpen: true, view: 'signup' })}>
+            <Button variant="outline" className="w-full h-12 justify-center text-base" onClick={() => setAuthModalState({ isOpen: true, view: 'signup' })}>
                 <Mail className="mr-4 h-5 w-5" />
                 Continue with email
             </Button>

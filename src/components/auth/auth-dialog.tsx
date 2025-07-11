@@ -22,7 +22,7 @@ export function AuthDialog() {
     <Dialog open={authModalState.isOpen} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-md p-0">
         <DialogHeader className="p-6 pb-4">
-          <DialogTitle className="text-center font-bold text-base">
+          <DialogTitle className="text-center font-bold text-lg">
             {isLoginView ? 'Log in or sign up' : 'Finish signing up'}
           </DialogTitle>
         </DialogHeader>
