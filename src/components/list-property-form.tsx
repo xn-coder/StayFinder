@@ -770,15 +770,15 @@ export function ListPropertyForm() {
       </div>
 
       <div className="mt-8 flex items-center">
-        <Button variant="outline" size="lg" onClick={prevStep} disabled={step === 1} style={{ backgroundColor: '#ffffff', color: 'hsl(185 65% 23%)', borderColor: 'hsl(185 65% 23%)'}}>Back</Button>
+        <Button variant="outline" size="lg" onClick={prevStep} disabled={step === 1}>Back</Button>
         <div className="flex-grow"></div>
         {step < totalSteps && (
-          <Button size="lg" onClick={nextStep} style={{ backgroundColor: 'hsl(185 65% 23%)' }}>
+          <Button size="lg" onClick={nextStep}>
             Next
           </Button>
         )}
         {step === totalSteps && (
-          <Button onClick={onSubmit} disabled={loading} size="lg" style={{ backgroundColor: 'hsl(185 65% 23%)' }}>
+          <Button onClick={onSubmit} disabled={loading} size="lg">
             {loading ? <Loader2 className="animate-spin" /> : <PartyPopper />}
             Submit Listing
           </Button>
