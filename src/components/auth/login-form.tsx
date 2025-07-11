@@ -46,15 +46,11 @@ function LoginFormWrapper() {
   });
 
   const onPhoneSubmit = (data: PhoneLoginFormValues) => {
-    setLoading(true);
-    // This is a placeholder for actual phone/WhatsApp login logic (e.g., sending OTP)
-    setTimeout(() => {
-      toast({
-        title: "OTP Sent!",
-        description: `An OTP has been sent to ${data.phone}. (Demo only)`,
-      });
-      setLoading(false);
-    }, 1500);
+    // This is intentionally non-functional as requested
+    toast({
+      title: "Feature not implemented",
+      description: "Phone login is currently disabled.",
+    });
   };
 
   const onEmailSubmit = async (data: EmailLoginFormValues) => {
@@ -163,8 +159,7 @@ function LoginFormWrapper() {
              <p className="text-xs text-muted-foreground">
                 We’ll call or text you to confirm your number. Standard message and data rates apply. <a href="/privacy-policy" className="underline font-semibold">Privacy Policy</a>
             </p>
-            <Button type="submit" className="w-full h-12 text-base" disabled={loading}>
-              {loading ? <Loader2 className="mr-2 animate-spin" /> : null}
+            <Button type="submit" className="w-full h-12 text-base" disabled={true}>
               Continue
             </Button>
           </form>
