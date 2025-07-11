@@ -31,7 +31,7 @@ type EmailLoginFormValues = z.infer<typeof emailLoginSchema>;
 function LoginFormWrapper() {
   const { toast } = useToast();
   const { setAuthModalState } = useSettings();
-  const { loginWithEmail, loginWithGoogle } = useAuth();
+  const { loginWithEmail } = useAuth();
   const [loading, setLoading] = useState(false);
   const [view, setView] = useState<'default' | 'email'>('default');
 
@@ -130,7 +130,7 @@ function LoginFormWrapper() {
   }
 
   return (
-      <div className="space-y-6">
+      <div className="space-y-4">
         <h2 className="text-xl font-semibold">Welcome to StayFinder</h2>
         <Form {...phoneForm}>
           <form onSubmit={phoneForm.handleSubmit(onPhoneSubmit)} className="space-y-4">
@@ -191,6 +191,15 @@ function LoginFormWrapper() {
                 Continue with email
             </Button>
         </div>
+        <p className="text-center text-sm">
+          Don't have an account?{' '}
+          <button
+            onClick={() => setAuthModalState({ isOpen: true, view: 'signup' })}
+            className="font-semibold text-primary underline"
+          >
+            Sign up
+          </button>
+        </p>
       </div>
   );
 }
