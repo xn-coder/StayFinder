@@ -79,55 +79,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(null);
       return;
     }
-
-    const ensureSuperAdmin = async () => {
-        const email = process.env.NEXT_PUBLIC_SUPER_ADMIN_EMAIL;
-        const password = process.env.NEXT_PUBLIC_SUPER_ADMIN_PASSWORD;
-
-        if (!email || !password || email.includes('YOUR_') || password.includes('YOUR_')) {
-            console.log("Super admin credentials not found or are placeholders in .env. Skipping auto-creation.");
-            return;
-        }
-
-        // Check if a super-admin user already exists in Firestore
-        const adminQuery = query(collection(db, "users"), where("role", "==", "super-admin"), limit(1));
-        const adminSnapshot = await getDocs(adminQuery);
-        if (!adminSnapshot.empty) {
-            return; // Super admin already exists
-        }
-
-        try {
-            // Attempt to create the user in Firebase Auth
-            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-            const firebaseUser = userCredential.user;
-
-            const adminUserData: Omit<User, 'id'> = {
-                name: 'Super Admin',
-                email: firebaseUser.email!,
-                phone: '0000000000',
-                dob: '1970-01-01',
-                avatar: `https://placehold.co/100x100.png?text=A`,
-                role: 'super-admin',
-                verificationStatus: 'verified',
-                wishlist: [],
-                isDisabled: false,
-            };
-            
-            await setDoc(doc(db, 'users', firebaseUser.uid), adminUserData);
-            console.log('Super admin account created successfully.');
-
-        } catch (error) {
-            const authError = error as AuthError;
-            if (authError.code === AuthErrorCodes.EMAIL_EXISTS) {
-                console.log('Super admin email already exists in Firebase Auth. Assuming setup is correct.');
-            } else {
-                console.error('Error creating super admin:', authError);
-            }
-        }
-    };
-
-    ensureSuperAdmin();
-
+    
     const unsubscribeUsers = onSnapshot(query(collection(db, 'users')), (snapshot) => {
         const updatedUsers: User[] = [];
         snapshot.forEach(doc => {
@@ -167,17 +119,66 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         unsubscribeAuth();
     };
   }, []);
+  
+  const createSuperAdmin = async (email: string, password?: string): Promise<FirebaseUser> => {
+      if (!auth || !db || !password) {
+        throw new Error("Firebase configuration is missing for super admin creation.");
+      }
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const firebaseUser = userCredential.user;
+
+      const adminUserData: Omit<User, 'id'> = {
+        name: 'Super Admin',
+        email: firebaseUser.email!,
+        phone: '0000000000',
+        dob: '1970-01-01',
+        avatar: `https://placehold.co/100x100.png?text=A`,
+        role: 'super-admin',
+        verificationStatus: 'verified',
+        wishlist: [],
+        isDisabled: false,
+      };
+      
+      await setDoc(doc(db, 'users', firebaseUser.uid), adminUserData);
+      console.log('Super admin account created successfully.');
+      return firebaseUser;
+  }
 
   const loginWithEmail = useCallback(async (email: string, password?: string): Promise<FirebaseUser> => {
     if (!auth || !password) {
       throw new Error("Firebase configuration is missing. Please add your Firebase project keys to the .env file.");
     }
+    
+    const superAdminEmail = process.env.NEXT_PUBLIC_SUPER_ADMIN_EMAIL;
+    const superAdminPassword = process.env.NEXT_PUBLIC_SUPER_ADMIN_PASSWORD;
+
+    // Special flow for super admin
+    if (email === superAdminEmail) {
+      if (password !== superAdminPassword) {
+        throw new Error("Invalid super admin password.");
+      }
+      try {
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        return userCredential.user;
+      } catch (error) {
+        const authError = error as AuthError;
+        if (authError.code === AuthErrorCodes.USER_DELETED) {
+          // User does not exist in Auth, create it.
+          console.log("Super admin not found in Firebase Auth, creating...");
+          return await createSuperAdmin(email, password);
+        }
+        // Rethrow other errors
+        throw error;
+      }
+    }
+
+    // Normal user login
     try {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         return userCredential.user;
     } catch(error) {
         const authError = error as AuthError;
-        if (authError.code === AuthErrorCodes.INVALID_LOGIN_CREDENTIALS || authError.code === 'auth/user-not-found' || authError.code === 'auth/invalid-credential') {
+        if (authError.code === AuthErrorCodes.INVALID_LOGIN_CREDENTIALS || authError.code === AuthErrorCodes.USER_DELETED) {
             throw new Error("Invalid email or password. Please try again.");
         }
         console.error("Firebase login error:", error);
@@ -188,6 +189,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signup = useCallback(async (userData: SignupData): Promise<FirebaseUser> => {
      if (!auth || !db || !userData.password) {
       throw new Error("Firebase configuration is missing. Please add your Firebase project keys to the .env file.");
+    }
+    
+    const superAdminEmail = process.env.NEXT_PUBLIC_SUPER_ADMIN_EMAIL;
+    if (userData.email === superAdminEmail) {
+      throw new Error("This email is reserved for the super admin account. Please use a different email to sign up.");
     }
 
     try {
