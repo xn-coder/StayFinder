@@ -152,7 +152,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const loginWithEmail = useCallback(async (email: string, password?: string): Promise<FirebaseUser> => {
     if (!auth || !password) {
-      throw new Error("Auth service not available or password missing.");
+      throw new Error("Auth service not available or password missing. Please ensure Firebase is configured correctly in your .env file.");
     }
     try {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
@@ -165,7 +165,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signup = useCallback(async (userData: SignupData): Promise<FirebaseUser> => {
      if (!auth || !userData.password) {
-      throw new Error("Auth service not available or password missing.");
+      throw new Error("Auth service not available or password missing. Please ensure Firebase is configured correctly in your .env file.");
     }
     // Check if email already exists in Firestore (for pre-seeded users)
     const q = query(collection(db, 'users'), where('email', '==', userData.email));

@@ -20,8 +20,8 @@ const allKeysDefined =
   firebaseConfig.appId;
 
 // Initialize Firebase
-const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
-const db = getFirestore(app);
-const auth = allKeysDefined ? getAuth(app) : null;
+const app = allKeysDefined && !getApps().length ? initializeApp(firebaseConfig) : (getApps().length > 0 ? getApp() : null);
+const db = app ? getFirestore(app) : null;
+const auth = app ? getAuth(app) : null;
 
 export { db, auth };
