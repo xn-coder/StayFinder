@@ -107,7 +107,7 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
-      <main className="flex-grow space-y-12 py-8">
+      <main className="flex-grow space-y-12 py-8 bg-muted/20">
         {loading ? (
           <>
             <PropertySectionSkeleton title="Perfect for Pets" />
