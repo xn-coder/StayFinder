@@ -48,6 +48,12 @@ export function PropertyProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!db) {
+      console.log("Firestore is not initialized. Skipping data fetching.");
+      setLoading(false);
+      return;
+    }
+
     const setupFirestore = async () => {
       setLoading(true);
       try {
@@ -138,6 +144,7 @@ export function PropertyProvider({ children }: { children: ReactNode }) {
   }, []);
   
   const addProperty = useCallback(async (data: Omit<Property, 'id'>) => {
+    if (!db) return;
     try {
       await addDoc(collection(db, 'properties'), data);
     } catch (error)
@@ -147,6 +154,7 @@ export function PropertyProvider({ children }: { children: ReactNode }) {
   }, []);
   
   const updateProperty = useCallback(async (id: string, data: Partial<Property>) => {
+    if (!db) return;
     const propertyDocRef = doc(db, 'properties', id);
     try {
       await updateDoc(propertyDocRef, data);
@@ -156,6 +164,7 @@ export function PropertyProvider({ children }: { children: ReactNode }) {
   }, []);
   
   const deleteProperty = useCallback(async (id: string) => {
+    if (!db) return;
     const propertyDocRef = doc(db, 'properties', id);
     try {
       await deleteDoc(propertyDocRef);
@@ -165,6 +174,7 @@ export function PropertyProvider({ children }: { children: ReactNode }) {
   }, []);
   
   const updatePropertyStatus = useCallback(async (id: string, status: PropertyStatus) => {
+    if (!db) return;
     const propertyDocRef = doc(db, 'properties', id);
     try {
         await updateDoc(propertyDocRef, { status });
@@ -178,6 +188,7 @@ export function PropertyProvider({ children }: { children: ReactNode }) {
   }, [properties]);
 
   const addBooking = useCallback(async (bookingData: Omit<Booking, 'id' | 'status' | 'createdAt' | 'invoiceId'>) => {
+    if (!db) return;
     const newBooking = {
         ...bookingData,
         invoiceId: `INV-${Date.now()}-${uuidv4().slice(0, 4)}`,
@@ -196,6 +207,7 @@ export function PropertyProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const updateBookingStatus = useCallback(async (id: string, status: BookingStatus) => {
+    if (!db) return;
     const bookingDocRef = doc(db, 'bookings', id);
     try {
       await updateDoc(bookingDocRef, { status });
@@ -205,6 +217,7 @@ export function PropertyProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const addInquiry = useCallback(async (inquiryData: Omit<Inquiry, 'id' | 'status' | 'createdAt'>) => {
+    if (!db) return;
     const newInquiry = {
         ...inquiryData,
         status: 'pending' as InquiryStatus,
@@ -218,6 +231,7 @@ export function PropertyProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const updateInquiryStatus = useCallback(async (id: string, status: InquiryStatus) => {
+    if (!db) return;
     const inquiryDocRef = doc(db, 'inquiries', id);
     try {
         await updateDoc(inquiryDocRef, { status });
@@ -227,6 +241,7 @@ export function PropertyProvider({ children }: { children: ReactNode }) {
   }, []);
   
   const addReviewAndRating = useCallback(async (bookingId: string, propertyId: string, rating: number, comment: string) => {
+    if (!db) return;
     const propertyDocRef = doc(db, 'properties', propertyId);
     const bookingDocRef = doc(db, 'bookings', bookingId);
 
