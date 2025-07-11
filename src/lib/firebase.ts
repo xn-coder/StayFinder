@@ -1,3 +1,4 @@
+
 import { initializeApp, getApps, getApp, FirebaseApp } from "firebase/app";
 import { getFirestore, Firestore } from "firebase/firestore";
 import { getAuth, Auth } from "firebase/auth";
@@ -36,7 +37,7 @@ if (typeof window !== 'undefined' && allKeysDefined) {
     db = null;
   }
 } else if (!allKeysDefined) {
-  console.error("Firebase config keys are not all defined. Please check your .env file.");
+  console.log("Firebase config keys are not all defined. Authentication will be disabled.");
 }
 
 export { db, auth };

@@ -150,7 +150,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const loginWithEmail = useCallback(async (email: string, password?: string): Promise<FirebaseUser> => {
     if (!auth || !password) {
-      throw new Error("Auth service not available or password missing. Please ensure Firebase is configured correctly in your .env file.");
+      throw new Error("Firebase configuration is missing. Please add your Firebase project keys to the .env file.");
     }
     try {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
@@ -163,7 +163,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signup = useCallback(async (userData: SignupData): Promise<FirebaseUser> => {
      if (!auth || !db || !userData.password) {
-      throw new Error("Auth service not available or password missing. Please ensure Firebase is configured correctly in your .env file.");
+      throw new Error("Firebase configuration is missing. Please add your Firebase project keys to the .env file.");
     }
     const q = query(collection(db, 'users'), where('email', '==', userData.email));
     const querySnapshot = await getDocs(q);
