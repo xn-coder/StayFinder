@@ -84,8 +84,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const email = process.env.NEXT_PUBLIC_SUPER_ADMIN_EMAIL;
         const password = process.env.NEXT_PUBLIC_SUPER_ADMIN_PASSWORD;
 
-        if (!email || !password) {
-            console.log("Super admin credentials not found in .env. Skipping auto-creation.");
+        if (!email || !password || email.includes('YOUR_') || password.includes('YOUR_')) {
+            console.log("Super admin credentials not found or are placeholders in .env. Skipping auto-creation.");
             return;
         }
 
@@ -119,9 +119,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         } catch (error) {
             const authError = error as AuthError;
             if (authError.code === AuthErrorCodes.EMAIL_EXISTS) {
-                // If user exists in Auth but not as super-admin in Firestore, this part is complex.
-                // For simplicity, we assume if it exists in auth, we log in and update the role if needed.
-                // This part could be enhanced to find the user by email and update their role.
                 console.log('Super admin email already exists in Firebase Auth. Assuming setup is correct.');
             } else {
                 console.error('Error creating super admin:', authError);
@@ -155,6 +152,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             setUser(userData);
           }
         } else {
+            // This case can happen if a user is deleted from Firestore but not Auth
             await signOut(auth);
             setUser(null);
         }
@@ -297,6 +295,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             return;
         }
         await updateDoc(userDocRef, { isDisabled: !userData.isDisabled });
+        // If the admin disables the currently logged-in user, log them out.
         if (auth.currentUser?.uid === userId && !userData.isDisabled) {
             logout();
         }
@@ -317,3 +316,5 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     </AuthContext.Provider>
   );
 }
+
+    

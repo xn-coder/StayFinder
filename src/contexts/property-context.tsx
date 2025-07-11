@@ -69,15 +69,7 @@ export function PropertyProvider({ children }: { children: ReactNode }) {
           });
           await batch.commit();
           console.log('Database seeded.');
-          propertiesSnapshot = await getDocs(propertiesCollection);
         }
-
-        const props: Property[] = [];
-        propertiesSnapshot.forEach(doc => {
-            props.push({ id: doc.id, ...doc.data() } as Property);
-        });
-        setProperties(props);
-        setLoading(false);
 
         const unsubscribeProperties = onSnapshot(query(collection(db, 'properties')), (snapshot) => {
             const updatedProps: Property[] = [];
@@ -85,8 +77,10 @@ export function PropertyProvider({ children }: { children: ReactNode }) {
                 updatedProps.push({ id: doc.id, ...doc.data() } as Property);
             });
             setProperties(updatedProps);
+            setLoading(false); // Set loading to false after initial fetch
         }, (error) => {
             console.error("Error fetching properties: ", error);
+            setLoading(false);
         });
 
         const unsubscribeBookings = onSnapshot(query(collection(db, 'bookings'), orderBy('createdAt', 'desc')), (snapshot) => {
@@ -298,3 +292,5 @@ export function PropertyProvider({ children }: { children: ReactNode }) {
     </PropertyContext.Provider>
   );
 }
+
+    
