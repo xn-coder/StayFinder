@@ -23,11 +23,19 @@ const allKeysDefined =
   firebaseConfig.messagingSenderId &&
   firebaseConfig.appId;
 
-if (allKeysDefined) {
-  app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
-  auth = getAuth(app);
-  db = getFirestore(app);
-} else {
+if (typeof window !== 'undefined' && allKeysDefined) {
+  try {
+    app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
+    auth = getAuth(app);
+    db = getFirestore(app);
+  } catch (e) {
+    console.error("Failed to initialize Firebase", e);
+    // Set to null if initialization fails
+    app = null;
+    auth = null;
+    db = null;
+  }
+} else if (!allKeysDefined) {
   console.error("Firebase config keys are not all defined. Please check your .env file.");
 }
 
