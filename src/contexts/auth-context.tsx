@@ -78,20 +78,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // Initialize and subscribe to users collection
   useEffect(() => {
+    if (!db) {
+      console.error("Firestore is not initialized. Check Firebase config.");
+      setLoading(false);
+      return;
+    }
     const usersCollection = collection(db, 'users');
 
     const setupFirestore = async () => {
       const snapshot = await getDocs(usersCollection);
       if (snapshot.empty) {
         console.log('No users found, seeding database...');
-        // We cannot seed users with Firebase Auth enabled without their interaction
-        // So we will just add their data to firestore for roles and other details.
-        // Auth users must be created via the UI.
         const batch = writeBatch(db);
         initialUsers.forEach(u => {
           const docRef = doc(db, 'users', u.id);
-          // Only set dummy data for users that are not real Auth users yet.
-          // This avoids overwriting real user data.
            if (u.id.startsWith('user-')) {
              batch.set(docRef, u);
            }
@@ -118,7 +118,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // Firebase Auth state listener
   useEffect(() => {
-    if (!auth) {
+    if (!auth || !db) {
       setLoading(false);
       setUser(null);
       return;
@@ -136,8 +136,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             setUser(userData);
           }
         } else {
-            // This case might happen if a user exists in Auth but not Firestore.
-            // For this app's logic, we log them out.
             await signOut(auth);
             setUser(null);
         }
@@ -164,10 +162,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const signup = useCallback(async (userData: SignupData): Promise<FirebaseUser> => {
-     if (!auth || !userData.password) {
+     if (!auth || !db || !userData.password) {
       throw new Error("Auth service not available or password missing. Please ensure Firebase is configured correctly in your .env file.");
     }
-    // Check if email already exists in Firestore (for pre-seeded users)
     const q = query(collection(db, 'users'), where('email', '==', userData.email));
     const querySnapshot = await getDocs(q);
     if (!querySnapshot.empty) {
@@ -203,6 +200,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
   
   const deleteUser = useCallback(async (userId: string) => {
+    if (!db) return;
     const userDocRef = doc(db, 'users', userId);
     const userDoc = await getDoc(userDocRef);
 
@@ -210,12 +208,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       console.error("Cannot delete super-admin.");
       return;
     }
-    // Note: This only deletes the Firestore record, not the Firebase Auth user.
-    // Proper user deletion would require a Cloud Function to delete the Auth user.
     await deleteDoc(userDocRef);
   }, []);
 
   const submitForVerification = useCallback(async (userId: string, documentUrl: string) => {
+    if (!db) return;
     const userDocRef = doc(db, 'users', userId);
     await updateDoc(userDocRef, { 
       verificationStatus: 'pending', 
@@ -224,6 +221,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const updateVerificationStatus = useCallback(async (userId: string, status: UserVerificationStatus) => {
+    if (!db) return;
     const userDocRef = doc(db, 'users', userId);
     const updateData: Partial<User> = { verificationStatus: status };
     if (status === 'rejected') {
@@ -237,7 +235,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const toggleWishlist = useCallback(async (propertyId: string) => {
-    if (!user) return;
+    if (!user || !db) return;
     
     const userDocRef = doc(db, 'users', user.id);
     const currentWishlist = user.wishlist || [];
@@ -246,16 +244,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         : [...currentWishlist, propertyId];
     
     await updateDoc(userDocRef, { wishlist: newWishlist });
-    // Optimistically update local state
     setUser(prev => prev ? {...prev, wishlist: newWishlist} : null);
   }, [user]);
 
   const switchToHostRole = useCallback(async (userId: string) => {
+    if (!db) return;
     const userDocRef = doc(db, 'users', userId);
     await updateDoc(userDocRef, { role: 'host' as UserRole });
   }, []);
 
   const toggleUserStatus = useCallback(async (userId: string) => {
+    if (!db || !auth) return;
     const userDocRef = doc(db, 'users', userId);
     const userDoc = await getDoc(userDocRef);
     
@@ -266,13 +265,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             return;
         }
         await updateDoc(userDocRef, { isDisabled: !userData.isDisabled });
-        if (auth?.currentUser?.uid === userId && !userData.isDisabled) {
+        if (auth.currentUser?.uid === userId && !userData.isDisabled) {
             logout();
         }
     }
   }, [logout]);
 
   const updateUser = useCallback(async (userId: string, data: Partial<User>) => {
+    if (!db) return;
     const userDocRef = doc(db, 'users', userId);
     await updateDoc(userDocRef, data);
   }, []);

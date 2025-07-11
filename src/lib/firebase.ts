@@ -1,6 +1,6 @@
-import { initializeApp, getApps, getApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
-import { getAuth } from "firebase/auth";
+import { initializeApp, getApps, getApp, FirebaseApp } from "firebase/app";
+import { getFirestore, Firestore } from "firebase/firestore";
+import { getAuth, Auth } from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -11,6 +11,10 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
+let app: FirebaseApp | null = null;
+let auth: Auth | null = null;
+let db: Firestore | null = null;
+
 const allKeysDefined =
   firebaseConfig.apiKey &&
   firebaseConfig.authDomain &&
@@ -19,9 +23,12 @@ const allKeysDefined =
   firebaseConfig.messagingSenderId &&
   firebaseConfig.appId;
 
-// Initialize Firebase
-const app = allKeysDefined && !getApps().length ? initializeApp(firebaseConfig) : (getApps().length > 0 ? getApp() : null);
-const db = app ? getFirestore(app) : null;
-const auth = app ? getAuth(app) : null;
+if (allKeysDefined) {
+  app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+  auth = getAuth(app);
+  db = getFirestore(app);
+} else {
+  console.error("Firebase config keys are not all defined. Please check your .env file.");
+}
 
 export { db, auth };
