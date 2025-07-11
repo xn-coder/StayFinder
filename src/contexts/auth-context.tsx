@@ -4,21 +4,25 @@
 import React, { createContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import type { User, UserRole, UserVerificationStatus } from '@/types';
 import { dummyUsers as initialUsers } from '@/lib/dummy-data';
-import { v4 as uuidv4 } from 'uuid';
-import { db } from '@/lib/firebase';
+import { db, auth } from '@/lib/firebase';
+import { 
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  onAuthStateChanged,
+  signOut,
+  User as FirebaseUser
+} from 'firebase/auth';
 import { 
   collection, 
   onSnapshot, 
-  addDoc, 
-  updateDoc, 
   doc, 
   deleteDoc,
-  getDocs,
   getDoc,
   setDoc,
   writeBatch,
   query,
-  where
+  updateDoc,
+  getDocs
 } from 'firebase/firestore';
 
 
@@ -30,9 +34,9 @@ interface AuthContextType {
   user: User | null | undefined; // undefined means loading, null means not logged in
   loading: boolean;
   users: User[];
-  loginWithEmail: (email: string, password?: string) => Promise<User>;
-  signup: (userData: SignupData) => Promise<User>;
-  logout: () => void;
+  loginWithEmail: (email: string, password?: string) => Promise<FirebaseUser>;
+  signup: (userData: SignupData) => Promise<FirebaseUser>;
+  logout: () => Promise<void>;
   deleteUser: (userId: string) => Promise<void>;
   submitForVerification: (userId: string, documentUrl: string) => Promise<void>;
   updateVerificationStatus: (userId: string, status: UserVerificationStatus) => Promise<void>;
@@ -49,7 +53,7 @@ export const AuthContext = createContext<AuthContextType>({
   users: [],
   loginWithEmail: async () => { throw new Error('loginWithEmail not implemented'); },
   signup: async () => { throw new Error('signup not implemented'); },
-  logout: () => {},
+  logout: async () => {},
   deleteUser: async () => {},
   submitForVerification: async () => {},
   updateVerificationStatus: async () => {},
@@ -59,8 +63,6 @@ export const AuthContext = createContext<AuthContextType>({
   toggleUserStatus: async () => {},
   updateUser: async () => {},
 });
-
-const CURRENT_USER_ID_STORAGE_KEY = 'currentUserId';
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null | undefined>(undefined);
@@ -75,6 +77,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const snapshot = await getDocs(usersCollection);
       if (snapshot.empty) {
         console.log('No users found, seeding database...');
+        // We cannot seed users with Firebase Auth enabled without their interaction
+        // So we will just add their data to firestore.
         const batch = writeBatch(db);
         initialUsers.forEach(u => {
           const docRef = doc(db, 'users', u.id);
@@ -92,114 +96,85 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               updatedUsers.push({ id: doc.id, ...doc.data() } as User);
           });
           setUsers(updatedUsers);
-
-          // This logic ensures that if the current user's data changes in Firestore,
-          // the local user state is updated. This handles real-time updates for the logged-in user.
-          const currentUserId = localStorage.getItem(CURRENT_USER_ID_STORAGE_KEY);
-          if (currentUserId) {
-              const freshUserData = updatedUsers.find(u => u.id === currentUserId);
-              if (freshUserData) {
-                // If user becomes disabled while logged in, log them out.
-                if (freshUserData.isDisabled) {
-                  logout();
-                } else {
-                  setUser(freshUserData);
-                }
-              } else {
-                // User was deleted from DB, log them out
-                logout();
-              }
-          }
       }, (error) => {
           console.error("Error fetching users snapshot: ", error);
       });
 
       return () => unsubscribe();
     });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Check for logged-in user on initial load
+  // Firebase Auth state listener
   useEffect(() => {
-    const checkCurrentUser = async () => {
-      setLoading(true);
-      try {
-        const storedUserId = localStorage.getItem(CURRENT_USER_ID_STORAGE_KEY);
-        if (storedUserId) {
-          const userDocRef = doc(db, "users", storedUserId);
-          const userDoc = await getDoc(userDocRef);
-          if (userDoc.exists() && !userDoc.data().isDisabled) {
-            setUser({ id: userDoc.id, ...userDoc.data() } as User);
-          } else {
+    if (!auth) {
+      setLoading(false);
+      setUser(null);
+      return;
+    }
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (firebaseUser) {
+        const userDocRef = doc(db, "users", firebaseUser.uid);
+        const userDoc = await getDoc(userDocRef);
+        if (userDoc.exists()) {
+          const userData = { id: userDoc.id, ...userDoc.data() } as User;
+          if (userData.isDisabled) {
+            await signOut(auth);
             setUser(null);
-            localStorage.removeItem(CURRENT_USER_ID_STORAGE_KEY);
+          } else {
+            setUser(userData);
           }
         } else {
-          setUser(null);
+            // This case might happen if a user exists in Auth but not Firestore.
+            // For this app's logic, we log them out.
+            await signOut(auth);
+            setUser(null);
         }
-      } catch (error) {
-        console.error("Failed to fetch current user:", error);
+      } else {
         setUser(null);
-      } finally {
-        setLoading(false);
       }
-    };
-    checkCurrentUser();
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
   }, []);
 
-  const loginWithEmail = useCallback(async (email: string, password?: string): Promise<User> => {
-    const q = query(collection(db, "users"), where("email", "==", email.toLowerCase()));
-    const querySnapshot = await getDocs(q);
-
-    if (querySnapshot.empty) {
-        throw new Error("No user found with that email address.");
+  const loginWithEmail = useCallback(async (email: string, password?: string): Promise<FirebaseUser> => {
+    if (!auth || !password) {
+      throw new Error("Auth service not available or password missing.");
     }
-
-    const userDoc = querySnapshot.docs[0];
-    const userToLogin = { id: userDoc.id, ...userDoc.data() } as User;
-    
-    if (userToLogin.isDisabled) {
-        throw new Error("This account has been disabled by an administrator.");
-    }
-
-    if (userToLogin.password !== password) {
-        throw new Error("Incorrect password.");
-    }
-
-    localStorage.setItem(CURRENT_USER_ID_STORAGE_KEY, userToLogin.id);
-    setUser(userToLogin);
-    return userToLogin;
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    return userCredential.user;
   }, []);
 
-  const signup = useCallback(async (userData: SignupData): Promise<User> => {
-    const q = query(collection(db, "users"), where("email", "==", userData.email.toLowerCase()));
-    const querySnapshot = await getDocs(q);
-
-    if (!querySnapshot.empty) {
-        throw new Error("An account with this email already exists.");
+  const signup = useCallback(async (userData: SignupData): Promise<FirebaseUser> => {
+     if (!auth || !userData.password) {
+      throw new Error("Auth service not available or password missing.");
     }
-    
-    const newUserId = uuidv4();
-    const newUser: User = {
-        ...userData,
-        id: newUserId,
+    const userCredential = await createUserWithEmailAndPassword(auth, userData.email, userData.password);
+    const firebaseUser = userCredential.user;
+
+    const newUser: Omit<User, 'id'> = {
+        name: userData.name,
+        email: firebaseUser.email || userData.email,
+        phone: userData.phone,
+        dob: userData.dob,
         avatar: `https://placehold.co/100x100.png?text=${userData.name.charAt(0)}`,
+        role: 'user',
         verificationStatus: 'unverified',
         wishlist: [],
         isDisabled: false,
     };
     
-    const userDocRef = doc(db, 'users', newUserId);
+    const userDocRef = doc(db, 'users', firebaseUser.uid);
     await setDoc(userDocRef, newUser);
 
-    localStorage.setItem(CURRENT_USER_ID_STORAGE_KEY, newUser.id);
-    setUser(newUser);
-
-    return newUser;
+    return firebaseUser;
   }, []);
 
-  const logout = useCallback(() => {
-    localStorage.removeItem(CURRENT_USER_ID_STORAGE_KEY);
+  const logout = useCallback(async () => {
+    if (auth) {
+      await signOut(auth);
+    }
     setUser(null);
   }, []);
   
@@ -211,6 +186,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       console.error("Cannot delete super-admin.");
       return;
     }
+    // Note: This only deletes the Firestore record, not the Firebase Auth user.
+    // Proper user deletion would require a Cloud Function to delete the Auth user.
     await deleteDoc(userDocRef);
   }, []);
 
@@ -245,6 +222,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         : [...currentWishlist, propertyId];
     
     await updateDoc(userDocRef, { wishlist: newWishlist });
+    // Optimistically update local state
+    setUser(prev => prev ? {...prev, wishlist: newWishlist} : null);
   }, [user]);
 
   const switchToHostRole = useCallback(async (userId: string) => {
@@ -263,11 +242,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             return;
         }
         await updateDoc(userDocRef, { isDisabled: !userData.isDisabled });
-        if (user?.id === userId && !userData.isDisabled) {
+        if (auth?.currentUser?.uid === userId && !userData.isDisabled) {
             logout();
         }
     }
-  }, [user, logout]);
+  }, [logout]);
 
   const updateUser = useCallback(async (userId: string, data: Partial<User>) => {
     const userDocRef = doc(db, 'users', userId);
