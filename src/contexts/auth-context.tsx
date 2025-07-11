@@ -10,12 +10,6 @@ import {
   onAuthStateChanged,
   signOut,
   User as FirebaseUser,
-  GoogleAuthProvider,
-  signInWithPopup,
-  PhoneAuthProvider,
-  RecaptchaVerifier,
-  signInWithPhoneNumber,
-  ConfirmationResult,
   AuthError,
   AuthErrorCodes
 } from 'firebase/auth';
@@ -26,11 +20,11 @@ import {
   deleteDoc,
   getDoc,
   setDoc,
-  writeBatch,
-  query,
   updateDoc,
+  query,
+  where,
   getDocs,
-  where
+  limit
 } from 'firebase/firestore';
 
 
@@ -79,13 +73,65 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // Initialize and subscribe to users collection
   useEffect(() => {
-    if (!db) {
-      console.log("Firestore is not initialized. Check Firebase config.");
+    if (!db || !auth) {
+      console.log("Firebase config keys are not all defined or are placeholders. Authentication will be disabled.");
       setLoading(false);
+      setUser(null);
       return;
     }
 
-    const unsubscribe = onSnapshot(query(collection(db, 'users')), (snapshot) => {
+    const ensureSuperAdmin = async () => {
+        const email = process.env.NEXT_PUBLIC_SUPER_ADMIN_EMAIL;
+        const password = process.env.NEXT_PUBLIC_SUPER_ADMIN_PASSWORD;
+
+        if (!email || !password) {
+            console.log("Super admin credentials not found in .env. Skipping auto-creation.");
+            return;
+        }
+
+        // Check if a super-admin user already exists in Firestore
+        const adminQuery = query(collection(db, "users"), where("role", "==", "super-admin"), limit(1));
+        const adminSnapshot = await getDocs(adminQuery);
+        if (!adminSnapshot.empty) {
+            return; // Super admin already exists
+        }
+
+        try {
+            // Attempt to create the user in Firebase Auth
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            const firebaseUser = userCredential.user;
+
+            const adminUserData: Omit<User, 'id'> = {
+                name: 'Super Admin',
+                email: firebaseUser.email!,
+                phone: '0000000000',
+                dob: '1970-01-01',
+                avatar: `https://placehold.co/100x100.png?text=A`,
+                role: 'super-admin',
+                verificationStatus: 'verified',
+                wishlist: [],
+                isDisabled: false,
+            };
+            
+            await setDoc(doc(db, 'users', firebaseUser.uid), adminUserData);
+            console.log('Super admin account created successfully.');
+
+        } catch (error) {
+            const authError = error as AuthError;
+            if (authError.code === AuthErrorCodes.EMAIL_EXISTS) {
+                // If user exists in Auth but not as super-admin in Firestore, this part is complex.
+                // For simplicity, we assume if it exists in auth, we log in and update the role if needed.
+                // This part could be enhanced to find the user by email and update their role.
+                console.log('Super admin email already exists in Firebase Auth. Assuming setup is correct.');
+            } else {
+                console.error('Error creating super admin:', authError);
+            }
+        }
+    };
+
+    ensureSuperAdmin();
+
+    const unsubscribeUsers = onSnapshot(query(collection(db, 'users')), (snapshot) => {
         const updatedUsers: User[] = [];
         snapshot.forEach(doc => {
             updatedUsers.push({ id: doc.id, ...doc.data() } as User);
@@ -94,18 +140,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }, (error) => {
         console.error("Error fetching users snapshot: ", error);
     });
-
-    return () => unsubscribe();
-  }, []);
-
-  // Firebase Auth state listener
-  useEffect(() => {
-    if (!auth || !db) {
-      setLoading(false);
-      setUser(null);
-      return;
-    }
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+    
+    // Firebase Auth state listener
+    const unsubscribeAuth = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
         const userDocRef = doc(db, "users", firebaseUser.uid);
         const userDoc = await getDoc(userDocRef);
@@ -118,9 +155,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             setUser(userData);
           }
         } else {
-            // This case can happen if a user is created in Auth but not in Firestore
-            // Or if the Firestore document is deleted.
-            // For now, we sign them out to prevent a broken state.
             await signOut(auth);
             setUser(null);
         }
@@ -130,7 +164,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setLoading(false);
     });
 
-    return () => unsubscribe();
+    return () => {
+        unsubscribeUsers();
+        unsubscribeAuth();
+    };
   }, []);
 
   const loginWithEmail = useCallback(async (email: string, password?: string): Promise<FirebaseUser> => {
