@@ -22,11 +22,6 @@ import {
 } from 'firebase/firestore';
 
 
-type LoginCredentials = {
-  email: string;
-  password?: string;
-};
-
 type SignupData = Omit<User, 'id' | 'verificationStatus' | 'avatar' | 'password' | 'wishlist'> & {
     password?: string;
 };
@@ -35,7 +30,7 @@ interface AuthContextType {
   user: User | null | undefined; // undefined means loading, null means not logged in
   loading: boolean;
   users: User[];
-  login: (credentials: LoginCredentials) => Promise<User>;
+  loginWithEmail: (email: string, password?: string) => Promise<User>;
   signup: (userData: SignupData) => Promise<User>;
   logout: () => void;
   deleteUser: (userId: string) => Promise<void>;
@@ -52,7 +47,7 @@ export const AuthContext = createContext<AuthContextType>({
   user: undefined,
   loading: true,
   users: [],
-  login: async () => { throw new Error('login not implemented'); },
+  loginWithEmail: async () => { throw new Error('loginWithEmail not implemented'); },
   signup: async () => { throw new Error('signup not implemented'); },
   logout: () => {},
   deleteUser: async () => {},
@@ -152,7 +147,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     checkCurrentUser();
   }, []);
 
-  const login = useCallback(async ({ email, password }: LoginCredentials): Promise<User> => {
+  const loginWithEmail = useCallback(async (email: string, password?: string): Promise<User> => {
     const q = query(collection(db, "users"), where("email", "==", email.toLowerCase()));
     const querySnapshot = await getDocs(q);
 
@@ -279,7 +274,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await updateDoc(userDocRef, data);
   }, []);
 
-  const value = { user, loading, users, login, signup, logout, deleteUser, submitForVerification, updateVerificationStatus, toggleWishlist, isInWishlist, switchToHostRole, toggleUserStatus, updateUser };
+  const value = { user, loading, users, loginWithEmail, signup, logout, deleteUser, submitForVerification, updateVerificationStatus, toggleWishlist, isInWishlist, switchToHostRole, toggleUserStatus, updateUser };
 
   return (
     <AuthContext.Provider value={value}>
