@@ -55,7 +55,7 @@ function SearchBarWrapper({ className }: SearchBarProps) {
   };
 
   return (
-    <div className={cn("bg-background p-1.5 rounded-full shadow-md border w-full max-w-3xl mx-auto", className)}>
+    <div className={cn("bg-background p-1.5 rounded-full shadow-lg border w-full max-w-3xl mx-auto", className)}>
       <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr_1fr] items-center">
         
         {/* Location */}
