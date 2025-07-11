@@ -177,7 +177,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return userCredential.user;
     } catch(error) {
         const authError = error as AuthError;
-        if (authError.code === AuthErrorCodes.INVALID_LOGIN_CREDENTIALS || authError.code === 'auth/user-not-found') {
+        if (authError.code === AuthErrorCodes.INVALID_LOGIN_CREDENTIALS || authError.code === 'auth/user-not-found' || authError.code === 'auth/invalid-credential') {
             throw new Error("Invalid email or password. Please try again.");
         }
         console.error("Firebase login error:", error);
@@ -316,5 +316,3 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     </AuthContext.Provider>
   );
 }
-
-    
