@@ -162,11 +162,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
      if (!auth || !db || !userData.password) {
       throw new Error("Firebase configuration is missing. Please add your Firebase project keys to the .env file.");
     }
-    
-    const superAdminEmail = process.env.NEXT_PUBLIC_SUPER_ADMIN_EMAIL;
-    if (userData.email === superAdminEmail) {
-      throw new Error("This email is reserved. Please use a different email to sign up.");
-    }
 
     try {
         const userCredential = await createUserWithEmailAndPassword(auth, userData.email, userData.password);
@@ -186,7 +181,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         
         const userDocRef = doc(db, 'users', firebaseUser.uid);
         await setDoc(userDocRef, newUser);
-        setUser({ id: firebaseUser.uid, ...newUser });
+        
+        await handleAuthSuccess(firebaseUser);
 
         return firebaseUser;
     } catch(error) {
