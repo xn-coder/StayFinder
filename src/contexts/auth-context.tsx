@@ -124,6 +124,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         unsubscribeAuth();
     };
   }, []);
+
+  const handleAuthSuccess = async (firebaseUser: FirebaseUser) => {
+    const userDocRef = doc(db, 'users', firebaseUser.uid);
+    const userDoc = await getDoc(userDocRef);
+    if (userDoc.exists()) {
+      const userData = { id: userDoc.id, ...userDoc.data() } as User;
+      const superAdminEmail = process.env.NEXT_PUBLIC_SUPER_ADMIN_EMAIL;
+      if (userData.email === superAdminEmail && userData.role !== 'super-admin') {
+        await updateDoc(userDocRef, { role: 'super-admin' });
+        userData.role = 'super-admin';
+      }
+      setUser(userData);
+    }
+  };
   
   const loginWithEmail = useCallback(async (email: string, password?: string): Promise<FirebaseUser> => {
     if (!auth || !password) {
@@ -132,6 +146,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     try {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        await handleAuthSuccess(userCredential.user);
         return userCredential.user;
     } catch(error) {
         const authError = error as AuthError;
@@ -171,6 +186,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         
         const userDocRef = doc(db, 'users', firebaseUser.uid);
         await setDoc(userDocRef, newUser);
+        setUser({ id: firebaseUser.uid, ...newUser });
 
         return firebaseUser;
     } catch(error) {
@@ -211,6 +227,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       verificationStatus: 'pending', 
       identityDocumentUrl: documentUrl 
     });
+    setUser(prev => prev && prev.id === userId ? { ...prev, verificationStatus: 'pending', identityDocumentUrl: documentUrl } : prev);
   }, []);
 
   const updateVerificationStatus = useCallback(async (userId: string, status: UserVerificationStatus) => {
@@ -244,6 +261,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!db) return;
     const userDocRef = doc(db, 'users', userId);
     await updateDoc(userDocRef, { role: 'host' as UserRole });
+    setUser(prev => prev && prev.id === userId ? { ...prev, role: 'host' } : prev);
   }, []);
 
   const toggleUserStatus = useCallback(async (userId: string) => {
@@ -269,6 +287,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!db) return;
     const userDocRef = doc(db, 'users', userId);
     await updateDoc(userDocRef, data);
+    setUser(prev => prev && prev.id === userId ? { ...prev, ...data } : prev);
   }, []);
 
   const value = { user, loading, users, loginWithEmail, signup, logout, deleteUser, submitForVerification, updateVerificationStatus, toggleWishlist, isInWishlist, switchToHostRole, toggleUserStatus, updateUser };
