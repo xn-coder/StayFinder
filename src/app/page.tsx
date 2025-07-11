@@ -71,37 +71,15 @@ const PropertySection = ({ title, properties }: { title: string; properties: Pro
   );
 };
 
-const AllPropertiesGrid = ({ title, properties }: { title: string; properties: Property[] }) => {
-  if (properties.length === 0) {
-    return null;
-  }
-
-  return (
-    <section>
-      <div className="container mx-auto px-4">
-        <h2 className="text-2xl font-bold font-headline mb-4">{title}</h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
-          {properties.map((property) => (
-            <PropertyCard key={property.id} property={property} />
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-};
-
 
 export default function Home() {
   const { properties, loading } = useProperties();
 
   const approvedProperties = properties.filter(p => p.status === 'approved');
 
-  const petFriendlyStays = approvedProperties.filter(
-    p => p.amenities.includes('Pet friendly')
-  ).slice(0, 10);
-
-  const petFriendlyIds = new Set(petFriendlyStays.map(p => p.id));
-  const otherStays = approvedProperties.filter(p => !petFriendlyIds.has(p.id));
+  const topRatedStays = approvedProperties.filter(p => p.rating >= 4.9).slice(0, 10);
+  const uniqueStayTypes = ['Castle', 'Tree house', 'Boat', 'Houseboat', 'Yurt', 'Barn'];
+  const uniqueStays = approvedProperties.filter(p => uniqueStayTypes.includes(p.type)).slice(0, 10);
 
 
   return (
@@ -110,13 +88,13 @@ export default function Home() {
       <main className="flex-grow space-y-12 py-8 bg-muted/20">
         {loading ? (
           <>
-            <PropertySectionSkeleton title="Perfect for Pets" />
-            <PropertySectionSkeleton title="Explore All Stays" />
+            <PropertySectionSkeleton title="Top-rated Stays" />
+            <PropertySectionSkeleton title="Unique Stays" />
           </>
         ) : (
             <>
-                <PropertySection title="Perfect for Pets" properties={petFriendlyStays} />
-                <AllPropertiesGrid title="Explore All Stays" properties={otherStays} />
+                <PropertySection title="Top-rated Stays" properties={topRatedStays} />
+                <PropertySection title="Unique Stays" properties={uniqueStays} />
             </>
         )}
       </main>
