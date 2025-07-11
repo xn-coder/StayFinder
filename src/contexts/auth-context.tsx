@@ -16,7 +16,9 @@ import {
   PhoneAuthProvider,
   RecaptchaVerifier,
   signInWithPhoneNumber,
-  ConfirmationResult
+  ConfirmationResult,
+  AuthError,
+  AuthErrorCodes
 } from 'firebase/auth';
 import { 
   collection, 
@@ -136,6 +138,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             setUser(userData);
           }
         } else {
+            // This case can happen if a user is created in Auth but not in Firestore
+            // Or if the Firestore document is deleted.
+            // For now, we sign them out to prevent a broken state.
             await signOut(auth);
             setUser(null);
         }
@@ -156,8 +161,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         return userCredential.user;
     } catch(error) {
+        const authError = error as AuthError;
+        if (authError.code === AuthErrorCodes.INVALID_LOGIN_CREDENTIALS) {
+            throw new Error("Invalid email or password. Please try again.");
+        }
         console.error("Firebase login error:", error);
-        throw new Error("Invalid credentials. Please check your email and password.");
+        throw new Error("An unknown error occurred during login.");
     }
   }, []);
 
@@ -165,31 +174,37 @@ export function AuthProvider({ children }: { children: ReactNode }) {
      if (!auth || !db || !userData.password) {
       throw new Error("Firebase configuration is missing. Please add your Firebase project keys to the .env file.");
     }
-    const q = query(collection(db, 'users'), where('email', '==', userData.email));
-    const querySnapshot = await getDocs(q);
-    if (!querySnapshot.empty) {
-        throw new Error("An account with this email already exists.");
+
+    try {
+        const userCredential = await createUserWithEmailAndPassword(auth, userData.email, userData.password);
+        const firebaseUser = userCredential.user;
+
+        const newUser: Omit<User, 'id'> = {
+            name: userData.name,
+            email: firebaseUser.email || userData.email,
+            phone: userData.phone,
+            dob: userData.dob,
+            avatar: `https://placehold.co/100x100.png?text=${userData.name.charAt(0)}`,
+            role: 'user',
+            verificationStatus: 'unverified',
+            wishlist: [],
+            isDisabled: false,
+        };
+        
+        const userDocRef = doc(db, 'users', firebaseUser.uid);
+        await setDoc(userDocRef, newUser);
+
+        return firebaseUser;
+    } catch(error) {
+        const authError = error as AuthError;
+        if (authError.code === AuthErrorCodes.EMAIL_EXISTS) {
+            throw new Error("An account with this email already exists.");
+        } else if (authError.code === AuthErrorCodes.WEAK_PASSWORD) {
+            throw new Error("The password is too weak. Please use at least 6 characters.");
+        }
+        console.error("Firebase signup error:", authError);
+        throw new Error("An unknown error occurred during signup.");
     }
-
-    const userCredential = await createUserWithEmailAndPassword(auth, userData.email, userData.password);
-    const firebaseUser = userCredential.user;
-
-    const newUser: Omit<User, 'id'> = {
-        name: userData.name,
-        email: firebaseUser.email || userData.email,
-        phone: userData.phone,
-        dob: userData.dob,
-        avatar: `https://placehold.co/100x100.png?text=${userData.name.charAt(0)}`,
-        role: 'user',
-        verificationStatus: 'unverified',
-        wishlist: [],
-        isDisabled: false,
-    };
-    
-    const userDocRef = doc(db, 'users', firebaseUser.uid);
-    await setDoc(userDocRef, newUser);
-
-    return firebaseUser;
   }, []);
 
   const logout = useCallback(async () => {
