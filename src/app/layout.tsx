@@ -5,6 +5,7 @@ import { AuthProvider } from '@/contexts/auth-context';
 import { PropertyProvider } from '@/contexts/property-context';
 import { SettingsProvider } from '@/contexts/settings-context';
 import { AnnouncementBar } from '@/components/layout/announcement-bar';
+import { AuthDialog } from '@/components/auth/auth-dialog';
 
 export const metadata: Metadata = {
   title: 'StayFinder',
@@ -30,6 +31,7 @@ export default function RootLayout({
               <AnnouncementBar />
               {children}
               <Toaster />
+              <AuthDialog />
             </PropertyProvider>
           </SettingsProvider>
         </AuthProvider>

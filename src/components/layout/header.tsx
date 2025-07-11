@@ -24,11 +24,13 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { LanguageCurrencyDialog } from '../language-currency-dialog';
 import { SearchBar } from '../search-bar';
+import { useSettings } from '@/hooks/use-settings';
 
 export function Header({ className }: { className?: string }) {
   const { user, logout } = useAuth();
   const router = useRouter();
   const { bookings, inquiries } = useProperties();
+  const { setAuthModalState } = useSettings();
   const [isLangCurrencyOpen, setIsLangCurrencyOpen] = useState(false);
 
   const handleLogout = () => {
@@ -173,12 +175,12 @@ export function Header({ className }: { className?: string }) {
                  <Button variant="ghost" size="icon" onClick={() => setIsLangCurrencyOpen(true)}>
                     <Globe className="h-5 w-5" />
                  </Button>
-                <Link href="/login">
-                  <Button variant="outline" className="px-5">Log in</Button>
-                </Link>
-                <Link href="/signup">
-                  <Button className="px-5">Sign up</Button>
-                </Link>
+                <Button variant="ghost" className="px-5" onClick={() => setAuthModalState({ isOpen: true, view: 'login' })}>
+                  Log in
+                </Button>
+                <Button variant="outline" className="px-5" onClick={() => setAuthModalState({ isOpen: true, view: 'signup' })}>
+                  Sign up
+                </Button>
               </>
             )}
           </div>

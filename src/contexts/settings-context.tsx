@@ -18,6 +18,11 @@ export const languageNames: Record<Language, string> = {
 };
 
 
+interface AuthModalState {
+  isOpen: boolean;
+  view: 'login' | 'signup';
+}
+
 interface SettingsContextType {
   language: Language;
   setLanguage: (language: Language) => void;
@@ -25,6 +30,8 @@ interface SettingsContextType {
   setCurrency: (currency: Currency) => void;
   currencySymbol: string;
   languageName: string;
+  authModalState: AuthModalState;
+  setAuthModalState: (state: AuthModalState) => void;
 }
 
 export const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
@@ -34,6 +41,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   
   const [language, setLanguage] = useState<Language>('en-IN');
   const [currency, setCurrency] = useState<Currency>('INR');
+  const [authModalState, setAuthModalState] = useState<AuthModalState>({ isOpen: false, view: 'login' });
   
   useEffect(() => {
     if (user) {
@@ -83,6 +91,8 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     setCurrency: handleSetCurrency,
     currencySymbol,
     languageName,
+    authModalState,
+    setAuthModalState,
   };
 
   return (

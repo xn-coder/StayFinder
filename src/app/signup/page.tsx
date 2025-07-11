@@ -1,26 +1,24 @@
-import { SignupForm } from '@/components/auth/signup-form';
-import Link from 'next/link';
+
+'use client';
+
+import { useEffect } from 'react';
+import { useSettings } from '@/hooks/use-settings';
+import { useRouter } from 'next/navigation';
 
 export default function SignupPage() {
+  const { setAuthModalState } = useSettings();
+  const router = useRouter();
+
+  useEffect(() => {
+    // Open the auth modal and then replace the history state to the homepage
+    // so the user doesn't see a blank page.
+    setAuthModalState({ isOpen: true, view: 'signup' });
+    router.replace('/');
+  }, [setAuthModalState, router]);
+
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-background p-4">
-       <div className="w-full max-w-lg">
-        <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold font-headline">
-              Join StayFinder
-            </h1>
-            <p className="text-muted-foreground">
-              Create an account to book unique stays and experiences.
-            </p>
-        </div>
-        <SignupForm />
-        <p className="mt-4 text-center text-sm text-muted-foreground">
-          Already have an account?{' '}
-          <Link href="/login" className="font-semibold text-primary hover:underline">
-            Log in
-          </Link>
-        </p>
-      </div>
+    <div className="flex h-screen w-full items-center justify-center">
+      <p>Redirecting...</p>
     </div>
   );
 }
