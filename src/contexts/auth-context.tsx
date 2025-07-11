@@ -10,7 +10,13 @@ import {
   signInWithEmailAndPassword,
   onAuthStateChanged,
   signOut,
-  User as FirebaseUser
+  User as FirebaseUser,
+  GoogleAuthProvider,
+  signInWithPopup,
+  PhoneAuthProvider,
+  RecaptchaVerifier,
+  signInWithPhoneNumber,
+  ConfirmationResult
 } from 'firebase/auth';
 import { 
   collection, 
@@ -22,7 +28,8 @@ import {
   writeBatch,
   query,
   updateDoc,
-  getDocs
+  getDocs,
+  where
 } from 'firebase/firestore';
 
 
@@ -78,11 +85,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (snapshot.empty) {
         console.log('No users found, seeding database...');
         // We cannot seed users with Firebase Auth enabled without their interaction
-        // So we will just add their data to firestore.
+        // So we will just add their data to firestore for roles and other details.
+        // Auth users must be created via the UI.
         const batch = writeBatch(db);
         initialUsers.forEach(u => {
           const docRef = doc(db, 'users', u.id);
-          batch.set(docRef, u);
+          // Only set dummy data for users that are not real Auth users yet.
+          // This avoids overwriting real user data.
+           if (u.id.startsWith('user-')) {
+             batch.set(docRef, u);
+           }
         });
         await batch.commit();
         console.log('Users collection seeded.');
@@ -142,14 +154,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!auth || !password) {
       throw new Error("Auth service not available or password missing.");
     }
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    return userCredential.user;
+    try {
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        return userCredential.user;
+    } catch(error) {
+        console.error("Firebase login error:", error);
+        throw new Error("Invalid credentials. Please check your email and password.");
+    }
   }, []);
 
   const signup = useCallback(async (userData: SignupData): Promise<FirebaseUser> => {
      if (!auth || !userData.password) {
       throw new Error("Auth service not available or password missing.");
     }
+    // Check if email already exists in Firestore (for pre-seeded users)
+    const q = query(collection(db, 'users'), where('email', '==', userData.email));
+    const querySnapshot = await getDocs(q);
+    if (!querySnapshot.empty) {
+        throw new Error("An account with this email already exists.");
+    }
+
     const userCredential = await createUserWithEmailAndPassword(auth, userData.email, userData.password);
     const firebaseUser = userCredential.user;
 
