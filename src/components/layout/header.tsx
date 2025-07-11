@@ -49,23 +49,23 @@ export function Header({ className }: { className?: string }) {
   return (
     <>
       <header className={cn("sticky top-0 z-50 w-full border-b bg-background", className)}>
-        <div className="container mx-auto flex h-20 items-center px-4">
+        <div className="container mx-auto flex h-20 items-center justify-between px-4">
           <Link href="/" className="hidden md:flex items-center gap-2 mr-6 flex-shrink-0">
             <Home className="h-8 w-8 text-primary" />
             <span className="font-bold font-headline text-2xl text-primary">StayFinder</span>
           </Link>
 
           <div className="hidden md:flex flex-1 items-center justify-center">
-            
+             {/* Desktop SearchBar could go here if needed in a different layout */}
           </div>
           
-          <div className="hidden md:flex flex-shrink-0 items-center justify-end space-x-2">
+          <div className="flex items-center justify-end space-x-2">
             {user ? (
               <>
                 {(user.role === 'host' || user.role === 'user') && (
                   <Link href="/list-property">
                     <Button variant="ghost" className="text-base font-semibold">
-                      {user.role === 'host' ? 'List ur Property' : 'Become a Host'}
+                      {user.role === 'host' ? 'List your Property' : 'Become a Host'}
                     </Button>
                   </Link>
                 )}
@@ -182,14 +182,9 @@ export function Header({ className }: { className?: string }) {
               </>
             )}
           </div>
-          {/* Mobile menu could go here */}
         </div>
 
-        <div className="container mx-auto px-4 pb-4 md:hidden">
-            <SearchBar />
-        </div>
-
-        <div className="container mx-auto px-4 pb-4 hidden md:block">
+        <div className="container mx-auto px-4 pb-4">
             <SearchBar />
         </div>
       </header>

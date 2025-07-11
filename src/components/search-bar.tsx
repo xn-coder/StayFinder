@@ -17,6 +17,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+import { Separator } from './ui/separator';
 
 interface SearchBarProps {
     className?: string;
@@ -54,32 +55,48 @@ function SearchBarWrapper({ className }: SearchBarProps) {
   };
 
   return (
-    <div className={cn("bg-background p-1.5 rounded-full shadow-md border w-full max-w-2xl mx-auto", className)}>
-      <div className="flex flex-col md:flex-row items-stretch md:divide-x md:divide-border">
+    <div className={cn("bg-background p-1.5 rounded-full shadow-md border w-full max-w-3xl mx-auto", className)}>
+      <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr_1fr] items-center">
         
-        <div className="flex-1 px-4 py-2 flex items-center gap-3 hover:bg-muted/50 rounded-full">
-          <div className="flex flex-col text-left w-full">
-            <Label htmlFor="location" className="text-xs font-semibold text-foreground px-1">Where</Label>
-            <Input
-              id="location"
-              placeholder="Search destinations"
-              className="border-none bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 h-auto p-1 text-foreground placeholder:text-muted-foreground text-base"
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
-            />
-          </div>
+        {/* Location */}
+        <div className="group relative">
+          <Popover>
+            <PopoverTrigger asChild>
+                <button className="w-full text-left px-4 py-2 hover:bg-muted/50 rounded-full">
+                  <Label htmlFor="location" className="text-xs font-semibold text-foreground px-1">Where</Label>
+                  <p className="text-sm text-muted-foreground truncate pr-1">
+                      {location || 'Search destinations'}
+                  </p>
+                </button>
+            </PopoverTrigger>
+            <PopoverContent className="w-80" align="start">
+              <div className="p-2">
+                <Label htmlFor="location-input" className="text-sm font-medium">Search destinations</Label>
+                 <Input
+                    id="location-input"
+                    placeholder="e.g. Paris, France"
+                    className="mt-2 border-none bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 h-auto p-1 text-foreground placeholder:text-muted-foreground text-base"
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
+                  />
+              </div>
+            </PopoverContent>
+          </Popover>
+           <Separator orientation="vertical" className="absolute right-0 top-1/2 -translate-y-1/2 h-8 hidden md:block group-hover:hidden"/>
         </div>
 
-        <Popover>
+        {/* Dates */}
+         <Popover>
             <PopoverTrigger asChild>
-                <button className="flex-1 px-4 py-2 flex items-center gap-3 text-left hover:bg-muted/50 rounded-full">
-                    <div className="flex-1">
+                <button className="group relative w-full flex items-stretch text-left hover:bg-muted/50 rounded-full">
+                    <div className="flex-1 px-4 py-2">
                         <div className="text-xs font-semibold">Check in</div>
                         <div className="text-sm text-muted-foreground">
                           {checkIn ? format(checkIn, "MMM d") : 'Add dates'}
                         </div>
                     </div>
-                    <div className="flex-1">
+                     <Separator orientation="vertical" className="absolute left-1/2 top-1/2 -translate-y-1/2 -translate-x-1/2 h-8 hidden md:block group-hover:hidden"/>
+                    <div className="flex-1 px-4 py-2">
                         <div className="text-xs font-semibold">Check out</div>
                         <div className="text-sm text-muted-foreground">
                           {checkOut ? format(checkOut, "MMM d") : 'Add dates'}
@@ -103,57 +120,56 @@ function SearchBarWrapper({ className }: SearchBarProps) {
             </PopoverContent>
           </Popover>
 
-        <div className="flex-1 pl-4 pr-2 py-2 flex items-center gap-3 justify-between hover:bg-muted/50 rounded-full">
-            <div className="flex items-center gap-3 flex-1">
-                <Popover>
-                    <PopoverTrigger asChild>
-                        <button className="text-left w-full">
-                            <div className="text-xs font-semibold text-foreground">Who</div>
-                            <div className="text-base text-muted-foreground">
-                              {guests > 0 ? `${guests} guest${guests > 1 ? 's' : ''}` : 'Add guests'}
-                            </div>
-                        </button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-64">
-                        <div className="grid gap-4">
-                          <div className="space-y-2">
-                            <h4 className="font-medium leading-none">Guests</h4>
-                            <p className="text-sm text-muted-foreground">
-                              How many guests are coming?
-                            </p>
-                          </div>
-                            <div className="flex items-center justify-between">
-                                <Label className="text-base">Adults</Label>
-                                <div className="flex items-center gap-2">
-                                    <Button
-                                        type="button"
-                                        variant="outline"
-                                        size="icon"
-                                        className="h-8 w-8 rounded-full"
-                                        onClick={() => setGuests(prev => Math.max(1, prev - 1))}
-                                        disabled={guests <= 1}
-                                    >
-                                        <Minus className="h-4 w-4" />
-                                        <span className="sr-only">Decrease guests</span>
-                                    </Button>
-                                    <span className="w-8 text-center text-lg font-medium text-foreground">{guests}</span>
-                                    <Button
-                                        type="button"
-                                        variant="outline"
-                                        size="icon"
-                                        className="h-8 w-8 rounded-full"
-                                        onClick={() => setGuests(prev => prev + 1)}
-                                    >
-                                        <Plus className="h-4 w-4" />
-                                        <span className="sr-only">Increase guests</span>
-                                    </Button>
-                                </div>
+        {/* Guests and Search Button */}
+        <div className="pl-4 pr-2 py-2 flex items-center gap-3 justify-between hover:bg-muted/50 rounded-full">
+            <Popover>
+                <PopoverTrigger asChild>
+                    <button className="text-left w-full">
+                        <div className="text-xs font-semibold text-foreground">Who</div>
+                        <div className="text-sm text-muted-foreground">
+                          {guests > 0 ? `${guests} guest${guests > 1 ? 's' : ''}` : 'Add guests'}
+                        </div>
+                    </button>
+                </PopoverTrigger>
+                <PopoverContent className="w-64">
+                    <div className="grid gap-4">
+                      <div className="space-y-2">
+                        <h4 className="font-medium leading-none">Guests</h4>
+                        <p className="text-sm text-muted-foreground">
+                          How many guests are coming?
+                        </p>
+                      </div>
+                        <div className="flex items-center justify-between">
+                            <Label className="text-base">Adults</Label>
+                            <div className="flex items-center gap-2">
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    size="icon"
+                                    className="h-8 w-8 rounded-full"
+                                    onClick={() => setGuests(prev => Math.max(1, prev - 1))}
+                                    disabled={guests <= 1}
+                                >
+                                    <Minus className="h-4 w-4" />
+                                    <span className="sr-only">Decrease guests</span>
+                                </Button>
+                                <span className="w-8 text-center text-lg font-medium text-foreground">{guests}</span>
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    size="icon"
+                                    className="h-8 w-8 rounded-full"
+                                    onClick={() => setGuests(prev => prev + 1)}
+                                >
+                                    <Plus className="h-4 w-4" />
+                                    <span className="sr-only">Increase guests</span>
+                                </Button>
                             </div>
                         </div>
-                    </PopoverContent>
-                </Popover>
-            </div>
-            <Button size="icon" onClick={handleSearch} className="rounded-full h-10 w-10 flex-shrink-0">
+                    </div>
+                </PopoverContent>
+            </Popover>
+            <Button size="icon" onClick={handleSearch} className="rounded-full h-12 w-12 flex-shrink-0">
                 <SearchIcon className="h-5 w-5" />
                 <span className="sr-only">Search</span>
             </Button>
