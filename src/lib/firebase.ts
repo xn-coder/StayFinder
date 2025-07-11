@@ -16,13 +16,15 @@ let app: FirebaseApp | null = null;
 let auth: Auth | null = null;
 let db: Firestore | null = null;
 
+// Check if all required environment variables are defined and not just placeholders
 const allKeysDefined =
   firebaseConfig.apiKey &&
   firebaseConfig.authDomain &&
   firebaseConfig.projectId &&
   firebaseConfig.storageBucket &&
   firebaseConfig.messagingSenderId &&
-  firebaseConfig.appId;
+  firebaseConfig.appId &&
+  !Object.values(firebaseConfig).some(v => v?.includes('YOUR_'));
 
 if (typeof window !== 'undefined' && allKeysDefined) {
   try {
@@ -37,7 +39,7 @@ if (typeof window !== 'undefined' && allKeysDefined) {
     db = null;
   }
 } else if (!allKeysDefined) {
-  console.log("Firebase config keys are not all defined. Authentication will be disabled.");
+  console.log("Firebase config keys are not all defined or are placeholders. Authentication will be disabled.");
 }
 
 export { db, auth };
