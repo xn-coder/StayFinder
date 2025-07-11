@@ -63,7 +63,7 @@ function SearchBarWrapper({ className }: SearchBarProps) {
             <Input
               id="location"
               placeholder="Search destinations"
-              className="border-none bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 h-auto p-1 text-foreground placeholder:text-muted-foreground text-sm"
+              className="border-none bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 h-auto p-1 text-foreground placeholder:text-muted-foreground text-base"
               value={location}
               onChange={(e) => setLocation(e.target.value)}
             />
@@ -109,7 +109,7 @@ function SearchBarWrapper({ className }: SearchBarProps) {
                     <PopoverTrigger asChild>
                         <button className="text-left w-full">
                             <div className="text-xs font-semibold text-foreground">Who</div>
-                            <div className="text-sm text-muted-foreground">
+                            <div className="text-base text-muted-foreground">
                               {guests > 0 ? `${guests} guest${guests > 1 ? 's' : ''}` : 'Add guests'}
                             </div>
                         </button>

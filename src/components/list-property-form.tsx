@@ -377,7 +377,7 @@ export function ListPropertyForm() {
       case 1:
         return (
           <StepContainer title="Which of these best describes your place?">
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 max-h-[60vh] overflow-y-auto pr-3">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 max-h-[60vh] overflow-y-auto pr-3">
               {propertyTypes.map(({ type, icon: Icon }) => (
                 <button
                   key={type}
@@ -386,21 +386,21 @@ export function ListPropertyForm() {
                     nextStep();
                   }}
                   className={cn(
-                    "p-4 border rounded-lg transition-all duration-200 flex flex-col items-start gap-3 h-28 justify-end hover:shadow-md hover:border-primary/80",
+                    "p-4 border-2 rounded-lg transition-all duration-200 flex flex-col items-start gap-3 h-32 justify-between hover:shadow-lg hover:border-primary",
                     formData.type === type
-                      ? "border-primary bg-primary/5 shadow-md ring-2 ring-primary"
+                      ? "border-primary bg-accent shadow-md"
                       : "border-border bg-card hover:bg-muted/50"
                   )}
                 >
                   <Icon
                     className={cn(
-                      "w-7 h-7",
+                      "w-8 h-8",
                       formData.type === type
                         ? "text-primary"
                         : "text-muted-foreground"
                     )}
                   />
-                  <span className="font-semibold text-left">{type}</span>
+                  <span className="font-semibold text-left text-base">{type}</span>
                 </button>
               ))}
             </div>
@@ -443,7 +443,7 @@ export function ListPropertyForm() {
                 placeholder="e.g. Mumbai, India" 
                 value={formData.location || ''}
                 onChange={e => handleUpdateData({ location: e.target.value })}
-                className="h-14 text-lg"
+                className="h-14 text-lg border-2"
              />
           </StepContainer>
         );
@@ -500,7 +500,7 @@ export function ListPropertyForm() {
                 placeholder="e.g. Cozy Beachfront Cottage"
                 value={formData.name || ''}
                 onChange={e => handleUpdateData({ name: e.target.value })}
-                className="h-14 text-lg"
+                className="h-14 text-lg border-2"
              />
           </StepContainer>
         );
@@ -530,7 +530,7 @@ export function ListPropertyForm() {
                     placeholder="You'll have a great time at this comfortable place to stay."
                     value={formData.description || ''}
                     onChange={e => handleUpdateData({ description: e.target.value })}
-                    className="h-56 resize-none"
+                    className="h-56 resize-none border-2"
                 />
             </StepContainer>
         );
@@ -770,15 +770,15 @@ export function ListPropertyForm() {
       </div>
 
       <div className="mt-8 flex items-center">
-        <Button variant="outline" onClick={prevStep} disabled={step === 1}>Back</Button>
+        <Button variant="outline" size="lg" onClick={prevStep} disabled={step === 1} style={{ backgroundColor: '#ffffff', color: 'hsl(185 65% 23%)', borderColor: 'hsl(185 65% 23%)'}}>Back</Button>
         <div className="flex-grow"></div>
         {step < totalSteps && (
-          <Button onClick={nextStep}>
+          <Button size="lg" onClick={nextStep} style={{ backgroundColor: 'hsl(185 65% 23%)' }}>
             Next
           </Button>
         )}
         {step === totalSteps && (
-          <Button onClick={onSubmit} disabled={loading} size="lg">
+          <Button onClick={onSubmit} disabled={loading} size="lg" style={{ backgroundColor: 'hsl(185 65% 23%)' }}>
             {loading ? <Loader2 className="animate-spin" /> : <PartyPopper />}
             Submit Listing
           </Button>

@@ -3,7 +3,7 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { Globe, Euro, DollarSign, IndianRupee } from 'lucide-react';
+import { Globe, Euro, DollarSign, IndianRupee, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { LanguageCurrencyDialog } from '../language-currency-dialog';
 import { useSettings } from '@/hooks/use-settings';
@@ -13,32 +13,22 @@ const footerLinks = {
   Support: [
     { title: 'Help Centre', href: '/help' },
     { title: 'Get help with a safety issue', href: '/support/safety' },
-    { title: 'AirCover', href: '#' },
-    { title: 'Anti-discrimination', href: '#' },
-    { title: 'Disability support', href: '#' },
     { title: 'Cancellation options', href: '/cancellation-policy' },
-    { title: 'Report neighbourhood concern', href: '#' },
+    { title: 'Report neighborhood concern', href: '#' },
   ],
   Hosting: [
-    { title: 'StayFinder your home', href: '/list-property' },
-    { title: 'AirCover for Hosts', href: '#' },
+    { title: 'List your property', href: '/list-property' },
     { title: 'Hosting resources', href: '/hosting/resources' },
     { title: 'Community forum', href: '#' },
     { title: 'Hosting responsibly', href: '#' },
   ],
   StayFinder: [
     { title: 'Newsroom', href: '/newsroom' },
-    { title: 'New features', href: '#' },
     { title: 'Careers', href: '#' },
-    { title: 'Investors', href: '#' },
-    { title: 'Emergency stays', href: '#' },
+    { title: 'Contact Us', href: '/contact-us' },
+    { title: 'Privacy Policy', href: '/privacy-policy' },
   ],
 };
-
-const topDestinations = [
-    "Australia", "United States", "Indonesia", "Thailand", "United Kingdom", "Spain",
-    "Malaysia", "Italy", "Portugal", "France", "New Zealand", "Mexico",
-];
 
 const CurrencyIcon = ({ currency }: { currency: Currency }) => {
     switch (currency) {
@@ -55,32 +45,23 @@ export function Footer() {
 
   return (
     <>
-      <footer className="bg-gradient-to-br from-gradient-from via-gradient-via to-gradient-to text-white">
-        <div className="max-w-7xl mx-auto px-6 pt-10 pb-8 border-b border-teal-300/30">
-            <h3 className="text-2xl font-bold mb-6 text-[#aef0f4]">
-                Inspiration for future getaways
-            </h3>
-             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-y-4 text-sm">
-                {topDestinations.map((destination) => (
-                    <div key={destination}>
-                        <div className="hover:text-[#d0f4f7] cursor-pointer transition duration-200 font-semibold">
-                            {destination}
-                        </div>
-                        <div className="text-[#c8edf0cc] hover:text-white cursor-pointer text-xs">
-                            Hotels & Resorts
-                        </div>
-                    </div>
-                ))}
-            </div>
-        </div>
-
-        <div className="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-3 gap-8 text-sm">
+      <footer className="bg-background border-t">
+        <div className="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-4 gap-8 text-base">
+          <div className="md:col-span-1">
+             <Link href="/" className="flex items-center gap-2 mb-4">
+                <Home className="h-8 w-8 text-primary" />
+                <span className="font-bold font-headline text-2xl text-primary">StayFinder</span>
+            </Link>
+            <p className="text-muted-foreground text-sm">
+                Your next adventure is just a stay away.
+            </p>
+          </div>
           <div>
-            <h3 className="font-semibold mb-4 uppercase text-xs tracking-wide text-[#aef0f4]">Support</h3>
-            <ul className="space-y-3 text-[#c8edf0cc]">
+            <h3 className="font-semibold mb-4 text-foreground">Support</h3>
+            <ul className="space-y-3 text-muted-foreground">
               {footerLinks.Support.map((link) => (
                 <li key={link.title}>
-                  <Link href={link.href} className="hover:text-white hover:underline underline-offset-2 cursor-pointer transition-colors">
+                  <Link href={link.href} className="hover:text-primary hover:underline underline-offset-2 cursor-pointer transition-colors">
                     {link.title}
                   </Link>
                 </li>
@@ -88,11 +69,11 @@ export function Footer() {
             </ul>
           </div>
           <div>
-            <h3 className="font-semibold mb-4 uppercase text-xs tracking-wide text-[#aef0f4]">Hosting</h3>
-            <ul className="space-y-3 text-[#c8edf0cc]">
+            <h3 className="font-semibold mb-4 text-foreground">Hosting</h3>
+            <ul className="space-y-3 text-muted-foreground">
               {footerLinks.Hosting.map((link) => (
                 <li key={link.title}>
-                  <Link href={link.href} className="hover:text-white hover:underline underline-offset-2 cursor-pointer transition-colors">
+                  <Link href={link.href} className="hover:text-primary hover:underline underline-offset-2 cursor-pointer transition-colors">
                     {link.title}
                   </Link>
                 </li>
@@ -100,11 +81,11 @@ export function Footer() {
             </ul>
           </div>
           <div>
-            <h3 className="font-semibold mb-4 uppercase text-xs tracking-wide text-[#aef0f4]">StayFinder</h3>
-            <ul className="space-y-3 text-[#c8edf0cc]">
+            <h3 className="font-semibold mb-4 text-foreground">StayFinder</h3>
+            <ul className="space-y-3 text-muted-foreground">
               {footerLinks.StayFinder.map((link) => (
                 <li key={link.title}>
-                  <Link href={link.href} className="hover:text-white hover:underline underline-offset-2 cursor-pointer transition-colors">
+                  <Link href={link.href} className="hover:text-primary hover:underline underline-offset-2 cursor-pointer transition-colors">
                     {link.title}
                   </Link>
                 </li>
@@ -113,21 +94,17 @@ export function Footer() {
           </div>
         </div>
         
-        <div className="max-w-7xl mx-auto px-6 border-t border-teal-300/30">
+        <div className="max-w-7xl mx-auto px-6 border-t">
             <div className="flex flex-col md:flex-row justify-between items-center text-sm py-6">
-                <div className="flex flex-wrap gap-x-4 gap-y-2 text-[#c8edf0cc] mb-4 md:mb-0">
+                <div className="flex flex-wrap gap-x-4 gap-y-2 text-muted-foreground mb-4 md:mb-0">
                     <span>© {new Date().getFullYear()} StayFinder, Inc.</span>
-                    <Link href="#" className="hover:text-white">Privacy</Link>
-                    <Link href="#" className="hover:text-white">Terms</Link>
-                    <Link href="#" className="hover:text-white">Sitemap</Link>
-                    <Link href="#" className="hover:text-white">Company details</Link>
                 </div>
-                <div className="flex items-center gap-4 text-[#d0f4f7]">
-                    <Button variant="link" className="text-current p-0 h-auto font-semibold" onClick={() => setIsLangCurrencyOpen(true)}>
+                <div className="flex items-center gap-4">
+                    <Button variant="ghost" className="text-muted-foreground p-0 h-auto font-semibold hover:text-primary" onClick={() => setIsLangCurrencyOpen(true)}>
                         <Globe className="mr-2 h-4 w-4" />
                         {languageName}
                     </Button>
-                    <Button variant="link" className="text-current p-0 h-auto font-semibold" onClick={() => setIsLangCurrencyOpen(true)}>
+                    <Button variant="ghost" className="text-muted-foreground p-0 h-auto font-semibold hover:text-primary" onClick={() => setIsLangCurrencyOpen(true)}>
                         <CurrencyIcon currency={currency} />
                         {currency}
                     </Button>

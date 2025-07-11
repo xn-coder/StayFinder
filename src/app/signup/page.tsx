@@ -4,9 +4,9 @@ import Link from 'next/link';
 export default function SignupPage() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background p-4">
-       <div className="w-full max-w-md">
+       <div className="w-full max-w-lg">
         <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold font-headline">
+            <h1 className="text-4xl font-bold font-headline">
               Join StayFinder
             </h1>
             <p className="text-muted-foreground">

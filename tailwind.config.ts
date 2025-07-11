@@ -8,10 +8,17 @@ export default {
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
+    container: {
+      center: true,
+      padding: '2rem',
+      screens: {
+        '2xl': '1400px',
+      },
+    },
     extend: {
       fontFamily: {
-        body: ['"PT Sans"', 'sans-serif'],
-        headline: ['Poppins', 'sans-serif'],
+        body: ['"Lato"', 'sans-serif'],
+        headline: ['"Playfair Display"', 'serif'],
         code: ['monospace'],
       },
       colors: {
@@ -55,9 +62,6 @@ export default {
           '4': 'hsl(var(--chart-4))',
           '5': 'hsl(var(--chart-5))',
         },
-        'gradient-from': '#031f2d',
-        'gradient-via': '#0c4d52',
-        'gradient-to': '#155e63',
       },
       borderRadius: {
         lg: 'var(--radius)',
@@ -81,15 +85,10 @@ export default {
             height: '0',
           },
         },
-        'toast-progress': {
-          '0%': { width: '100%' },
-          '100%': { width: '0%' },
-        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
-        'toast-progress': 'toast-progress 5s linear forwards',
       },
     },
   },
