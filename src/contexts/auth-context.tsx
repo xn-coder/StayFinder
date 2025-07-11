@@ -3,7 +3,6 @@
 
 import React, { createContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import type { User, UserRole, UserVerificationStatus } from '@/types';
-import { dummyUsers as initialUsers } from '@/lib/dummy-data';
 import { db, auth } from '@/lib/firebase';
 import { 
   createUserWithEmailAndPassword,
@@ -85,37 +84,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setLoading(false);
       return;
     }
-    const usersCollection = collection(db, 'users');
 
-    const setupFirestore = async () => {
-      const snapshot = await getDocs(usersCollection);
-      if (snapshot.empty) {
-        console.log('No users found, seeding database...');
-        const batch = writeBatch(db);
-        initialUsers.forEach(u => {
-          const docRef = doc(db, 'users', u.id);
-           if (u.id.startsWith('user-')) {
-             batch.set(docRef, u);
-           }
+    const unsubscribe = onSnapshot(query(collection(db, 'users')), (snapshot) => {
+        const updatedUsers: User[] = [];
+        snapshot.forEach(doc => {
+            updatedUsers.push({ id: doc.id, ...doc.data() } as User);
         });
-        await batch.commit();
-        console.log('Users collection seeded.');
-      }
-    };
-    
-    setupFirestore().then(() => {
-      const unsubscribe = onSnapshot(query(collection(db, 'users')), (snapshot) => {
-          const updatedUsers: User[] = [];
-          snapshot.forEach(doc => {
-              updatedUsers.push({ id: doc.id, ...doc.data() } as User);
-          });
-          setUsers(updatedUsers);
-      }, (error) => {
-          console.error("Error fetching users snapshot: ", error);
-      });
-
-      return () => unsubscribe();
+        setUsers(updatedUsers);
+    }, (error) => {
+        console.error("Error fetching users snapshot: ", error);
     });
+
+    return () => unsubscribe();
   }, []);
 
   // Firebase Auth state listener
@@ -162,7 +142,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return userCredential.user;
     } catch(error) {
         const authError = error as AuthError;
-        if (authError.code === AuthErrorCodes.INVALID_LOGIN_CREDENTIALS) {
+        if (authError.code === AuthErrorCodes.INVALID_LOGIN_CREDENTIALS || authError.code === 'auth/user-not-found') {
             throw new Error("Invalid email or password. Please try again.");
         }
         console.error("Firebase login error:", error);
