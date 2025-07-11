@@ -79,7 +79,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Initialize and subscribe to users collection
   useEffect(() => {
     if (!db) {
-      console.error("Firestore is not initialized. Check Firebase config.");
+      console.log("Firestore is not initialized. Check Firebase config.");
       setLoading(false);
       return;
     }
