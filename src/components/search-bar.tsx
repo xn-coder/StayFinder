@@ -23,6 +23,37 @@ interface SearchBarProps {
     className?: string;
 }
 
+const Counter = ({ title, subtitle, value, onUpdate, min = 0 }: { title: string; subtitle: string; value: number; onUpdate: (newValue: number) => void, min?: number }) => (
+    <div className="flex items-center justify-between py-2">
+        <div>
+            <Label className="text-base font-normal">{title}</Label>
+            <p className="text-sm text-muted-foreground">{subtitle}</p>
+        </div>
+        <div className="flex items-center gap-2">
+            <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                className="h-8 w-8 rounded-full"
+                onClick={() => onUpdate(Math.max(min, value - 1))}
+                disabled={value <= min}
+            >
+                <Minus className="h-4 w-4" />
+            </Button>
+            <span className="w-8 text-center text-lg font-medium text-foreground">{value}</span>
+            <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                className="h-8 w-8 rounded-full"
+                onClick={() => onUpdate(value + 1)}
+            >
+                <Plus className="h-4 w-4" />
+            </Button>
+        </div>
+    </div>
+);
+
 function SearchBarWrapper({ className }: SearchBarProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -34,13 +65,23 @@ function SearchBarWrapper({ className }: SearchBarProps) {
   };
 
   const [location, setLocation] = useState('');
-  const [guests, setGuests] = useState(2);
+  const [adults, setAdults] = useState(2);
+  const [children, setChildren] = useState(0);
+  const [infants, setInfants] = useState(0);
+  const [pets, setPets] = useState(0);
   const [checkIn, setCheckIn] = useState<Date | undefined>();
   const [checkOut, setCheckOut] = useState<Date | undefined>();
+  
+  const totalGuests = adults + children;
 
   useEffect(() => {
       setLocation(searchParams.get('location') || '');
-      setGuests(searchParams.get('guests') ? Number(searchParams.get('guests')) : 2);
+      setAdults(searchParams.get('guests') ? Number(searchParams.get('guests')) : 2);
+      // For simplicity, we'll only load the main guest count.
+      // A more complex implementation could store/load all guest types.
+      setChildren(0);
+      setInfants(0);
+      setPets(0);
       setCheckIn(getValidDate(searchParams.get('from')));
       setCheckOut(getValidDate(searchParams.get('to')));
   }, [searchParams]);
@@ -50,9 +91,18 @@ function SearchBarWrapper({ className }: SearchBarProps) {
     if (location) params.append('location', location);
     if (checkIn) params.append('from', format(checkIn, 'yyyy-MM-dd'));
     if (checkOut) params.append('to', format(checkOut, 'yyyy-MM-dd'));
-    if (guests > 0) params.append('guests', String(guests));
+    if (totalGuests > 0) params.append('guests', String(totalGuests));
+    if (pets > 0) params.append('pets', String(pets)); // Can be used for filtering later
     router.push(`/search?${params.toString()}`);
   };
+
+  const guestSummary = () => {
+    if (totalGuests === 0) return 'Add guests';
+    let summary = `${totalGuests} guest${totalGuests > 1 ? 's' : ''}`;
+    if (infants > 0) summary += `, ${infants} infant${infants > 1 ? 's' : ''}`;
+    if (pets > 0) summary += `, ${pets} pet${pets > 1 ? 's' : ''}`;
+    return summary;
+  }
 
   return (
     <div className={cn("bg-background p-1.5 rounded-full shadow-lg border w-full max-w-3xl mx-auto", className)}>
@@ -126,46 +176,20 @@ function SearchBarWrapper({ className }: SearchBarProps) {
                 <PopoverTrigger asChild>
                     <button className="text-left w-full">
                         <div className="text-xs font-semibold text-foreground">Who</div>
-                        <div className="text-sm text-muted-foreground">
-                          {guests > 0 ? `${guests} guest${guests > 1 ? 's' : ''}` : 'Add guests'}
+                        <div className="text-sm text-muted-foreground truncate">
+                          {guestSummary()}
                         </div>
                     </button>
                 </PopoverTrigger>
-                <PopoverContent className="w-64">
+                <PopoverContent className="w-80">
                     <div className="grid gap-4">
-                      <div className="space-y-2">
-                        <h4 className="font-medium leading-none">Guests</h4>
-                        <p className="text-sm text-muted-foreground">
-                          How many guests are coming?
-                        </p>
-                      </div>
-                        <div className="flex items-center justify-between">
-                            <Label className="text-base">Adults</Label>
-                            <div className="flex items-center gap-2">
-                                <Button
-                                    type="button"
-                                    variant="outline"
-                                    size="icon"
-                                    className="h-8 w-8 rounded-full"
-                                    onClick={() => setGuests(prev => Math.max(1, prev - 1))}
-                                    disabled={guests <= 1}
-                                >
-                                    <Minus className="h-4 w-4" />
-                                    <span className="sr-only">Decrease guests</span>
-                                </Button>
-                                <span className="w-8 text-center text-lg font-medium text-foreground">{guests}</span>
-                                <Button
-                                    type="button"
-                                    variant="outline"
-                                    size="icon"
-                                    className="h-8 w-8 rounded-full"
-                                    onClick={() => setGuests(prev => prev + 1)}
-                                >
-                                    <Plus className="h-4 w-4" />
-                                    <span className="sr-only">Increase guests</span>
-                                </Button>
-                            </div>
-                        </div>
+                      <Counter title="Adults" subtitle="Ages 13 or above" value={adults} onUpdate={setAdults} min={1}/>
+                      <Separator />
+                      <Counter title="Children" subtitle="Ages 2–12" value={children} onUpdate={setChildren} />
+                      <Separator />
+                      <Counter title="Infants" subtitle="Under 2" value={infants} onUpdate={setInfants} />
+                      <Separator />
+                      <Counter title="Pets" subtitle="Bringing a service animal?" value={pets} onUpdate={setPets} />
                     </div>
                 </PopoverContent>
             </Popover>
