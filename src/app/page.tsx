@@ -77,13 +77,22 @@ const PropertySection = ({ title, properties }: { title: string; properties: Pro
 export default function Home() {
   const { properties, loading } = useProperties();
 
-  const { topRatedStays, uniqueStays } = useMemo(() => {
+  const { topRatedStays, uniqueStays, newlyAddedStays } = useMemo(() => {
     const approvedProperties = properties.filter(p => p.status === 'approved');
-    const topRated = approvedProperties.filter(p => p.rating >= 4.9).slice(0, 10);
-    const uniqueTypes = ['Castle', 'Tree house', 'Boat', 'Houseboat', 'Yurt', 'Barn'];
-    const unique = approvedProperties.filter(p => uniqueTypes.includes(p.type)).slice(0, 10);
+
+    const topRated = [...approvedProperties]
+      .sort((a, b) => b.rating - a.rating)
+      .slice(0, 10);
     
-    return { topRatedStays: topRated, uniqueStays: unique };
+    const uniqueTypes = ['Castle', 'Tree house', 'Boat', 'Houseboat', 'Yurt', 'Barn', 'Cabin', 'Windmill'];
+    const unique = approvedProperties
+      .filter(p => uniqueTypes.includes(p.type))
+      .slice(0, 10);
+
+    // Sort by creation time (assuming properties have it) or just take the last few as a proxy
+    const newlyAdded = [...approvedProperties].reverse().slice(0, 10);
+    
+    return { topRatedStays: topRated, uniqueStays: unique, newlyAddedStays: newlyAdded };
   }, [properties]);
 
 
@@ -95,11 +104,13 @@ export default function Home() {
           <>
             <PropertySectionSkeleton title="Top-rated Stays" />
             <PropertySectionSkeleton title="Unique Stays" />
+            <PropertySectionSkeleton title="Newly Added" />
           </>
         ) : (
             <>
                 <PropertySection title="Top-rated Stays" properties={topRatedStays} />
                 <PropertySection title="Unique Stays" properties={uniqueStays} />
+                <PropertySection title="Newly Added Stays" properties={newlyAddedStays} />
             </>
         )}
       </main>
