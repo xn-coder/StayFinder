@@ -24,12 +24,12 @@ interface SearchBarProps {
 }
 
 const Counter = ({ title, subtitle, value, onUpdate, min = 0 }: { title: string; subtitle: string; value: number; onUpdate: (newValue: number) => void, min?: number }) => (
-    <div className="flex items-center justify-between py-2">
+    <div className="flex items-center justify-between">
         <div>
-            <Label className="text-base font-normal">{title}</Label>
+            <p className="font-medium">{title}</p>
             <p className="text-sm text-muted-foreground">{subtitle}</p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-4">
             <Button
                 type="button"
                 variant="outline"
@@ -40,7 +40,9 @@ const Counter = ({ title, subtitle, value, onUpdate, min = 0 }: { title: string;
             >
                 <Minus className="h-4 w-4" />
             </Button>
-            <span className="w-8 text-center text-lg font-medium text-foreground">{value}</span>
+            <span className="w-5 text-center text-lg font-medium tabular-nums">
+                {value}
+            </span>
             <Button
                 type="button"
                 variant="outline"
@@ -182,7 +184,7 @@ function SearchBarWrapper({ className }: SearchBarProps) {
                     </button>
                 </PopoverTrigger>
                 <PopoverContent className="w-80">
-                    <div className="grid gap-4">
+                    <div className="space-y-4">
                       <Counter title="Adults" subtitle="Ages 13 or above" value={adults} onUpdate={setAdults} min={1}/>
                       <Separator />
                       <Counter title="Children" subtitle="Ages 2–12" value={children} onUpdate={setChildren} />
