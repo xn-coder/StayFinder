@@ -12,9 +12,9 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-let app: FirebaseApp | null = null;
-let auth: Auth | null = null;
-let db: Firestore | null = null;
+let app: FirebaseApp;
+let auth: Auth;
+let db: Firestore;
 
 // Check if all required environment variables are defined and not just placeholders
 const allKeysDefined =
@@ -28,18 +28,22 @@ const allKeysDefined =
 
 if (typeof window !== 'undefined' && allKeysDefined) {
   try {
-    app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
+    app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
     auth = getAuth(app);
     db = getFirestore(app);
   } catch (e) {
     console.error("Failed to initialize Firebase", e);
-    // Set to null if initialization fails
+    // Set to null if initialization fails to avoid further errors
+    // @ts-ignore
     app = null;
+    // @ts-ignore
     auth = null;
+    // @ts-ignore
     db = null;
   }
 } else if (!allKeysDefined) {
-  console.log("Firebase config keys are not all defined or are placeholders. Authentication will be disabled.");
+  console.log("Firebase config keys are not all defined or are placeholders. Firebase will be disabled.");
 }
 
+// @ts-ignore
 export { db, auth };

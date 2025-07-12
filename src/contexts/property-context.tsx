@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { createContext, useState, useCallback, ReactNode, useEffect } from 'react';
@@ -37,6 +36,7 @@ interface PropertyContextType {
   updateInquiryStatus: (id: string, status: InquiryStatus) => void;
   addReviewAndRating: (bookingId: string, propertyId: string, rating: number, comment: string) => Promise<void>;
   loading: boolean;
+  error: string | null; // Added for better error feedback
 }
 
 export const PropertyContext = createContext<PropertyContextType | undefined>(undefined);
@@ -46,20 +46,24 @@ export function PropertyProvider({ children }: { children: ReactNode }) {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null); // Added error state
 
   useEffect(() => {
     if (!db) {
       console.log("Firestore is not initialized. Skipping data fetching.");
+      setError("Database connection is not configured.");
       setLoading(false);
       return;
     }
 
-    const setupFirestore = async () => {
-      setLoading(true);
+    // This function handles the initial fetch and sets up real-time listeners.
+    const initializeData = async () => {
       try {
+        // 1. Explicitly fetch initial properties data
         const propertiesCollection = collection(db, 'properties');
         let propertiesSnapshot = await getDocs(propertiesCollection);
         
+        // 2. Seed the database if it's empty on first load
         if (propertiesSnapshot.empty) {
           console.log('No properties found, seeding database...');
           const batch = writeBatch(db);
@@ -69,71 +73,88 @@ export function PropertyProvider({ children }: { children: ReactNode }) {
           });
           await batch.commit();
           console.log('Database seeded.');
+          // Re-fetch the data after seeding
+          propertiesSnapshot = await getDocs(propertiesCollection);
         }
 
-        const unsubscribeProperties = onSnapshot(query(collection(db, 'properties')), (snapshot) => {
-            const updatedProps: Property[] = [];
-            snapshot.forEach(doc => {
-                updatedProps.push({ id: doc.id, ...doc.data() } as Property);
-            });
-            setProperties(updatedProps);
-            setLoading(false); // Set loading to false after initial fetch
-        }, (error) => {
-            console.error("Error fetching properties: ", error);
-            setLoading(false);
+        // 3. Populate state with the initial data
+        const initialProps: Property[] = [];
+        propertiesSnapshot.forEach(doc => {
+            initialProps.push({ id: doc.id, ...doc.data() } as Property);
         });
+        setProperties(initialProps);
 
-        const unsubscribeBookings = onSnapshot(query(collection(db, 'bookings'), orderBy('createdAt', 'desc')), (snapshot) => {
-            const newBookings: Booking[] = [];
-            snapshot.forEach(doc => {
-                const data = doc.data();
-                newBookings.push({
-                    id: doc.id,
-                    ...data,
-                    dateRange: {
-                        from: (data.dateRange.from as Timestamp).toDate(),
-                        to: (data.dateRange.to as Timestamp).toDate(),
-                    },
-                    createdAt: (data.createdAt as Timestamp).toDate().toISOString(),
-                } as Booking);
-            });
-            setBookings(newBookings);
-        }, (error) => {
-            console.error("Error fetching bookings: ", error);
-        });
-
-        const unsubscribeInquiries = onSnapshot(query(collection(db, 'inquiries'), orderBy('createdAt', 'desc')), (snapshot) => {
-            const newInquiries: Inquiry[] = [];
-            snapshot.forEach(doc => {
-                const data = doc.data();
-                newInquiries.push({
-                    id: doc.id,
-                    ...data,
-                    createdAt: (data.createdAt as Timestamp).toDate().toISOString(),
-                } as Inquiry);
-            });
-            setInquiries(newInquiries);
-        }, (error) => {
-            console.error("Error fetching inquiries: ", error);
-        });
-
-        return () => {
-          unsubscribeProperties();
-          unsubscribeBookings();
-          unsubscribeInquiries();
-        };
-
-      } catch (error) {
-        console.error("Error during Firestore setup: ", error);
+      } catch (err) {
+        console.error("Error during initial properties fetch/seed: ", err);
+        setError("Failed to load property data.");
+      } finally {
+        // 4. Set loading to false after the initial load is complete
         setLoading(false);
-        return () => {};
       }
+
+      // 5. Now, set up real-time listeners for subsequent updates
+      const unsubscribeProperties = onSnapshot(query(collection(db, 'properties')), (snapshot) => {
+          const updatedProps: Property[] = [];
+          snapshot.forEach(doc => {
+              updatedProps.push({ id: doc.id, ...doc.data() } as Property);
+          });
+          setProperties(updatedProps);
+      }, (err) => {
+          console.error("Error with properties listener: ", err);
+          setError("Lost connection to properties data.");
+      });
+
+      const unsubscribeBookings = onSnapshot(query(collection(db, 'bookings'), orderBy('createdAt', 'desc')), (snapshot) => {
+          const newBookings: Booking[] = [];
+          snapshot.forEach(doc => {
+              const data = doc.data();
+              newBookings.push({
+                  id: doc.id,
+                  ...data,
+                  dateRange: {
+                      from: (data.dateRange.from as Timestamp).toDate(),
+                      to: (data.dateRange.to as Timestamp).toDate(),
+                  },
+                  createdAt: (data.createdAt as Timestamp).toDate().toISOString(),
+              } as Booking);
+          });
+          setBookings(newBookings);
+      }, (err) => {
+          console.error("Error with bookings listener: ", err);
+      });
+
+      const unsubscribeInquiries = onSnapshot(query(collection(db, 'inquiries'), orderBy('createdAt', 'desc')), (snapshot) => {
+          const newInquiries: Inquiry[] = [];
+          snapshot.forEach(doc => {
+              const data = doc.data();
+              newInquiries.push({
+                  id: doc.id,
+                  ...data,
+                  createdAt: (data.createdAt as Timestamp).toDate().toISOString(),
+              } as Inquiry);
+          });
+          setInquiries(newInquiries);
+      }, (err) => {
+          console.error("Error with inquiries listener: ", err);
+      });
+
+      // Return a cleanup function to unsubscribe from listeners on component unmount
+      return () => {
+        unsubscribeProperties();
+        unsubscribeBookings();
+        unsubscribeInquiries();
+      };
     };
     
-    const cleanupPromise = setupFirestore();
+    let cleanup = () => {};
+    initializeData().then(cleanupFn => {
+        if (cleanupFn) {
+            cleanup = cleanupFn;
+        }
+    });
 
     return () => {
-      cleanupPromise.then(cleanup => cleanup && cleanup());
+      cleanup();
     };
   }, []);
   
@@ -239,8 +260,6 @@ export function PropertyProvider({ children }: { children: ReactNode }) {
     const propertyDocRef = doc(db, 'properties', propertyId);
     const bookingDocRef = doc(db, 'bookings', bookingId);
 
-    // The 'comment' is available if you want to store it, e.g., in a subcollection.
-    // For this prototype, we'll just update the aggregate rating.
     try {
       await runTransaction(db, async (transaction) => {
         const propertyDoc = await transaction.get(propertyDocRef);
@@ -284,6 +303,7 @@ export function PropertyProvider({ children }: { children: ReactNode }) {
       updateInquiryStatus,
       addReviewAndRating,
       loading,
+      error,
   }
 
   return (
@@ -292,5 +312,3 @@ export function PropertyProvider({ children }: { children: ReactNode }) {
     </PropertyContext.Provider>
   );
 }
-
-    
