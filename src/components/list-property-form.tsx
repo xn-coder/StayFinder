@@ -400,7 +400,7 @@ export function ListPropertyForm() {
                         : "text-muted-foreground"
                     )}
                   />
-                  <span className="font-semibold text-left text-base">{type}</span>
+                  <span className="font-semibold text-left text-lg">{type}</span>
                 </button>
               ))}
             </div>
