@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
 import {
@@ -121,7 +121,7 @@ const Counter = ({ title, value, onUpdate }: { title: string, value: number, onU
     </div>
 );
 
-const StepContainer = React.memo(({ title, description, children }: { title: string, description?: string, children: React.ReactNode }) => {
+const StepContainer = (({ title, description, children }: { title: string, description?: string, children: React.ReactNode }) => {
     return (
         <div className="w-full animate-in fade-in-50 duration-500">
             <h2 className="text-3xl md:text-4xl font-bold font-headline mb-2">{title}</h2>
@@ -770,7 +770,7 @@ export function ListPropertyForm() {
       </div>
 
       <div className="mt-8 flex items-center">
-        <Button variant="outline" onClick={prevStep} disabled={step === 1} className="h-12 px-6">Back</Button>
+        <Button onClick={prevStep} disabled={step === 1} className="h-12 px-6">Back</Button>
         <div className="flex-grow"></div>
         {step < totalSteps && (
           <Button onClick={nextStep} className="h-12 px-8">
