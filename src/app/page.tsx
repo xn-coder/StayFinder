@@ -1,6 +1,7 @@
 
 'use client';
 
+import { useMemo } from 'react';
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { PropertyCard } from "@/components/property-card";
@@ -40,6 +41,7 @@ const PropertySection = ({ title, properties }: { title: string; properties: Pro
         <Carousel
             opts={{
                 align: "start",
+                dragFree: true,
             }}
             className="w-full"
         >
@@ -75,11 +77,14 @@ const PropertySection = ({ title, properties }: { title: string; properties: Pro
 export default function Home() {
   const { properties, loading } = useProperties();
 
-  const approvedProperties = properties.filter(p => p.status === 'approved');
-
-  const topRatedStays = approvedProperties.filter(p => p.rating >= 4.9).slice(0, 10);
-  const uniqueStayTypes = ['Castle', 'Tree house', 'Boat', 'Houseboat', 'Yurt', 'Barn'];
-  const uniqueStays = approvedProperties.filter(p => uniqueStayTypes.includes(p.type)).slice(0, 10);
+  const { topRatedStays, uniqueStays } = useMemo(() => {
+    const approvedProperties = properties.filter(p => p.status === 'approved');
+    const topRated = approvedProperties.filter(p => p.rating >= 4.9).slice(0, 10);
+    const uniqueTypes = ['Castle', 'Tree house', 'Boat', 'Houseboat', 'Yurt', 'Barn'];
+    const unique = approvedProperties.filter(p => uniqueTypes.includes(p.type)).slice(0, 10);
+    
+    return { topRatedStays: topRated, uniqueStays: unique };
+  }, [properties]);
 
 
   return (
