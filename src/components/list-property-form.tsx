@@ -770,16 +770,16 @@ export function ListPropertyForm() {
       </div>
 
       <div className="mt-8 flex items-center">
-        <Button variant="outline" size="lg" onClick={prevStep} disabled={step === 1}>Back</Button>
+        <Button variant="outline" onClick={prevStep} disabled={step === 1} className="h-12 px-6">Back</Button>
         <div className="flex-grow"></div>
         {step < totalSteps && (
-          <Button size="lg" onClick={nextStep}>
+          <Button onClick={nextStep} className="h-12 px-8">
             Next
           </Button>
         )}
         {step === totalSteps && (
-          <Button onClick={onSubmit} disabled={loading} size="lg">
-            {loading ? <Loader2 className="animate-spin" /> : <PartyPopper />}
+          <Button onClick={onSubmit} disabled={loading} className="h-12 px-8">
+            {loading ? <Loader2 className="animate-spin" /> : <PartyPopper className="mr-2" />}
             Submit Listing
           </Button>
         )}
