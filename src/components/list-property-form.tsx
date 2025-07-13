@@ -80,7 +80,7 @@ const propertyTypes = [
     { type: 'Bed & breakfast', icon: BedDouble },
     { type: 'Boat', icon: Ship },
     { type: 'Cabin', icon: Home },
-    { type: 'Campervan/motorhome', icon: Caravan },
+    { type: 'Campervan', icon: Caravan },
     { type: 'Casa particular', icon: Home },
     { type: 'Castle', icon: Castle },
     { type: 'Cave', icon: Mountain },
@@ -400,7 +400,7 @@ export function ListPropertyForm() {
                   key={type}
                   onClick={() => handleUpdateData({ type: type as any })}
                   className={cn(
-                    "p-4 border-2 rounded-lg transition-all duration-200 flex flex-col items-start gap-4 hover:shadow-lg hover:border-primary",
+                    "p-4 border-2 rounded-lg transition-all duration-200 flex flex-col items-start gap-3 justify-between hover:shadow-lg hover:border-primary",
                     formData.type === type
                       ? "border-primary bg-accent shadow-md"
                       : "border-border bg-card hover:bg-muted/50"
@@ -414,7 +414,7 @@ export function ListPropertyForm() {
                         : "text-muted-foreground"
                     )}
                   />
-                  <span className="font-semibold text-left text-base">{type}</span>
+                  <span className="font-semibold text-left text-lg">{type}</span>
                 </button>
               ))}
             </div>
