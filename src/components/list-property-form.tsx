@@ -126,7 +126,7 @@ const StepContainer = (({ title, description, children }: { title: string, descr
         <div className="w-full text-center animate-in fade-in-50 duration-500">
             <h2 className="text-3xl md:text-4xl font-bold font-headline mb-2">{title}</h2>
             {description && <p className="text-muted-foreground mb-8 text-lg max-w-2xl mx-auto">{description}</p>}
-            <div className="max-w-2xl mx-auto">
+            <div className="max-w-3xl mx-auto">
               {children}
             </div>
         </div>
@@ -285,7 +285,7 @@ export function ListPropertyForm() {
     }
   };
   
-  const imageInputRef = useRef<HTMLInputElement>(null);
+  const imageInputRef = React.useRef<HTMLInputElement>(null);
 
   const handleImageFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -390,7 +390,7 @@ export function ListPropertyForm() {
       case 1:
         return (
           <StepContainer title="Which of these best describes your place?">
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 max-h-[60vh] overflow-y-auto pr-3">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 max-h-[60vh] overflow-y-auto pr-3 scrollbar-hide">
               {propertyTypes.map(({ type, icon: Icon }) => (
                 <button
                   key={type}
@@ -419,7 +419,7 @@ export function ListPropertyForm() {
       case 2:
         return (
           <StepContainer title="What type of place will guests have?">
-            <div className="space-y-4">
+            <div className="space-y-4 max-w-xl mx-auto">
                 <button onClick={() => handleUpdateData({ privacyType: 'entire-place' })} className={cn("p-6 border-2 rounded-lg w-full text-left transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 flex justify-between items-center", formData.privacyType === 'entire-place' ? 'border-primary bg-accent shadow-lg' : 'border-border bg-background hover:border-primary')}>
                     <div>
                         <h3 className="font-bold text-xl">An entire place</h3>
@@ -460,10 +460,12 @@ export function ListPropertyForm() {
       case 4:
         return (
             <StepContainer title="Share some basics about your place" description="You'll add more details later, such as bed types.">
-                <Counter title="Max Guests" value={formData.maxGuests!} onUpdate={val => handleUpdateData({ maxGuests: val })} />
-                <Counter title="Bedrooms" value={formData.bedrooms!} onUpdate={val => handleUpdateData({ bedrooms: val })} />
-                <Counter title="Beds" value={formData.beds!} onUpdate={val => handleUpdateData({ beds: val })} />
-                <Counter title="Bathrooms" value={formData.baths!} onUpdate={val => handleUpdateData({ baths: val })} />
+                <div className="max-w-xl mx-auto">
+                    <Counter title="Max Guests" value={formData.maxGuests!} onUpdate={val => handleUpdateData({ maxGuests: val })} />
+                    <Counter title="Bedrooms" value={formData.bedrooms!} onUpdate={val => handleUpdateData({ bedrooms: val })} />
+                    <Counter title="Beds" value={formData.beds!} onUpdate={val => handleUpdateData({ beds: val })} />
+                    <Counter title="Bathrooms" value={formData.baths!} onUpdate={val => handleUpdateData({ baths: val })} />
+                </div>
             </StepContainer>
         );
       case 5:
