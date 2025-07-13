@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
 import {
@@ -123,10 +123,12 @@ const Counter = ({ title, value, onUpdate }: { title: string, value: number, onU
 
 const StepContainer = (({ title, description, children }: { title: string, description?: string, children: React.ReactNode }) => {
     return (
-        <div className="w-full animate-in fade-in-50 duration-500">
+        <div className="w-full text-center animate-in fade-in-50 duration-500">
             <h2 className="text-3xl md:text-4xl font-bold font-headline mb-2">{title}</h2>
-            {description && <p className="text-muted-foreground mb-8 text-lg">{description}</p>}
-            {children}
+            {description && <p className="text-muted-foreground mb-8 text-lg max-w-2xl mx-auto">{description}</p>}
+            <div className="max-w-2xl mx-auto">
+              {children}
+            </div>
         </div>
     )
 });
@@ -143,6 +145,7 @@ export function ListPropertyForm() {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<Partial<ListPropertyFormValues>>({
     type: '',
+    privacyType: undefined,
     pricePerNight: 1500,
     maxGuests: 4,
     bedrooms: 1,
@@ -167,14 +170,22 @@ export function ListPropertyForm() {
   });
 
   const totalSteps = 16;
-  
-  useEffect(() => {
-    if (step === 2 && formData.type && formData.type !== '') {
-      if (!validateStep(1)) {
-        setStep(1); // Revert step if validation fails (e.g., page reload)
-      }
+
+  const prevStep = () => setStep(prev => Math.max(prev - 1, 1));
+
+  const nextStep = () => {
+    if (validateStep(step)) {
+      setStep(prev => Math.min(prev + 1, totalSteps));
     }
-  }, [step, formData.type]);
+  };
+
+  useEffect(() => {
+    if (step === 1 && formData.type) {
+      nextStep();
+    } else if (step === 2 && formData.privacyType) {
+      nextStep();
+    }
+  }, [formData.type, formData.privacyType]);
 
   const validateStep = (currentStep: number): boolean => {
     switch (currentStep) {
@@ -247,13 +258,6 @@ export function ListPropertyForm() {
     return true;
   };
 
-  const nextStep = () => {
-    if (validateStep(step)) {
-      setStep(prev => Math.min(prev + 1, totalSteps));
-    }
-  };
-  const prevStep = () => setStep(prev => Math.max(prev - 1, 1));
-
   const handleUpdateData = (newData: Partial<ListPropertyFormValues>) => {
     setFormData(prev => ({ ...prev, ...newData }));
   };
@@ -281,7 +285,7 @@ export function ListPropertyForm() {
     }
   };
   
-  const imageInputRef = React.useRef<HTMLInputElement>(null);
+  const imageInputRef = useRef<HTMLInputElement>(null);
 
   const handleImageFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -390,10 +394,7 @@ export function ListPropertyForm() {
               {propertyTypes.map(({ type, icon: Icon }) => (
                 <button
                   key={type}
-                  onClick={() => {
-                    handleUpdateData({ type: type as any });
-                    nextStep();
-                  }}
+                  onClick={() => handleUpdateData({ type: type as any })}
                   className={cn(
                     "p-4 border-2 rounded-lg transition-all duration-200 flex flex-col items-start gap-3 h-32 justify-between hover:shadow-lg hover:border-primary",
                     formData.type === type
@@ -419,21 +420,21 @@ export function ListPropertyForm() {
         return (
           <StepContainer title="What type of place will guests have?">
             <div className="space-y-4">
-                <button onClick={() => { handleUpdateData({ privacyType: 'entire-place' }); nextStep(); }} className={cn("p-6 border-2 rounded-lg w-full text-left transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 flex justify-between items-center", formData.privacyType === 'entire-place' ? 'border-primary bg-accent shadow-lg' : 'border-border bg-background hover:border-primary')}>
+                <button onClick={() => handleUpdateData({ privacyType: 'entire-place' })} className={cn("p-6 border-2 rounded-lg w-full text-left transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 flex justify-between items-center", formData.privacyType === 'entire-place' ? 'border-primary bg-accent shadow-lg' : 'border-border bg-background hover:border-primary')}>
                     <div>
                         <h3 className="font-bold text-xl">An entire place</h3>
                         <p className="text-muted-foreground mt-1">Guests have the whole place to themselves.</p>
                     </div>
                     <Home className="w-10 h-10 text-muted-foreground" />
                 </button>
-                <button onClick={() => { handleUpdateData({ privacyType: 'room' }); nextStep(); }} className={cn("p-6 border-2 rounded-lg w-full text-left transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 flex justify-between items-center", formData.privacyType === 'room' ? 'border-primary bg-accent shadow-lg' : 'border-border bg-background hover:border-primary')}>
+                <button onClick={() => handleUpdateData({ privacyType: 'room' })} className={cn("p-6 border-2 rounded-lg w-full text-left transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 flex justify-between items-center", formData.privacyType === 'room' ? 'border-primary bg-accent shadow-lg' : 'border-border bg-background hover:border-primary')}>
                     <div>
                         <h3 className="font-bold text-xl">A room</h3>
                         <p className="text-muted-foreground mt-1">Guests have their own room in a home, plus access to shared spaces.</p>
                     </div>
                     <Bed className="w-10 h-10 text-muted-foreground" />
                 </button>
-                <button onClick={() => { handleUpdateData({ privacyType: 'shared-room' }); nextStep(); }} className={cn("p-6 border-2 rounded-lg w-full text-left transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 flex justify-between items-center", formData.privacyType === 'shared-room' ? 'border-primary bg-accent shadow-lg' : 'border-border bg-background hover:border-primary')}>
+                <button onClick={() => handleUpdateData({ privacyType: 'shared-room' })} className={cn("p-6 border-2 rounded-lg w-full text-left transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 flex justify-between items-center", formData.privacyType === 'shared-room' ? 'border-primary bg-accent shadow-lg' : 'border-border bg-background hover:border-primary')}>
                     <div>
                         <h3 className="font-bold text-xl">A shared room</h3>
                         <p className="text-muted-foreground mt-1">Guests sleep in a room with others and share the entire space.</p>
@@ -452,7 +453,7 @@ export function ListPropertyForm() {
                 placeholder="e.g. Mumbai, India" 
                 value={formData.location || ''}
                 onChange={e => handleUpdateData({ location: e.target.value })}
-                className="h-14 text-xl border-2"
+                className="h-14 text-xl border-2 text-center"
              />
           </StepContainer>
         );
@@ -468,9 +469,9 @@ export function ListPropertyForm() {
       case 5:
          return (
             <StepContainer title="Tell guests what your place has to offer" description="You can add more amenities after you publish.">
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-h-[50vh] overflow-y-auto pr-2">
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-h-[50vh] overflow-y-auto pr-2 text-left">
                     {allAmenities.map(amenity => (
-                        <button key={amenity} onClick={() => handleAmenityToggle(amenity)} className={cn("p-4 border-2 rounded-lg text-left hover:border-primary transition-colors flex items-center gap-3", (formData.amenities || []).includes(amenity) ? 'border-primary bg-primary/10' : 'border-border')}>
+                        <button key={amenity} onClick={() => handleAmenityToggle(amenity)} className={cn("p-4 border-2 rounded-lg hover:border-primary transition-colors flex items-center gap-3", (formData.amenities || []).includes(amenity) ? 'border-primary bg-primary/10' : 'border-border')}>
                            <span className="font-semibold">{amenity}</span>
                         </button>
                     ))}
@@ -509,7 +510,7 @@ export function ListPropertyForm() {
                 placeholder="e.g. Cozy Beachfront Cottage"
                 value={formData.name || ''}
                 onChange={e => handleUpdateData({ name: e.target.value })}
-                className="h-14 text-lg border-2"
+                className="h-14 text-lg border-2 text-center"
              />
           </StepContainer>
         );
@@ -539,7 +540,7 @@ export function ListPropertyForm() {
                     placeholder="You'll have a great time at this comfortable place to stay."
                     value={formData.description || ''}
                     onChange={e => handleUpdateData({ description: e.target.value })}
-                    className="h-56 resize-none border-2"
+                    className="h-56 resize-none border-2 text-base"
                 />
             </StepContainer>
         );
@@ -557,10 +558,10 @@ export function ListPropertyForm() {
                     value={formData.pricePerNight || ''}
                     onChange={e => handleUpdateData({ pricePerNight: Number(e.target.value) })}
                     onWheel={e => (e.target as HTMLElement).blur()}
-                    className="h-24 flex-1 text-8xl font-bold font-mono bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 p-0 text-foreground text-left"
+                    className="h-24 flex-1 text-8xl font-bold font-mono bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 p-0 text-foreground text-center"
                 />
              </div>
-             <div className="mt-6 border-t pt-4 space-y-2 text-muted-foreground max-w-sm mx-auto">
+             <div className="mt-6 border-t pt-4 space-y-2 text-muted-foreground max-w-sm mx-auto text-left">
                 <div className="flex justify-between"><span>Base price</span><span>{currencySymbol}{basePrice.toLocaleString()}</span></div>
                 <div className="flex justify-between"><span>Guest service fee</span><span>{currencySymbol}{guestFee.toLocaleString()}</span></div>
                 <div className="flex justify-between font-bold text-foreground"><span>Guest price before taxes</span><span>{currencySymbol}{guestPrice.toLocaleString()}</span></div>
@@ -577,7 +578,7 @@ export function ListPropertyForm() {
                     <h3 className="text-4xl font-bold">{currencySymbol}{weekendPrice.toLocaleString()}</h3>
                     <p className="text-muted-foreground">Guest price before taxes: {currencySymbol}{(weekendPrice * 1.14).toLocaleString()}</p>
                 </div>
-                <div className="mt-8 max-w-sm mx-auto">
+                <div className="mt-8 max-w-sm mx-auto text-left">
                     <Label>Weekend premium (Tip: Try 3%)</Label>
                     <div className="flex items-center gap-4 mt-2">
                         <Slider
@@ -594,15 +595,15 @@ export function ListPropertyForm() {
       case 12:
         return (
             <StepContainer title="Choose who to welcome for your first reservation" description="After your first guest, anyone can book your place.">
-                <div className="space-y-4">
-                    <button onClick={() => { handleUpdateData({ firstGuestChoice: 'any' }); nextStep(); }} className={cn("p-6 border-2 rounded-lg w-full text-left hover:border-primary transition-colors flex justify-between items-center", formData.firstGuestChoice === 'any' ? 'border-primary bg-primary/10' : 'border-border')}>
+                <div className="space-y-4 text-left">
+                    <button onClick={() => { handleUpdateData({ firstGuestChoice: 'any' }); nextStep(); }} className={cn("p-6 border-2 rounded-lg w-full hover:border-primary transition-colors flex justify-between items-center", formData.firstGuestChoice === 'any' ? 'border-primary bg-primary/10' : 'border-border')}>
                         <div>
                             <h3 className="font-bold text-lg">Any StayFinder guest</h3>
                             <p className="text-muted-foreground">Get reservations faster when you welcome anyone from the community.</p>
                         </div>
                         <Users className="w-8 h-8 text-muted-foreground" />
                     </button>
-                    <button onClick={() => { handleUpdateData({ firstGuestChoice: 'experienced' }); nextStep(); }} className={cn("p-6 border-2 rounded-lg w-full text-left hover:border-primary transition-colors flex justify-between items-center", formData.firstGuestChoice === 'experienced' ? 'border-primary bg-primary/10' : 'border-border')}>
+                    <button onClick={() => { handleUpdateData({ firstGuestChoice: 'experienced' }); nextStep(); }} className={cn("p-6 border-2 rounded-lg w-full hover:border-primary transition-colors flex justify-between items-center", formData.firstGuestChoice === 'experienced' ? 'border-primary bg-primary/10' : 'border-border')}>
                         <div>
                             <h3 className="font-bold text-lg">An experienced guest</h3>
                             <p className="text-muted-foreground">Welcome someone with a good track record on StayFinder.</p>
@@ -616,7 +617,7 @@ export function ListPropertyForm() {
         const discounts = formData.discounts!;
         return (
           <StepContainer title="Add discounts" description="Help your place stand out to get booked faster and earn your first reviews.">
-            <div className="space-y-4">
+            <div className="space-y-4 text-left">
 
               <div className="p-4 border rounded-lg flex justify-between items-center">
                 <div>
@@ -696,7 +697,7 @@ export function ListPropertyForm() {
         const safety = formData.safetyDetails!;
         return (
           <StepContainer title="Share safety details" description="Does your place have any of these?">
-            <div className="space-y-4">
+            <div className="space-y-4 text-left">
               <div className="flex justify-between items-center p-4 border rounded-lg">
                 <Label htmlFor="camera-switch" className="flex items-center gap-2"><Video /> Exterior security camera</Label>
                 <Switch
@@ -722,7 +723,7 @@ export function ListPropertyForm() {
                 />
               </div>
             </div>
-             <div className="mt-6 p-4 bg-muted/50 rounded-lg text-sm text-muted-foreground">
+             <div className="mt-6 p-4 bg-muted/50 rounded-lg text-sm text-muted-foreground text-left">
                 <h4 className="font-semibold text-foreground mb-2">Important things to know</h4>
                 <p>Security cameras that monitor indoor spaces are not allowed even if they’re turned off. All exterior security cameras must be disclosed. Be sure to comply with your local laws.</p>
             </div>
@@ -731,8 +732,8 @@ export function ListPropertyForm() {
       case 15:
         return (
           <StepContainer title="Pick your booking settings" description="You can change this at any time.">
-            <div className="space-y-4">
-                <button onClick={() => handleUpdateData({ bookingPolicy: 'review-first' })} className={cn("p-6 border-2 rounded-lg w-full text-left hover:border-primary transition-colors flex justify-between items-center", formData.bookingPolicy === 'review-first' ? 'border-primary bg-primary/10' : 'border-border')}>
+            <div className="space-y-4 text-left">
+                <button onClick={() => handleUpdateData({ bookingPolicy: 'review-first' })} className={cn("p-6 border-2 rounded-lg w-full hover:border-primary transition-colors flex justify-between items-center", formData.bookingPolicy === 'review-first' ? 'border-primary bg-primary/10' : 'border-border')}>
                     <div>
                         <h3 className="font-bold text-lg flex items-center gap-2">
                           Approve your first 5 bookings
@@ -742,7 +743,7 @@ export function ListPropertyForm() {
                     </div>
                     <ThumbsUp className="w-8 h-8 text-muted-foreground" />
                 </button>
-                <button onClick={() => handleUpdateData({ bookingPolicy: 'instant-book' })} className={cn("p-6 border-2 rounded-lg w-full text-left hover:border-primary transition-colors flex justify-between items-center", formData.bookingPolicy === 'instant-book' ? 'border-primary bg-primary/10' : 'border-border')}>
+                <button onClick={() => handleUpdateData({ bookingPolicy: 'instant-book' })} className={cn("p-6 border-2 rounded-lg w-full hover:border-primary transition-colors flex justify-between items-center", formData.bookingPolicy === 'instant-book' ? 'border-primary bg-primary/10' : 'border-border')}>
                     <div>
                         <h3 className="font-bold text-lg">Use Instant Book</h3>
                         <p className="text-muted-foreground mt-1">Let guests who meet your requirements book automatically.</p>
@@ -774,7 +775,7 @@ export function ListPropertyForm() {
         <Progress value={(step / totalSteps) * 100} className="w-full h-2" />
       </div>
       
-      <div className="min-h-[450px] flex items-center justify-center">
+      <div className="min-h-[50vh] flex items-center justify-center">
         {renderContent()}
       </div>
 
