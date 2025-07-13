@@ -15,7 +15,7 @@ const ListPropertyIntro = ({ onGetStarted }: { onGetStarted: () => void }) => {
       <div className="grid md:grid-cols-2 gap-16 items-center">
         {/* Left Column */}
         <div className="text-left">
-          <h1 className="text-4xl md:text-5xl font-bold font-headline mb-4 bg-gradient-to-r from-gradient-from via-gradient-via to-gradient-to text-transparent bg-clip-text">
+          <h1 className="text-4xl md:text-5xl font-bold font-headline mb-4 text-primary">
             It's easy to get started on StayFinder
           </h1>
         </div>
