@@ -457,7 +457,7 @@ export function ListPropertyForm() {
                 placeholder="e.g. Mumbai, India" 
                 value={formData.location || ''}
                 onChange={e => handleUpdateData({ location: e.target.value })}
-                className="h-14 text-2xl border-2 text-center"
+                className="h-14 text-4xl border-2 text-center"
              />
           </StepContainer>
         );
