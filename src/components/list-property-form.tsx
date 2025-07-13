@@ -400,7 +400,7 @@ export function ListPropertyForm() {
                   key={type}
                   onClick={() => handleUpdateData({ type: type as any })}
                   className={cn(
-                    "p-4 border-2 rounded-lg transition-all duration-200 flex flex-col items-start gap-3 justify-between hover:shadow-lg hover:border-primary",
+                    "p-4 border-2 rounded-lg transition-all duration-200 flex flex-col items-start gap-4 hover:shadow-lg hover:border-primary",
                     formData.type === type
                       ? "border-primary bg-accent shadow-md"
                       : "border-border bg-card hover:bg-muted/50"
@@ -414,7 +414,7 @@ export function ListPropertyForm() {
                         : "text-muted-foreground"
                     )}
                   />
-                  <span className="font-semibold text-left text-lg">{type}</span>
+                  <span className="font-semibold text-left text-base">{type}</span>
                 </button>
               ))}
             </div>
@@ -558,13 +558,13 @@ export function ListPropertyForm() {
         return (
           <StepContainer title="Now, set your weekday base price" description={`Tip: You can set a different price for weekends.`}>
              <div className="flex justify-center items-baseline h-24">
-                <span className="text-8xl font-bold font-mono text-muted-foreground">{currencySymbol}</span>
+                <span className="text-9xl font-bold font-mono text-muted-foreground">{currencySymbol}</span>
                 <Input
                     type="number"
                     value={formData.pricePerNight || ''}
                     onChange={e => handleUpdateData({ pricePerNight: Number(e.target.value) })}
                     onWheel={e => (e.target as HTMLElement).blur()}
-                    className="h-24 flex-1 text-8xl font-bold font-mono bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 p-0 text-foreground text-center"
+                    className="h-24 flex-1 text-9xl font-bold font-mono bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 p-0 text-foreground text-center"
                 />
              </div>
              <div className="mt-6 border-t pt-4 space-y-2 text-muted-foreground max-w-sm mx-auto text-left">
