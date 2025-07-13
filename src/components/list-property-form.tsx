@@ -453,7 +453,7 @@ export function ListPropertyForm() {
                 placeholder="e.g. Mumbai, India" 
                 value={formData.location || ''}
                 onChange={e => handleUpdateData({ location: e.target.value })}
-                className="h-14 text-xl border-2 text-center"
+                className="h-14 text-2xl border-2 text-center"
              />
           </StepContainer>
         );
@@ -780,7 +780,9 @@ export function ListPropertyForm() {
       </div>
 
       <div className="mt-8 flex items-center">
-        <Button onClick={prevStep} disabled={step === 1} className="h-12 px-6">Back</Button>
+        <Button onClick={prevStep} disabled={step === 1} className="h-12 px-6">
+            Back
+        </Button>
         <div className="flex-grow"></div>
         {step < totalSteps && (
           <Button onClick={nextStep} className="h-12 px-8">
