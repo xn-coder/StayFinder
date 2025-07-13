@@ -524,7 +524,7 @@ export function ListPropertyForm() {
                     trigger="loop"
                     delay="1000"
                     colors="primary:#121331,secondary:#08a88a"
-                    style={{width:'96px', height:'96px'}}>
+                    style={{width:'96px', height:'96px', transform: 'rotate(-10deg)'}}>
                 </lord-icon>
              </div>
              <Input 
