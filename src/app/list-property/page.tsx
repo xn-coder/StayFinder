@@ -24,7 +24,7 @@ const ListPropertyIntro = ({ onGetStarted }: { onGetStarted: () => void }) => {
         <div className="space-y-8">
           <div className="flex items-center gap-4">
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-accent flex-shrink-0">
-                <ListChecks className="w-8 h-8 text-primary" />
+                <ListChecks className="w-8 h-8 text-accent-foreground" />
               </div>
               <div>
                 <h3 className="text-xl font-semibold">1. Tell us about your place</h3>
@@ -33,7 +33,7 @@ const ListPropertyIntro = ({ onGetStarted }: { onGetStarted: () => void }) => {
           </div>
           <div className="flex items-center gap-4">
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-accent flex-shrink-0">
-                  <Star className="w-8 h-8 text-primary" />
+                  <Star className="w-8 h-8 text-accent-foreground" />
               </div>
               <div>
                 <h3 className="text-xl font-semibold">2. Make it stand out</h3>
@@ -42,7 +42,7 @@ const ListPropertyIntro = ({ onGetStarted }: { onGetStarted: () => void }) => {
           </div>
           <div className="flex items-center gap-4">
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-accent flex-shrink-0">
-                  <CircleDollarSign className="w-8 h-8 text-primary" />
+                  <CircleDollarSign className="w-8 h-8 text-accent-foreground" />
               </div>
               <div>
                 <h3 className="text-xl font-semibold">3. Finish up and publish</h3>
