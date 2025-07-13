@@ -24,6 +24,7 @@ import { Separator } from "@/components/ui/separator";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import Image from 'next/image';
 
 const userSchema = z.object({
   id: z.string(),
@@ -178,80 +179,87 @@ export function ListPropertyForm() {
       setStep(prev => Math.min(prev + 1, totalSteps));
     }
   };
+  
+  const handleUpdateAndNext = (updateData: Partial<ListPropertyFormValues>) => {
+    handleUpdateData(updateData);
+    if (validateStep(step, { ...formData, ...updateData })) {
+      setStep(prev => prev + 1);
+    }
+  };
 
   useEffect(() => {
     if (step === 1 && formData.type) {
-      setStep(2);
+        setStep(2);
     }
   }, [formData.type, step]);
-
+  
   useEffect(() => {
     if (step === 2 && formData.privacyType) {
-      setStep(3);
+        setStep(3);
     }
   }, [formData.privacyType, step]);
 
-  const validateStep = (currentStep: number): boolean => {
+  const validateStep = (currentStep: number, currentData: Partial<ListPropertyFormValues> = formData): boolean => {
     switch (currentStep) {
       case 1:
-        if (!formData.type) {
+        if (!currentData.type) {
           toast({ variant: 'destructive', title: 'Please select a property type.' });
           return false;
         }
         break;
       case 2:
-        if (!formData.privacyType) {
+        if (!currentData.privacyType) {
           toast({ variant: 'destructive', title: 'Please select a privacy type.' });
           return false;
         }
         break;
       case 3:
-        if (!formData.location || formData.location.length < 5) {
+        if (!currentData.location || currentData.location.length < 5) {
           toast({ variant: 'destructive', title: 'Location is required', description: 'Please enter a location of at least 5 characters.' });
           return false;
         }
         break;
       case 4:
-        if ((formData.maxGuests ?? 0) < 1) {
+        if ((currentData.maxGuests ?? 0) < 1) {
           toast({ variant: 'destructive', title: 'Invalid guest count', description: 'Must accommodate at least 1 guest.' });
           return false;
         }
-        if ((formData.beds ?? 0) < 1) {
+        if ((currentData.beds ?? 0) < 1) {
           toast({ variant: 'destructive', title: 'Invalid bed count', description: 'Must have at least 1 bed.' });
           return false;
         }
-        if ((formData.baths ?? 0) < 1) {
+        if ((currentData.baths ?? 0) < 1) {
           toast({ variant: 'destructive', title: 'Invalid bathroom count', description: 'Must have at least 1 bathroom.' });
           return false;
         }
         break;
       case 5:
-        if (!formData.amenities || formData.amenities.length < 1) {
+        if (!currentData.amenities || currentData.amenities.length < 1) {
           toast({ variant: 'destructive', title: 'Select amenities', description: 'Please select at least one amenity.' });
           return false;
         }
         break;
       case 6:
-        const uploadedImagesCount = [formData.image1, formData.image2, formData.image3, formData.image4].filter(Boolean).length;
+        const uploadedImagesCount = [currentData.image1, currentData.image2, currentData.image3, currentData.image4].filter(Boolean).length;
         if (uploadedImagesCount < 4) {
           toast({ variant: 'destructive', title: 'Upload photos', description: 'Please upload at least 4 photos.' });
           return false;
         }
         break;
       case 7:
-        if (!formData.name || formData.name.length < 5) {
+        if (!currentData.name || currentData.name.length < 5) {
           toast({ variant: 'destructive', title: 'Property name is required', description: 'Please enter a name of at least 5 characters.' });
           return false;
         }
         break;
       case 9:
-        if (!formData.description || formData.description.length < 20) {
+        if (!currentData.description || currentData.description.length < 20) {
           toast({ variant: 'destructive', title: 'Description is required', description: 'Please enter a description of at least 20 characters.' });
           return false;
         }
         break;
       case 10:
-        if ((formData.pricePerNight ?? 0) < 10) {
+        if ((currentData.pricePerNight ?? 0) < 10) {
           toast({ variant: 'destructive', title: 'Invalid price', description: 'Price must be at least 10.' });
           return false;
         }
@@ -394,13 +402,13 @@ export function ListPropertyForm() {
       case 1:
         return (
           <StepContainer title="Which of these best describes your place?">
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 max-h-[60vh] overflow-y-auto pr-3 scrollbar-hide">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 max-h-[60vh] overflow-y-auto p-1 scrollbar-hide">
               {propertyTypes.map(({ type, icon: Icon }) => (
                 <button
                   key={type}
                   onClick={() => handleUpdateData({ type: type as any })}
                   className={cn(
-                    "p-4 border-2 rounded-lg transition-all duration-200 flex flex-col items-start gap-4 hover:shadow-lg hover:border-primary",
+                    "p-4 border-2 rounded-lg transition-all duration-200 flex flex-col items-center justify-center gap-2 text-center aspect-square hover:shadow-lg hover:border-primary",
                     formData.type === type
                       ? "border-primary bg-accent shadow-md"
                       : "border-border bg-card hover:bg-muted/50"
@@ -408,13 +416,13 @@ export function ListPropertyForm() {
                 >
                   <Icon
                     className={cn(
-                      "w-8 h-8",
+                      "w-10 h-10",
                       formData.type === type
                         ? "text-primary"
                         : "text-muted-foreground"
                     )}
                   />
-                  <span className="font-semibold text-left text-base">{type}</span>
+                  <span className="font-semibold text-sm">{type}</span>
                 </button>
               ))}
             </div>
@@ -510,7 +518,15 @@ export function ListPropertyForm() {
       case 7:
         return (
           <StepContainer title="Now, let's give it a name" description="Short and sweet works best!">
-             <Pencil className="w-16 h-16 text-primary mx-auto mb-4"/>
+             <div className="relative w-24 h-24 mx-auto mb-4">
+                <Image 
+                    src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExazA1NmQ1cGg4Nm14NTNvY2Z4NnB2cmcwM3VscG5uY3R1c2F4NGE0eCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3o7aCSFE45iR0aL3oI/giphy.gif" 
+                    alt="Pen writing animation" 
+                    width={96}
+                    height={96}
+                    unoptimized
+                />
+             </div>
              <Input 
                 type="text" 
                 placeholder="e.g. Cozy Beachfront Cottage"
@@ -781,7 +797,7 @@ export function ListPropertyForm() {
         <Progress value={(step / totalSteps) * 100} className="w-full h-2" />
       </div>
       
-      <div className="min-h-[50vh] flex items-center justify-center">
+      <div className="min-h-[60vh] flex items-center justify-center">
         {renderContent()}
       </div>
 
