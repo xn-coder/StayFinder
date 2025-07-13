@@ -181,11 +181,15 @@ export function ListPropertyForm() {
 
   useEffect(() => {
     if (step === 1 && formData.type) {
-      nextStep();
-    } else if (step === 2 && formData.privacyType) {
-      nextStep();
+      setStep(2);
     }
-  }, [formData.type, formData.privacyType]);
+  }, [formData.type, step]);
+
+  useEffect(() => {
+    if (step === 2 && formData.privacyType) {
+      setStep(3);
+    }
+  }, [formData.privacyType, step]);
 
   const validateStep = (currentStep: number): boolean => {
     switch (currentStep) {
@@ -396,7 +400,7 @@ export function ListPropertyForm() {
                   key={type}
                   onClick={() => handleUpdateData({ type: type as any })}
                   className={cn(
-                    "p-4 border-2 rounded-lg transition-all duration-200 flex flex-col items-start gap-3 h-32 justify-between hover:shadow-lg hover:border-primary",
+                    "p-4 border-2 rounded-lg transition-all duration-200 flex flex-col items-start gap-4 hover:shadow-lg hover:border-primary",
                     formData.type === type
                       ? "border-primary bg-accent shadow-md"
                       : "border-border bg-card hover:bg-muted/50"
@@ -410,7 +414,7 @@ export function ListPropertyForm() {
                         : "text-muted-foreground"
                     )}
                   />
-                  <span className="font-semibold text-left text-xl">{type}</span>
+                  <span className="font-semibold text-left text-base">{type}</span>
                 </button>
               ))}
             </div>
@@ -782,17 +786,17 @@ export function ListPropertyForm() {
       </div>
 
       <div className="mt-8 flex items-center">
-        <Button onClick={prevStep} disabled={step === 1} className="h-12 px-6">
+        <Button onClick={prevStep} disabled={step === 1} className="h-14 px-8 text-lg">
             Back
         </Button>
         <div className="flex-grow"></div>
         {step < totalSteps && (
-          <Button onClick={nextStep} className="h-12 px-8">
+          <Button onClick={nextStep} className="h-14 px-8 text-lg">
             Next
           </Button>
         )}
         {step === totalSteps && (
-          <Button onClick={onSubmit} disabled={loading} className="h-12 px-8">
+          <Button onClick={onSubmit} disabled={loading} className="h-14 px-8 text-lg">
             {loading ? <Loader2 className="animate-spin" /> : <PartyPopper className="mr-2" />}
             Submit Listing
           </Button>
