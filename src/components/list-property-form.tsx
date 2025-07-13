@@ -518,14 +518,14 @@ export function ListPropertyForm() {
       case 7:
         return (
           <StepContainer title="Now, let's give it a name" description="Short and sweet works best!">
-             <div className="relative w-24 h-24 mx-auto mb-4">
-                <Image 
-                    src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExazA1NmQ1cGg4Nm14NTNvY2Z4NnB2cmcwM3VscG5uY3R1c2F4NGE0eCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3o7aCSFE45iR0aL3oI/giphy.gif" 
-                    alt="Pen writing animation" 
-                    width={96}
-                    height={96}
-                    unoptimized
-                />
+             <div className="w-24 h-24 mx-auto mb-4 flex items-center justify-center">
+                <lord-icon
+                    src="https://cdn.lordicon.com/wloilxuq.json"
+                    trigger="loop"
+                    delay="1000"
+                    colors="primary:#121331,secondary:#08a88a"
+                    style={{width:'96px', height:'96px'}}>
+                </lord-icon>
              </div>
              <Input 
                 type="text" 
