@@ -142,6 +142,7 @@ export function ListPropertyForm() {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<Partial<ListPropertyFormValues>>({
+    type: '',
     pricePerNight: 1500,
     maxGuests: 4,
     bedrooms: 1,
