@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
 import {
@@ -167,6 +167,14 @@ export function ListPropertyForm() {
   });
 
   const totalSteps = 16;
+  
+  useEffect(() => {
+    if (step === 2 && formData.type && formData.type !== '') {
+      if (!validateStep(1)) {
+        setStep(1); // Revert step if validation fails (e.g., page reload)
+      }
+    }
+  }, [step, formData.type]);
 
   const validateStep = (currentStep: number): boolean => {
     switch (currentStep) {
