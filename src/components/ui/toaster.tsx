@@ -10,7 +10,7 @@ import {
   ToastTitle,
   ToastViewport,
 } from "@/components/ui/toast"
-import { AlertTriangle } from "lucide-react"
+import { AlertTriangle, CheckCircle2 } from "lucide-react"
 
 export function Toaster() {
   const { toasts } = useToast()
@@ -24,6 +24,11 @@ export function Toaster() {
                {variant === "destructive" && (
                 <div className="pt-0.5">
                   <AlertTriangle className="h-5 w-5 text-destructive-foreground" />
+                </div>
+              )}
+               {variant !== "destructive" && (
+                <div className="pt-0.5">
+                  <CheckCircle2 className="h-5 w-5 text-primary" />
                 </div>
               )}
               <div className="grid gap-1">
