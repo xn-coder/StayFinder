@@ -582,7 +582,7 @@ export function ListPropertyForm() {
                     value={formData.pricePerNight || ''}
                     onChange={e => handleUpdateData({ pricePerNight: Number(e.target.value) })}
                     onWheel={e => (e.target as HTMLElement).blur()}
-                    className="h-24 w-auto font-bold font-mono bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 p-0 text-foreground text-left"
+                    className="h-24 w-fit font-bold font-mono bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 p-0 text-foreground text-left"
                     style={{ fontSize: '96px' }}
                 />
              </div>
@@ -624,14 +624,14 @@ export function ListPropertyForm() {
                     <button onClick={() => { handleUpdateData({ firstGuestChoice: 'any' }); nextStep(); }} className={cn("p-6 border-2 rounded-lg w-full hover:border-primary transition-colors flex justify-between items-center", formData.firstGuestChoice === 'any' ? 'border-primary bg-primary/10' : 'border-border')}>
                         <div>
                             <h3 className="font-bold text-lg">Any StayFinder guest</h3>
-                            <p className="text-muted-foreground">Get reservations faster when you welcome anyone from the community.</p>
+                            <p className="text-muted-foreground mt-1">Get reservations faster when you welcome anyone from the community.</p>
                         </div>
                         <Users className="w-8 h-8 text-muted-foreground" />
                     </button>
                     <button onClick={() => { handleUpdateData({ firstGuestChoice: 'experienced' }); nextStep(); }} className={cn("p-6 border-2 rounded-lg w-full hover:border-primary transition-colors flex justify-between items-center", formData.firstGuestChoice === 'experienced' ? 'border-primary bg-primary/10' : 'border-border')}>
                         <div>
                             <h3 className="font-bold text-lg">An experienced guest</h3>
-                            <p className="text-muted-foreground">Welcome someone with a good track record on StayFinder.</p>
+                            <p className="text-muted-foreground mt-1">Welcome someone with a good track record on StayFinder.</p>
                         </div>
                         <ShieldCheck className="w-8 h-8 text-muted-foreground" />
                     </button>
