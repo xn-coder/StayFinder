@@ -534,6 +534,7 @@ export function ListPropertyForm() {
                 value={formData.name || ''}
                 onChange={e => handleUpdateData({ name: e.target.value })}
                 className="h-14 text-lg border-2 text-center"
+                style={{ fontSize: '25px' }}
              />
           </StepContainer>
         );
