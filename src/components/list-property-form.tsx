@@ -583,11 +583,11 @@ export function ListPropertyForm() {
                     value={formData.pricePerNight || ''}
                     onChange={e => handleUpdateData({ pricePerNight: Number(e.target.value) })}
                     onWheel={e => (e.target as HTMLElement).blur()}
-                    className="h-24 font-bold font-mono bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 p-0 text-foreground"
+                    className="h-24 font-bold font-mono bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 p-0 text-primary"
                     style={{ fontSize: '96px', width: `${numDigits}ch` }}
                 />
              </div>
-             <div className="mt-6 border-t pt-4 space-y-2 text-muted-foreground max-w-sm mx-auto text-left text-lg">
+             <div className="mt-6 border-t pt-4 space-y-2 text-lg text-muted-foreground max-w-sm mx-auto text-left">
                 <div className="flex justify-between"><span>Base price</span><span>{currencySymbol}{basePrice.toLocaleString()}</span></div>
                 <div className="flex justify-between"><span>Guest service fee</span><span>{currencySymbol}{guestFee.toLocaleString()}</span></div>
                 <div className="flex justify-between font-bold text-foreground"><span>Guest price before taxes</span><span>{currencySymbol}{guestPrice.toLocaleString()}</span></div>
