@@ -573,17 +573,18 @@ export function ListPropertyForm() {
         const guestFee = basePrice * 0.14;
         const guestPrice = basePrice + guestFee;
         const hostEarning = basePrice * 0.97;
+        const numDigits = String(basePrice).length || 1;
         return (
           <StepContainer title="Now, set your weekday base price" description={`Tip: You can set a different price for weekends.`}>
              <div className="flex justify-center items-baseline h-24">
-                <span style={{fontSize: '96px'}} className="font-bold font-mono text-muted-foreground">{currencySymbol}</span>
+                <span style={{fontSize: '96px'}} className="font-bold font-mono text-muted-foreground">₹</span>
                 <Input
                     type="number"
                     value={formData.pricePerNight || ''}
                     onChange={e => handleUpdateData({ pricePerNight: Number(e.target.value) })}
                     onWheel={e => (e.target as HTMLElement).blur()}
-                    className="h-24 w-fit font-bold font-mono bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 p-0 text-foreground text-center"
-                    style={{ fontSize: '96px' }}
+                    className="h-24 w-[1ch] font-bold font-mono bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 p-0 text-foreground"
+                    style={{ fontSize: '96px', width: `${numDigits}ch` }}
                 />
              </div>
              <div className="mt-6 border-t pt-4 space-y-2 text-muted-foreground max-w-sm mx-auto text-left">
