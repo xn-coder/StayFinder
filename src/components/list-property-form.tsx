@@ -583,7 +583,7 @@ export function ListPropertyForm() {
                     value={formData.pricePerNight || ''}
                     onChange={e => handleUpdateData({ pricePerNight: Number(e.target.value) })}
                     onWheel={e => (e.target as HTMLElement).blur()}
-                    className="h-24 w-[1ch] font-bold font-mono bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 p-0 text-foreground"
+                    className="h-24 font-bold font-mono bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 p-0 text-foreground"
                     style={{ fontSize: '96px', width: `${numDigits}ch` }}
                 />
              </div>
