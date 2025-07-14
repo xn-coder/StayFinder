@@ -576,14 +576,14 @@ export function ListPropertyForm() {
         return (
           <StepContainer title="Now, set your weekday base price" description={`Tip: You can set a different price for weekends.`}>
              <div className="flex justify-center items-baseline h-24">
-                <span style={{fontSize: '25px'}} className="font-bold font-mono text-muted-foreground">{currencySymbol}</span>
+                <span style={{fontSize: '96px'}} className="font-bold font-mono text-muted-foreground">{currencySymbol}</span>
                 <Input
                     type="number"
                     value={formData.pricePerNight || ''}
                     onChange={e => handleUpdateData({ pricePerNight: Number(e.target.value) })}
                     onWheel={e => (e.target as HTMLElement).blur()}
                     className="h-24 w-auto flex-grow-0 font-bold font-mono bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 p-0 text-foreground text-left"
-                    style={{ fontSize: '25px' }}
+                    style={{ fontSize: '96px' }}
                 />
              </div>
              <div className="mt-6 border-t pt-4 space-y-2 text-muted-foreground max-w-sm mx-auto text-left">
