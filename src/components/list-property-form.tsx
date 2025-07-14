@@ -577,7 +577,7 @@ export function ListPropertyForm() {
         return (
           <StepContainer title="Now, set your weekday base price" description={`Tip: You can set a different price for weekends.`}>
              <div className="flex justify-center items-baseline h-24">
-                <span style={{fontSize: '96px'}} className="font-bold font-mono text-muted-foreground">₹</span>
+                <span style={{fontSize: '96px'}} className="font-bold font-mono text-primary">₹</span>
                 <Input
                     type="number"
                     value={formData.pricePerNight || ''}
