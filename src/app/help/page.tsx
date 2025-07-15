@@ -166,18 +166,23 @@ export default function HelpPage() {
                 <>
                   <div className="mb-16">
                     <h2 className="text-3xl font-bold text-center mb-8 font-headline">Frequently Asked Questions</h2>
-                     <Card className="p-4">
-                        <Accordion type="single" collapsible className="w-full">
-                            {faqs.map((faq, index) => (
-                                <AccordionItem value={`item-${index}`} key={index} id={faq.question.replace(/\s+/g, '-')} className={index === faqs.length - 1 ? 'border-b-0' : ''}>
-                                    <AccordionTrigger className="text-lg text-left hover:no-underline px-2 py-4">{faq.question}</AccordionTrigger>
-                                    <AccordionContent className="text-base text-muted-foreground leading-relaxed px-2">
-                                        {faq.answer}
-                                    </AccordionContent>
-                                </AccordionItem>
-                            ))}
-                        </Accordion>
-                     </Card>
+                    <Accordion type="single" collapsible className="w-full space-y-4">
+                        {faqs.map((faq, index) => (
+                            <AccordionItem 
+                                value={`item-${index}`} 
+                                key={index} 
+                                id={faq.question.replace(/\s+/g, '-')}
+                                className="border rounded-lg bg-background shadow-sm hover:shadow-md transition-shadow"
+                            >
+                                <AccordionTrigger className="text-lg text-left hover:no-underline px-6 py-4 font-semibold">
+                                    {faq.question}
+                                </AccordionTrigger>
+                                <AccordionContent className="text-base text-muted-foreground leading-relaxed px-6 pb-6">
+                                    {faq.answer}
+                                </AccordionContent>
+                            </AccordionItem>
+                        ))}
+                    </Accordion>
                   </div>
                 </>
               )}
