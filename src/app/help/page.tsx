@@ -8,11 +8,11 @@ import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Input } from '@/components/ui/input';
-import { Search } from 'lucide-react';
+import { Search, ChevronRight } from 'lucide-react';
 import { helpTopics, homeHostHelpTopics, experienceHostHelpTopics, serviceHostHelpTopics, travelAdminHelpTopics } from '@/lib/dummy-data';
 import { useAuth } from '@/hooks/use-auth';
 import { Button } from '@/components/ui/button';
-import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 
 const faqs = [
@@ -164,27 +164,31 @@ export default function HelpPage() {
                 </div>
               ) : (
                 <>
-                  <h2 className="text-3xl font-bold text-center mb-8">Frequently Asked Questions</h2>
-                  <Accordion type="single" collapsible className="w-full">
-                      {faqs.map((faq, index) => (
-                          <AccordionItem value={`item-${index}`} key={index} id={faq.question.replace(/\s+/g, '-')}>
-                              <AccordionTrigger className="text-lg text-left">{faq.question}</AccordionTrigger>
-                              <AccordionContent className="text-base text-muted-foreground leading-relaxed">
-                                  {faq.answer}
-                              </AccordionContent>
-                          </AccordionItem>
-                      ))}
-                  </Accordion>
+                  <div className="mb-16">
+                    <h2 className="text-3xl font-bold text-center mb-8 font-headline">Frequently Asked Questions</h2>
+                     <Card className="p-4">
+                        <Accordion type="single" collapsible className="w-full">
+                            {faqs.map((faq, index) => (
+                                <AccordionItem value={`item-${index}`} key={index} id={faq.question.replace(/\s+/g, '-')} className={index === faqs.length - 1 ? 'border-b-0' : ''}>
+                                    <AccordionTrigger className="text-lg text-left hover:no-underline px-2 py-4">{faq.question}</AccordionTrigger>
+                                    <AccordionContent className="text-base text-muted-foreground leading-relaxed px-2">
+                                        {faq.answer}
+                                    </AccordionContent>
+                                </AccordionItem>
+                            ))}
+                        </Accordion>
+                     </Card>
+                  </div>
                 </>
               )}
-                <div className="mt-16">
-                    <h2 className="text-3xl font-bold text-center mb-8">Quick Guides</h2>
+                <div className="mb-16">
+                    <h2 className="text-3xl font-bold text-center mb-8 font-headline">Quick Guides</h2>
                     <div className="flex space-x-4 overflow-x-auto pb-4 scrollbar-hide -mx-4 px-4">
                       {guides.map((guide, index) => (
                           <div key={index} className="w-80 flex-shrink-0">
                             <div className="p-1 h-full">
                                 <Link href={guide.href} className="block h-full">
-                                <Card className="h-full overflow-hidden group flex flex-col">
+                                <Card className="h-full overflow-hidden group flex flex-col hover:shadow-xl transition-shadow duration-300">
                                     <div className="relative h-40 w-full flex-shrink-0">
                                     <Image
                                         src={guide.image}
@@ -205,28 +209,35 @@ export default function HelpPage() {
                       ))}
                     </div>
                 </div>
-                 <div className="mt-16">
-                    <h2 className="text-3xl font-bold text-center mb-8 font-headline">Top Articles</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-10">
-                        {topArticles.map((article) => (
-                        <div key={article.title}>
-                            <Link href={article.href} className="group">
-                            <h3 className="font-semibold text-base group-hover:underline underline-offset-4">
-                                {article.title}
-                            </h3>
-                            <p className="text-muted-foreground mt-1 text-sm line-clamp-3">
-                                {article.description}
-                            </p>
-                            </Link>
-                        </div>
-                        ))}
-                    </div>
+                 <div className="mb-16">
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="text-3xl font-bold font-headline text-center">Top Articles</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              {topArticles.map((article) => (
+                              <Link href={article.href} key={article.title} className="group p-4 rounded-lg hover:bg-muted/50 transition-colors">
+                                  <h3 className="font-semibold text-base group-hover:text-primary">
+                                      {article.title}
+                                  </h3>
+                                  <p className="text-muted-foreground mt-1 text-sm line-clamp-2">
+                                      {article.description}
+                                  </p>
+                              </Link>
+                              ))}
+                          </div>
+                      </CardContent>
+                    </Card>
                 </div>
-               <div className="text-center mt-12">
-                    <p className="text-muted-foreground">Can't find what you're looking for?</p>
-                     <Link href="/help/all-topics" className="text-primary font-semibold hover:underline">
-                        Browse all topics
-                    </Link>
+               <div className="text-center">
+                    <h3 className="text-2xl font-semibold mb-2">Can't find what you're looking for?</h3>
+                    <p className="text-muted-foreground mb-4">Our help library has it all.</p>
+                     <Button asChild>
+                        <Link href="/help/all-topics">
+                            Browse all topics <ChevronRight className="ml-2 h-4 w-4" />
+                        </Link>
+                    </Button>
                 </div>
             </div>
         </div>
