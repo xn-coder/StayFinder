@@ -77,7 +77,7 @@ const PropertySection = ({ title, properties }: { title: string; properties: Pro
 export default function Home() {
   const { properties, loading } = useProperties();
 
-  const { topRatedStays, uniqueStays, newlyAddedStays } = useMemo(() => {
+  const { topRatedStays, uniqueStays, newlyAddedStays, cityStays, countryStays, beachStays, apartmentStays, villaStays, cabinStays, petFriendlyStays, luxuryStays, budgetStays } = useMemo(() => {
     const approvedProperties = properties.filter(p => p.status === 'approved');
 
     const topRated = [...approvedProperties]
@@ -89,10 +89,32 @@ export default function Home() {
       .filter(p => uniqueTypes.includes(p.type))
       .slice(0, 10);
 
-    // Sort by creation time (assuming properties have it) or just take the last few as a proxy
-    const newlyAdded = [...approvedProperties].reverse().slice(0, 10);
+    const newlyAdded = [...approvedProperties].sort((a, b) => (b.id > a.id ? 1 : -1)).slice(0, 10);
     
-    return { topRatedStays: topRated, uniqueStays: unique, newlyAddedStays: newlyAdded };
+    const city = approvedProperties.filter(p => p.location.includes('New York') || p.location.includes('Tokyo') || p.location.includes('Paris')).slice(0,10);
+    const country = approvedProperties.filter(p => p.location.includes('Tuscany') || p.location.includes('Aspen')).slice(0,10);
+    const beach = approvedProperties.filter(p => p.location.includes('Malibu') || p.location.includes('Miami')).slice(0,10);
+    const apartments = approvedProperties.filter(p => p.type === 'Apartment').slice(0,10);
+    const villas = approvedProperties.filter(p => p.type === 'Villa').slice(0,10);
+    const cabins = approvedProperties.filter(p => p.type === 'Cabin').slice(0,10);
+    const petFriendly = approvedProperties.filter(p => p.amenities.includes('Pet friendly')).slice(0,10);
+    const luxury = approvedProperties.filter(p => p.pricePerNight > 50000).slice(0,10);
+    const budget = approvedProperties.filter(p => p.pricePerNight < 20000).slice(0,10);
+    
+    return { 
+        topRatedStays: topRated, 
+        uniqueStays: unique, 
+        newlyAddedStays: newlyAdded,
+        cityStays: city,
+        countryStays: country,
+        beachStays: beach,
+        apartmentStays: apartments,
+        villaStays: villas,
+        cabinStays: cabins,
+        petFriendlyStays: petFriendly,
+        luxuryStays: luxury,
+        budgetStays: budget,
+    };
   }, [properties]);
 
 
@@ -105,12 +127,30 @@ export default function Home() {
             <PropertySectionSkeleton title="Top-rated Stays" />
             <PropertySectionSkeleton title="Unique Stays" />
             <PropertySectionSkeleton title="Newly Added" />
+            <PropertySectionSkeleton title="City Escapes" />
+            <PropertySectionSkeleton title="Countryside Retreats" />
+            <PropertySectionSkeleton title="Beachfront Bliss" />
+            <PropertySectionSkeleton title="Modern Apartments" />
+            <PropertySectionSkeleton title="Luxury Villas" />
+            <PropertySectionSkeleton title="Cozy Cabins" />
+            <PropertySectionSkeleton title="Pet-Friendly Homes" />
+            <PropertySectionSkeleton title="Luxury Collection" />
+            <PropertySectionSkeleton title="Budget-Friendly Finds" />
           </>
         ) : (
             <>
                 <PropertySection title="Top-rated Stays" properties={topRatedStays} />
                 <PropertySection title="Unique Stays" properties={uniqueStays} />
                 <PropertySection title="Newly Added Stays" properties={newlyAddedStays} />
+                <PropertySection title="City Escapes" properties={cityStays} />
+                <PropertySection title="Countryside Retreats" properties={countryStays} />
+                <PropertySection title="Beachfront Bliss" properties={beachStays} />
+                <PropertySection title="Modern Apartments" properties={apartmentStays} />
+                <PropertySection title="Luxury Villas" properties={villaStays} />
+                <PropertySection title="Cozy Cabins" properties={cabinStays} />
+                <PropertySection title="Pet-Friendly Homes" properties={petFriendlyStays} />
+                <PropertySection title="Luxury Collection" properties={luxuryStays} />
+                <PropertySection title="Budget-Friendly Finds" properties={budgetStays} />
             </>
         )}
       </main>
