@@ -6,73 +6,76 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Mail, Phone, MapPin } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 
 export default function ContactUsPage() {
   return (
-    <div className="flex flex-col min-h-screen bg-muted/40">
+    <div className="flex flex-col min-h-screen bg-muted/20">
       <Header />
-      <main className="flex-grow">
-        <div className="py-16 text-center px-4">
-          <h1 className="text-5xl font-bold font-headline">Get in Touch</h1>
-          <p className="mt-4 text-xl text-muted-foreground max-w-2xl mx-auto">
-            We'd love to hear from you. Whether you have a question, feedback, or need assistance, our team is here to help.
-          </p>
-        </div>
+      <main className="flex-grow flex items-center justify-center py-16 px-4">
+        <div className="w-full max-w-5xl">
+          <Card className="overflow-hidden shadow-2xl rounded-2xl">
+            <div className="grid md:grid-cols-2">
+              {/* Form Section */}
+              <div className="p-8 md:p-12">
+                <h2 className="text-3xl font-bold font-headline mb-2">Send us a message</h2>
+                <p className="text-muted-foreground mb-8">Our team will get back to you shortly.</p>
+                <form className="space-y-6">
+                  <div className="grid sm:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <Label htmlFor="firstName">First Name</Label>
+                      <Input id="firstName" placeholder="John" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="lastName">Last Name</Label>
+                      <Input id="lastName" placeholder="Doe" />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email Address</Label>
+                    <Input id="email" type="email" placeholder="you@example.com" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="message">Your Message</Label>
+                    <Textarea id="message" placeholder="Tell us how we can help..." className="min-h-[150px]" />
+                  </div>
+                  <Button type="submit" size="lg" className="w-full sm:w-auto">Send Message</Button>
+                </form>
+              </div>
 
-        <div className="container mx-auto px-4 pb-16">
-            <div className="max-w-2xl mx-auto">
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="text-2xl font-headline">Send us a message</CardTitle>
-                        <CardDescription>Our team will get back to you shortly.</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                         <form className="space-y-6">
-                            <div className="grid sm:grid-cols-2 gap-6">
-                            <div className="space-y-2">
-                                <Label htmlFor="firstName">First Name</Label>
-                                <Input id="firstName" placeholder="John" />
-                            </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="lastName">Last Name</Label>
-                                <Input id="lastName" placeholder="Doe" />
-                            </div>
-                            </div>
-                            <div className="space-y-2">
-                            <Label htmlFor="email">Email Address</Label>
-                            <Input id="email" type="email" placeholder="you@example.com" />
-                            </div>
-                            <div className="space-y-2">
-                            <Label htmlFor="message">Your Message</Label>
-                            <Textarea id="message" placeholder="Tell us how we can help..." className="min-h-[150px]" />
-                            </div>
-                            <Button type="submit" size="lg" className="w-full sm:w-auto">Send Message</Button>
-                        </form>
-
-                        <Separator className="my-8" />
-
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 text-center">
-                            <div className="flex flex-col items-center">
-                                <Mail className="h-8 w-8 text-primary mb-2" />
-                                <h4 className="font-semibold">Email</h4>
-                                <a href="mailto:support@stayfinder.com" className="text-muted-foreground hover:underline">support@stayfinder.com</a>
-                            </div>
-                            <div className="flex flex-col items-center">
-                                <Phone className="h-8 w-8 text-primary mb-2" />
-                                <h4 className="font-semibold">Phone</h4>
-                                <a href="tel:+15551234567" className="text-muted-foreground hover:underline">+1 (555) 123-4567</a>
-                            </div>
-                            <div className="flex flex-col items-center">
-                                <MapPin className="h-8 w-8 text-primary mb-2" />
-                                <h4 className="font-semibold">Office</h4>
-                                <p className="text-muted-foreground">123 StayFinder Lane, Silicon Valley</p>
-                            </div>
+              {/* Info Section */}
+              <div className="bg-primary text-primary-foreground p-8 md:p-12 flex flex-col justify-center rounded-r-2xl">
+                 <h2 className="text-3xl font-bold font-headline mb-4">Contact Information</h2>
+                 <p className="text-primary-foreground/80 mb-8">
+                    Find us at our office or get in touch through email or phone.
+                 </p>
+                 <div className="space-y-6">
+                    <div className="flex items-start gap-4">
+                        <Mail className="h-6 w-6 text-primary-foreground/80 mt-1 flex-shrink-0" />
+                        <div>
+                            <h4 className="font-semibold">Email</h4>
+                            <a href="mailto:support@stayfinder.com" className="text-primary-foreground/80 hover:underline">support@stayfinder.com</a>
                         </div>
-                    </CardContent>
-                </Card>
+                    </div>
+                     <div className="flex items-start gap-4">
+                        <Phone className="h-6 w-6 text-primary-foreground/80 mt-1 flex-shrink-0" />
+                        <div>
+                            <h4 className="font-semibold">Phone</h4>
+                            <a href="tel:+15551234567" className="text-primary-foreground/80 hover:underline">+1 (555) 123-4567</a>
+                        </div>
+                    </div>
+                     <div className="flex items-start gap-4">
+                        <MapPin className="h-6 w-6 text-primary-foreground/80 mt-1 flex-shrink-0" />
+                        <div>
+                            <h4 className="font-semibold">Office</h4>
+                            <p className="text-primary-foreground/80">123 StayFinder Lane, Silicon Valley</p>
+                        </div>
+                    </div>
+                 </div>
+              </div>
             </div>
+          </Card>
         </div>
       </main>
       <Footer />
