@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { Mail, Phone, MapPin } from 'lucide-react';
+import { Mail, Phone, MapPin, User, MessageSquare } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 
@@ -25,20 +25,32 @@ export default function ContactUsPage() {
                   <div className="grid sm:grid-cols-2 gap-6">
                     <div className="space-y-2">
                       <Label htmlFor="firstName">First Name</Label>
-                      <Input id="firstName" placeholder="John" />
+                      <div className="flex items-center gap-x-2 rounded-md border border-input bg-background px-3 ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
+                          <User className="h-4 w-4 text-muted-foreground" />
+                          <Input id="firstName" placeholder="John" className="h-9 w-full border-none bg-transparent p-0 focus-visible:ring-0 focus-visible:ring-offset-0" />
+                      </div>
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="lastName">Last Name</Label>
-                      <Input id="lastName" placeholder="Doe" />
+                       <div className="flex items-center gap-x-2 rounded-md border border-input bg-background px-3 ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
+                          <User className="h-4 w-4 text-muted-foreground" />
+                          <Input id="lastName" placeholder="Doe" className="h-9 w-full border-none bg-transparent p-0 focus-visible:ring-0 focus-visible:ring-offset-0" />
+                      </div>
                     </div>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="email">Email Address</Label>
-                    <Input id="email" type="email" placeholder="you@example.com" />
+                    <div className="flex items-center gap-x-2 rounded-md border border-input bg-background px-3 ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
+                        <Mail className="h-4 w-4 text-muted-foreground" />
+                        <Input id="email" type="email" placeholder="you@example.com" className="h-9 w-full border-none bg-transparent p-0 focus-visible:ring-0 focus-visible:ring-offset-0" />
+                    </div>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="message">Your Message</Label>
-                    <Textarea id="message" placeholder="Tell us how we can help..." className="min-h-[150px]" />
+                     <div className="flex items-start gap-x-2 rounded-md border border-input bg-background px-3 py-2 ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
+                        <MessageSquare className="h-4 w-4 text-muted-foreground mt-0.5" />
+                        <Textarea id="message" placeholder="Tell us how we can help..." className="min-h-[140px] border-none bg-transparent p-0 focus-visible:ring-0 focus-visible:ring-offset-0 resize-none" />
+                    </div>
                   </div>
                   <Button type="submit" size="lg" className="w-full sm:w-auto">Send Message</Button>
                 </form>
