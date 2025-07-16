@@ -100,18 +100,18 @@ export function Header({ className }: { className?: string }) {
                       {user.role === 'host' && (
                         <>
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem onClick={() => router.push('/my-properties')} className="cursor-pointer">
+                          <DropdownMenuItem onClick={() => router.push('/hosting/dashboard')} className="cursor-pointer">
                             <LayoutDashboard className="mr-2 h-4 w-4" />
                             <span>Host Dashboard</span>
                           </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => router.push('/bookings')} className="cursor-pointer">
+                          <DropdownMenuItem onClick={() => router.push('/hosting/bookings')} className="cursor-pointer">
                             <BookOpenCheck className="mr-2 h-4 w-4" />
                             <span>Bookings</span>
                              {pendingBookingsCount > 0 && (
                               <Badge variant="destructive" className="ml-auto">{pendingBookingsCount}</Badge>
                              )}
                           </DropdownMenuItem>
-                           <DropdownMenuItem onClick={() => router.push('/inquiries')} className="cursor-pointer">
+                           <DropdownMenuItem onClick={() => router.push('/hosting/inquiries')} className="cursor-pointer">
                             <MessageSquare className="mr-2 h-4 w-4" />
                             <span>Inquiries</span>
                              {pendingInquiriesCount > 0 && (

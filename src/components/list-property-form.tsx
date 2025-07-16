@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
@@ -381,10 +382,10 @@ export function ListPropertyForm() {
     await addProperty(propertyData as Omit<Property, 'id'>);
     toast({
       title: "Property Submitted!",
-      description: "Your property is now pending review. You can see it in 'My Properties'.",
+      description: "Your property is now pending review. You can see it in your Host Dashboard.",
     });
     setLoading(false);
-    router.push("/my-properties");
+    router.push("/hosting/dashboard");
   };
   
   const getStageInfo = (currentStep: number): { name: string, number: number } => {

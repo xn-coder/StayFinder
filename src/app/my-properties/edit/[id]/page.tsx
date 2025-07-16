@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -48,7 +49,7 @@ export default function EditPropertyPage() {
   useEffect(() => {
     if (!authLoading && property && user?.id !== property?.host.id) {
       toast({ variant: 'destructive', title: "Unauthorized", description: "You can only edit your own properties." });
-      router.push('/my-properties');
+      router.push('/hosting/dashboard');
     }
   }, [user, property, authLoading, router, toast]);
 
@@ -65,7 +66,7 @@ export default function EditPropertyPage() {
     await updateProperty(propertyId, formData);
     toast({ title: "Success", description: "Property updated successfully." });
     setIsSubmitting(false);
-    router.push('/my-properties');
+    router.push('/hosting/dashboard');
   };
 
   const isLoading = authLoading || propertiesLoading || property === undefined;
@@ -103,7 +104,7 @@ export default function EditPropertyPage() {
       <Header />
       <main className="container mx-auto px-4 py-8 max-w-2xl">
         <Button variant="ghost" onClick={() => router.back()} className="mb-4">
-            <ArrowLeft className="mr-2" /> Back to My Properties
+            <ArrowLeft className="mr-2" /> Back to Host Dashboard
         </Button>
         <Card>
           <CardHeader>
