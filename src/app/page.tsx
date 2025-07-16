@@ -77,7 +77,7 @@ const PropertySection = ({ title, properties }: { title: string; properties: Pro
 export default function Home() {
   const { properties, loading } = useProperties();
 
-  const { topRatedStays, newlyAddedStays, cityStays, countryStays, beachStays, apartmentStays, villaStays, cabinStays, petFriendlyStays, luxuryStays } = useMemo(() => {
+  const { topRatedStays, newlyAddedStays, cityStays, countryStays, beachStays, apartmentStays, villaStays, cabinStays, petFriendlyStays, luxuryStays, guestFavourites, roomStays } = useMemo(() => {
     const approvedProperties = properties.filter(p => p.status === 'approved');
 
     const topRated = [...approvedProperties]
@@ -94,6 +94,8 @@ export default function Home() {
     const cabins = approvedProperties.filter(p => p.type === 'Cabin').slice(0,10);
     const petFriendly = approvedProperties.filter(p => p.amenities.includes('Pet friendly')).slice(0,10);
     const luxury = approvedProperties.filter(p => p.pricePerNight > 50000).slice(0,10);
+    const favourites = approvedProperties.filter(p => p.rating >= 4.9).slice(0,10);
+    const rooms = approvedProperties.filter(p => p.privacyType === 'room').slice(0,10);
     
     return { 
         topRatedStays: topRated, 
@@ -106,6 +108,8 @@ export default function Home() {
         cabinStays: cabins,
         petFriendlyStays: petFriendly,
         luxuryStays: luxury,
+        guestFavourites: favourites,
+        roomStays: rooms,
     };
   }, [properties]);
 
@@ -117,10 +121,12 @@ export default function Home() {
         {loading ? (
           <>
             <PropertySectionSkeleton title="Top-rated Stays" />
+            <PropertySectionSkeleton title="Guest Favourites" />
             <PropertySectionSkeleton title="Newly Added" />
             <PropertySectionSkeleton title="City Escapes" />
             <PropertySectionSkeleton title="Countryside Retreats" />
             <PropertySectionSkeleton title="Beachfront Bliss" />
+            <PropertySectionSkeleton title="Rooms" />
             <PropertySectionSkeleton title="Modern Apartments" />
             <PropertySectionSkeleton title="Luxury Villas" />
             <PropertySectionSkeleton title="Cozy Cabins" />
@@ -130,10 +136,12 @@ export default function Home() {
         ) : (
             <>
                 <PropertySection title="Top-rated Stays" properties={topRatedStays} />
+                <PropertySection title="Guest Favourites" properties={guestFavourites} />
                 <PropertySection title="Newly Added Stays" properties={newlyAddedStays} />
                 <PropertySection title="City Escapes" properties={cityStays} />
                 <PropertySection title="Countryside Retreats" properties={countryStays} />
                 <PropertySection title="Beachfront Bliss" properties={beachStays} />
+                <PropertySection title="Rooms" properties={roomStays} />
                 <PropertySection title="Modern Apartments" properties={apartmentStays} />
                 <PropertySection title="Luxury Villas" properties={villaStays} />
                 <PropertySection title="Cozy Cabins" properties={cabinStays} />
