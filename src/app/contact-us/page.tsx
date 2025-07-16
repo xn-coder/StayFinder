@@ -7,7 +7,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Mail, Phone, MapPin } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import Image from 'next/image';
 import { Separator } from '@/components/ui/separator';
 
 export default function ContactUsPage() {
@@ -51,29 +50,28 @@ export default function ContactUsPage() {
                             </div>
                             <Button type="submit" size="lg" className="w-full sm:w-auto">Send Message</Button>
                         </form>
+
+                        <Separator className="my-8" />
+
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 text-center">
+                            <div className="flex flex-col items-center">
+                                <Mail className="h-8 w-8 text-primary mb-2" />
+                                <h4 className="font-semibold">Email</h4>
+                                <a href="mailto:support@stayfinder.com" className="text-muted-foreground hover:underline">support@stayfinder.com</a>
+                            </div>
+                            <div className="flex flex-col items-center">
+                                <Phone className="h-8 w-8 text-primary mb-2" />
+                                <h4 className="font-semibold">Phone</h4>
+                                <a href="tel:+15551234567" className="text-muted-foreground hover:underline">+1 (555) 123-4567</a>
+                            </div>
+                            <div className="flex flex-col items-center">
+                                <MapPin className="h-8 w-8 text-primary mb-2" />
+                                <h4 className="font-semibold">Office</h4>
+                                <p className="text-muted-foreground">123 StayFinder Lane, Silicon Valley</p>
+                            </div>
+                        </div>
                     </CardContent>
                 </Card>
-
-                <div className="mt-12">
-                  <Separator />
-                  <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-8 text-center">
-                      <div className="flex flex-col items-center">
-                          <Mail className="h-8 w-8 text-primary mb-2" />
-                          <h4 className="font-semibold">Email</h4>
-                          <a href="mailto:support@stayfinder.com" className="text-muted-foreground hover:underline">support@stayfinder.com</a>
-                      </div>
-                      <div className="flex flex-col items-center">
-                          <Phone className="h-8 w-8 text-primary mb-2" />
-                          <h4 className="font-semibold">Phone</h4>
-                          <a href="tel:+15551234567" className="text-muted-foreground hover:underline">+1 (555) 123-4567</a>
-                      </div>
-                      <div className="flex flex-col items-center">
-                          <MapPin className="h-8 w-8 text-primary mb-2" />
-                          <h4 className="font-semibold">Office</h4>
-                          <p className="text-muted-foreground">123 StayFinder Lane, Silicon Valley</p>
-                      </div>
-                  </div>
-                </div>
             </div>
         </div>
       </main>
