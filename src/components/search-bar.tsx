@@ -18,7 +18,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { Separator } from './ui/separator';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
 
 interface SearchBarProps {
     className?: string;
@@ -246,8 +246,8 @@ function SearchBarWrapper({ className }: SearchBarProps) {
 
       {/* Mobile Search Bar */}
       <div className="md:hidden">
-        <Popover>
-            <PopoverTrigger asChild>
+        <Dialog>
+            <DialogTrigger asChild>
                 <button className="w-full flex items-center gap-4 text-left p-2.5 rounded-full shadow-lg border">
                     <SearchIcon className="h-5 w-5 ml-2 flex-shrink-0" />
                     <div>
@@ -257,11 +257,14 @@ function SearchBarWrapper({ className }: SearchBarProps) {
                         </p>
                     </div>
                 </button>
-            </PopoverTrigger>
-            <PopoverContent className="w-[95vw] p-0" align="center">
+            </DialogTrigger>
+            <DialogContent className="max-w-[95vw] p-0">
+                <DialogHeader className="p-4 border-b">
+                  <DialogTitle>Search</DialogTitle>
+                </DialogHeader>
                 <MobileSearchContent />
-            </PopoverContent>
-        </Popover>
+            </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
