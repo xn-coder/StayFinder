@@ -86,13 +86,13 @@ export default function Home() {
     
     const newlyAdded = [...approvedProperties].sort((a, b) => (b.id > a.id ? 1 : -1)).slice(0, 10);
     
-    const city = approvedProperties.filter(p => p.location.includes('New York') || p.location.includes('Tokyo') || p.location.includes('Paris')).slice(0,10);
-    const country = approvedProperties.filter(p => p.location.includes('Tuscany') || p.location.includes('Aspen')).slice(0,10);
-    const beach = approvedProperties.filter(p => p.location.includes('Malibu') || p.location.includes('Miami')).slice(0,10);
-    const apartments = approvedProperties.filter(p => p.type === 'Apartment').slice(0,10);
-    const villas = approvedProperties.filter(p => p.type === 'Villa').slice(0,10);
-    const cabins = approvedProperties.filter(p => p.type === 'Cabin').slice(0,10);
-    const petFriendly = approvedProperties.filter(p => p.amenities.includes('Pet friendly')).slice(0,10);
+    const city = approvedProperties.filter(p => p.location.toLowerCase().includes('new york') || p.location.toLowerCase().includes('tokyo') || p.location.toLowerCase().includes('paris')).slice(0,10);
+    const country = approvedProperties.filter(p => p.location.toLowerCase().includes('tuscany') || p.location.toLowerCase().includes('aspen')).slice(0,10);
+    const beach = approvedProperties.filter(p => p.location.toLowerCase().includes('malibu') || p.location.toLowerCase().includes('miami')).slice(0,10);
+    const apartments = approvedProperties.filter(p => p.type.toLowerCase() === 'apartment').slice(0,10);
+    const villas = approvedProperties.filter(p => p.type.toLowerCase() === 'villa').slice(0,10);
+    const cabins = approvedProperties.filter(p => p.type.toLowerCase() === 'cabin').slice(0,10);
+    const petFriendly = approvedProperties.filter(p => p.amenities.map(a => a.toLowerCase()).includes('pet friendly')).slice(0,10);
     const luxury = approvedProperties.filter(p => p.pricePerNight > 50000).slice(0,10);
 
     return { 
