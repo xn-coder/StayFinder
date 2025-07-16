@@ -77,7 +77,7 @@ const PropertySection = ({ title, properties }: { title: string; properties: Pro
 export default function Home() {
   const { properties, loading } = useProperties();
 
-  const { topRatedStays, newlyAddedStays, cityStays, countryStays, beachStays, apartmentStays, villaStays, cabinStays, petFriendlyStays, luxuryStays, guestFavourites, roomStays, withPoolStays, remoteWorkStays, amazingViewsStays, iconicCitiesStays, uniqueStays, trendingStays, familyFriendlyStays, romanticGetawaysStays } = useMemo(() => {
+  const { topRatedStays, newlyAddedStays, cityStays, countryStays, beachStays, apartmentStays, villaStays, cabinStays, petFriendlyStays, luxuryStays } = useMemo(() => {
     const approvedProperties = properties.filter(p => p.status === 'approved');
 
     const topRated = [...approvedProperties]
@@ -94,16 +94,6 @@ export default function Home() {
     const cabins = approvedProperties.filter(p => p.type === 'Cabin').slice(0,10);
     const petFriendly = approvedProperties.filter(p => p.amenities.includes('Pet friendly')).slice(0,10);
     const luxury = approvedProperties.filter(p => p.pricePerNight > 50000).slice(0,10);
-    const favourites = approvedProperties.filter(p => p.rating >= 4.9).slice(0,10);
-    const rooms = approvedProperties.filter(p => p.privacyType === 'room').slice(0,10);
-    const withPool = approvedProperties.filter(p => p.amenities.includes('Pool')).slice(0,10);
-    const remoteWork = approvedProperties.filter(p => p.amenities.includes('WiFi') && p.amenities.includes('Kitchen')).slice(0,10);
-    const amazingViews = approvedProperties.filter(p => p.amenities.includes('City view') || p.amenities.includes('Beach access')).slice(0,10);
-    const iconicCities = approvedProperties.filter(p => p.location.includes('Paris') || p.location.includes('New York') || p.location.includes('Tokyo')).slice(0,10);
-    const unique = approvedProperties.filter(p => p.type === 'Tree house' || p.type === 'Castle' || p.type === 'Boat').slice(0,10);
-    const trending = [...approvedProperties].sort((a, b) => b.reviewsCount - a.reviewsCount).slice(0,10);
-    const familyFriendly = approvedProperties.filter(p => p.maxGuests >= 4).slice(0,10);
-    const romanticGetaways = approvedProperties.filter(p => p.maxGuests <= 2 && p.rating > 4.7).slice(0,10);
 
     return { 
         topRatedStays: topRated, 
@@ -116,16 +106,6 @@ export default function Home() {
         cabinStays: cabins,
         petFriendlyStays: petFriendly,
         luxuryStays: luxury,
-        guestFavourites: favourites,
-        roomStays: rooms,
-        withPoolStays: withPool,
-        remoteWorkStays: remoteWork,
-        amazingViewsStays: amazingViews,
-        iconicCitiesStays: iconicCities,
-        uniqueStays: unique,
-        trendingStays: trending,
-        familyFriendlyStays: familyFriendly,
-        romanticGetawaysStays: romanticGetaways,
     };
   }, [properties]);
 
@@ -137,48 +117,28 @@ export default function Home() {
         {loading ? (
           <>
             <PropertySectionSkeleton title="Top-rated Stays" />
-            <PropertySectionSkeleton title="Guest Favourites" />
             <PropertySectionSkeleton title="Newly Added" />
             <PropertySectionSkeleton title="City Escapes" />
             <PropertySectionSkeleton title="Countryside Retreats" />
             <PropertySectionSkeleton title="Beachfront Bliss" />
-            <PropertySectionSkeleton title="Rooms" />
             <PropertySectionSkeleton title="Modern Apartments" />
             <PropertySectionSkeleton title="Luxury Villas" />
             <PropertySectionSkeleton title="Cozy Cabins" />
             <PropertySectionSkeleton title="Pet-Friendly Homes" />
             <PropertySectionSkeleton title="Luxury Collection" />
-            <PropertySectionSkeleton title="Properties with Pools" />
-            <PropertySectionSkeleton title="Great for Remote Work" />
-            <PropertySectionSkeleton title="Stays with Great Views" />
-            <PropertySectionSkeleton title="Iconic Cities" />
-            <PropertySectionSkeleton title="Unique Stays" />
-            <PropertySectionSkeleton title="Trending Now" />
-            <PropertySectionSkeleton title="Family Friendly" />
-            <PropertySectionSkeleton title="Romantic Getaways" />
           </>
         ) : (
             <>
                 <PropertySection title="Top-rated Stays" properties={topRatedStays} />
-                <PropertySection title="Guest Favourites" properties={guestFavourites} />
                 <PropertySection title="Newly Added Stays" properties={newlyAddedStays} />
                 <PropertySection title="City Escapes" properties={cityStays} />
                 <PropertySection title="Countryside Retreats" properties={countryStays} />
                 <PropertySection title="Beachfront Bliss" properties={beachStays} />
-                <PropertySection title="Rooms" properties={roomStays} />
                 <PropertySection title="Modern Apartments" properties={apartmentStays} />
                 <PropertySection title="Luxury Villas" properties={villaStays} />
                 <PropertySection title="Cozy Cabins" properties={cabinStays} />
                 <PropertySection title="Pet-Friendly Homes" properties={petFriendlyStays} />
                 <PropertySection title="Luxury Collection" properties={luxuryStays} />
-                <PropertySection title="Properties with Pools" properties={withPoolStays} />
-                <PropertySection title="Great for Remote Work" properties={remoteWorkStays} />
-                <PropertySection title="Stays with Great Views" properties={amazingViewsStays} />
-                <PropertySection title="Iconic Cities" properties={iconicCitiesStays} />
-                <PropertySection title="Unique Stays" properties={uniqueStays} />
-                <PropertySection title="Trending Now" properties={trendingStays} />
-                <PropertySection title="Family Friendly" properties={familyFriendlyStays} />
-                <PropertySection title="Romantic Getaways" properties={romanticGetawaysStays} />
             </>
         )}
       </main>
