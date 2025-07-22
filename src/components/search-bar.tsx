@@ -130,18 +130,20 @@ function SearchBarWrapper({ className }: SearchBarProps) {
                 <div className="text-sm text-muted-foreground">{checkOut ? format(checkOut, 'MMM d') : 'Add date'}</div>
             </div>
           </div>
-          <Calendar
-            mode="range"
-            defaultMonth={checkIn}
-            selected={{ from: checkIn, to: checkOut }}
-            onSelect={(range) => {
-              setCheckIn(range?.from);
-              setCheckOut(range?.to);
-            }}
-            numberOfMonths={1}
-            disabled={(date: Date) => date < new Date(new Date().setHours(0,0,0,0))}
-            className="w-full"
-          />
+          <div className="flex justify-center">
+            <Calendar
+              mode="range"
+              defaultMonth={checkIn}
+              selected={{ from: checkIn, to: checkOut }}
+              onSelect={(range) => {
+                setCheckIn(range?.from);
+                setCheckOut(range?.to);
+              }}
+              numberOfMonths={1}
+              disabled={(date: Date) => date < new Date(new Date().setHours(0,0,0,0))}
+              className="p-3"
+            />
+          </div>
        </div>
        <div>
         <Label className="text-sm">Guests</Label>
