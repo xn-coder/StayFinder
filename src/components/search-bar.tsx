@@ -27,31 +27,31 @@ interface SearchBarProps {
 const Counter = ({ title, subtitle, value, onUpdate, min = 0 }: { title: string; subtitle: string; value: number; onUpdate: (newValue: number) => void, min?: number }) => (
     <div className="flex items-center justify-between">
         <div>
-            <p className="font-medium">{title}</p>
-            <p className="text-sm text-muted-foreground">{subtitle}</p>
+            <p className="font-medium text-sm">{title}</p>
+            <p className="text-xs text-muted-foreground">{subtitle}</p>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
             <Button
                 type="button"
                 variant="outline"
                 size="icon"
-                className="h-8 w-8 rounded-full"
+                className="h-7 w-7 rounded-full"
                 onClick={() => onUpdate(Math.max(min, value - 1))}
                 disabled={value <= min}
             >
-                <Minus className="h-4 w-4" />
+                <Minus className="h-3 w-3" />
             </Button>
-            <span className="w-5 text-center text-lg font-medium tabular-nums">
+            <span className="w-5 text-center font-medium tabular-nums">
                 {value}
             </span>
             <Button
                 type="button"
                 variant="outline"
                 size="icon"
-                className="h-8 w-8 rounded-full"
+                className="h-7 w-7 rounded-full"
                 onClick={() => onUpdate(value + 1)}
             >
-                <Plus className="h-4 w-4" />
+                <Plus className="h-3 w-3" />
             </Button>
         </div>
     </div>
@@ -106,9 +106,9 @@ function SearchBarWrapper({ className }: SearchBarProps) {
   }
   
   const MobileSearchContent = () => (
-    <div className='p-4 space-y-4'>
+    <div className='p-4 space-y-4 text-sm'>
        <div className="relative">
-          <Label htmlFor="location-input-mobile">Location</Label>
+          <Label htmlFor="location-input-mobile" className="text-base">Location</Label>
           <Input
             id="location-input-mobile"
             placeholder="Search destinations"
@@ -118,7 +118,7 @@ function SearchBarWrapper({ className }: SearchBarProps) {
           />
        </div>
        <div>
-          <Label>Dates</Label>
+          <Label className="text-base">Dates</Label>
            <Calendar
               mode="range"
               defaultMonth={checkIn}
@@ -133,7 +133,7 @@ function SearchBarWrapper({ className }: SearchBarProps) {
             />
        </div>
        <div>
-        <Label>Guests</Label>
+        <Label className="text-base">Guests</Label>
          <div className="space-y-4 mt-2 p-4 border rounded-lg">
             <Counter title="Adults" subtitle="Ages 13 or above" value={adults} onUpdate={setAdults} min={1}/>
             <Separator />
@@ -258,7 +258,7 @@ function SearchBarWrapper({ className }: SearchBarProps) {
                     </div>
                 </button>
             </DialogTrigger>
-            <DialogContent className="max-w-[95vw] p-0">
+            <DialogContent className="max-w-[95vw] sm:max-w-md p-0">
                 <DialogHeader className="p-4 border-b">
                   <DialogTitle>Search</DialogTitle>
                 </DialogHeader>
@@ -277,5 +277,3 @@ export function SearchBar({ className }: SearchBarProps) {
     </Suspense>
   );
 }
-
-    
