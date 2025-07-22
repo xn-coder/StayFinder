@@ -130,7 +130,8 @@ function SearchBarWrapper({ className }: SearchBarProps) {
                 <div className="text-sm text-muted-foreground">{checkOut ? format(checkOut, 'MMM d') : 'Add date'}</div>
             </div>
           </div>
-           <Calendar
+          <div className="flex justify-center">
+            <Calendar
               mode="range"
               defaultMonth={checkIn}
               selected={{ from: checkIn, to: checkOut }}
@@ -140,8 +141,8 @@ function SearchBarWrapper({ className }: SearchBarProps) {
               }}
               numberOfMonths={1}
               disabled={(date: Date) => date < new Date(new Date().setHours(0,0,0,0))}
-              className="w-full"
             />
+          </div>
        </div>
        <div>
         <Label className="text-sm">Guests</Label>
