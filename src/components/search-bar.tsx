@@ -120,6 +120,16 @@ function SearchBarWrapper({ className }: SearchBarProps) {
        </div>
        <div>
           <Label className="text-sm">Dates</Label>
+          <div className="grid grid-cols-2 gap-2 mt-1">
+            <div className="p-2 border rounded-md">
+                <div className="text-xs font-semibold">CHECK-IN</div>
+                <div className="text-sm text-muted-foreground">{checkIn ? format(checkIn, 'MMM d') : 'Add date'}</div>
+            </div>
+             <div className="p-2 border rounded-md">
+                <div className="text-xs font-semibold">CHECK-OUT</div>
+                <div className="text-sm text-muted-foreground">{checkOut ? format(checkOut, 'MMM d') : 'Add date'}</div>
+            </div>
+          </div>
            <Calendar
               mode="range"
               defaultMonth={checkIn}
