@@ -277,3 +277,5 @@ export function SearchBar({ className }: SearchBarProps) {
     </Suspense>
   );
 }
+
+    
