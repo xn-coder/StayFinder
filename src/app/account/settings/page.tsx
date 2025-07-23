@@ -146,7 +146,7 @@ export default function SettingsPage() {
                     </div>
                      <div className="space-y-2">
                         <Label htmlFor="email">Email</Label>
-                        <Input id="email" type="email" defaultValue={`${user.name.split(' ')[0].toLowerCase()}@stayfinder.com`} disabled />
+                        <Input id="email" type="email" defaultValue={`${user.name.split(' ')[0].toLowerCase()}@tripsandstay.com`} disabled />
                     </div>
                     <Button>Save Changes</Button>
                 </CardContent>

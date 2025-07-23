@@ -625,7 +625,7 @@ export function ListPropertyForm() {
                 <div className="space-y-4 text-left">
                     <button onClick={() => { handleUpdateData({ firstGuestChoice: 'any' }); nextStep(); }} className={cn("p-6 border-2 rounded-lg w-full hover:border-primary transition-colors flex justify-between items-center", formData.firstGuestChoice === 'any' ? 'border-primary bg-primary/10' : 'border-border')}>
                         <div>
-                            <h3 className="font-bold text-lg">Any StayFinder guest</h3>
+                            <h3 className="font-bold text-lg">Any TripsandStay guest</h3>
                             <p className="text-muted-foreground mt-1">Get reservations faster when you welcome anyone from the community.</p>
                         </div>
                         <Users className="w-8 h-8 text-muted-foreground" />
@@ -633,7 +633,7 @@ export function ListPropertyForm() {
                     <button onClick={() => { handleUpdateData({ firstGuestChoice: 'experienced' }); nextStep(); }} className={cn("p-6 border-2 rounded-lg w-full hover:border-primary transition-colors flex justify-between items-center", formData.firstGuestChoice === 'experienced' ? 'border-primary bg-primary/10' : 'border-border')}>
                         <div>
                             <h3 className="font-bold text-lg">An experienced guest</h3>
-                            <p className="text-muted-foreground mt-1">Welcome someone with a good track record on StayFinder.</p>
+                            <p className="text-muted-foreground mt-1">Welcome someone with a good track record on TripsandStay.</p>
                         </div>
                         <ShieldCheck className="w-8 h-8 text-muted-foreground" />
                     </button>

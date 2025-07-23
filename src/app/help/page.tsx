@@ -92,7 +92,7 @@ const topArticles = [
   { title: 'Paying for a reservation', href: '#', description: 'Learn about our secure payment system and how to pay for your stay.' },
   { title: 'ID and verification', href: '/account/settings', description: 'Understand our verification process to build trust in our community.' },
   { title: 'Safety tips and guidelines', href: '/support/safety', description: 'Our top tips for staying safe, whether you\'re a host or a guest.' },
-  { title: 'How StayFinder works', href: '#', description: 'A complete guide to using StayFinder as a guest or host.' },
+  { title: 'How TripsandStay works', href: '#', description: 'A complete guide to using TripsandStay as a guest or host.' },
 ];
 
 export default function HelpPage() {
@@ -122,7 +122,7 @@ export default function HelpPage() {
                 {greeting}
               </h1>
               <p className="mt-4 text-lg text-muted-foreground max-w-xl mx-auto">
-                  Find advice and answers from the StayFinder team.
+                  Find advice and answers from the TripsandStay team.
               </p>
               <div className="mt-8 max-w-xl mx-auto relative">
                 <Input 
