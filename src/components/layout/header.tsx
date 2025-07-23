@@ -52,21 +52,23 @@ export function Header({ className }: { className?: string }) {
     <>
       <header className={cn("sticky top-0 z-50 w-full border-b bg-background", className)}>
         <div className="container mx-auto flex h-20 items-center justify-between px-4">
-          <Link href="/" className="hidden md:flex items-center gap-2 mr-6 flex-shrink-0">
-            <Home className="h-8 w-8 text-primary" />
-            <span className="font-bold font-headline text-2xl text-primary">EasyStays</span>
-          </Link>
+          <div className="flex-1 flex justify-start">
+            <Link href="/" className="flex items-center gap-2 flex-shrink-0">
+              <Home className="h-8 w-8 text-primary" />
+              <span className="font-bold font-headline text-2xl text-primary hidden md:block">EasyStays</span>
+            </Link>
+          </div>
 
           <div className="hidden md:flex flex-1 items-center justify-center">
              {/* Desktop SearchBar could go here if needed in a different layout */}
           </div>
           
-          <div className="flex items-center justify-end space-x-2">
+          <div className="flex flex-1 items-center justify-end space-x-2">
             {user ? (
               <>
                 {(user.role === 'host' || user.role === 'user') && (
                   <Link href="/list-property">
-                    <Button variant="ghost" className="text-base font-semibold">
+                    <Button variant="ghost" className="hidden md:inline-flex text-base font-semibold">
                       {user.role === 'host' ? 'List your Property' : 'Become a Host'}
                     </Button>
                   </Link>
@@ -169,7 +171,7 @@ export function Header({ className }: { className?: string }) {
               </>
             ) : (
               <>
-                 <Button variant="ghost" className="text-base font-semibold" onClick={() => router.push('/list-property')}>
+                 <Button variant="ghost" className="hidden md:inline-flex text-base font-semibold" onClick={() => router.push('/list-property')}>
                     Become a Host
                  </Button>
                  <Button variant="ghost" size="icon" onClick={() => setIsLangCurrencyOpen(true)}>
