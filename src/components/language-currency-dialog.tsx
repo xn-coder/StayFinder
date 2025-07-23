@@ -40,7 +40,7 @@ export function LanguageCurrencyDialog({ isOpen, onOpenChange }: LanguageCurrenc
         <DialogHeader>
           <DialogTitle>Language and Currency</DialogTitle>
           <DialogDescription>
-            Choose the language and currency you want to use on TripsandStay.
+            Choose the language and currency you want to use on EasyStays.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-6 py-4">

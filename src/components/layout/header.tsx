@@ -54,7 +54,7 @@ export function Header({ className }: { className?: string }) {
         <div className="container mx-auto flex h-20 items-center justify-between px-4">
           <Link href="/" className="hidden md:flex items-center gap-2 mr-6 flex-shrink-0">
             <Home className="h-8 w-8 text-primary" />
-            <span className="font-bold font-headline text-2xl text-primary">TripsandStay</span>
+            <span className="font-bold font-headline text-2xl text-primary">EasyStays</span>
           </Link>
 
           <div className="hidden md:flex flex-1 items-center justify-center">

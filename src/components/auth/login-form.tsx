@@ -127,7 +127,7 @@ function LoginFormWrapper() {
 
   return (
       <div className="space-y-4">
-        <h2 className="text-xl font-semibold">Welcome to TripsandStay</h2>
+        <h2 className="text-xl font-semibold">Welcome to EasyStays</h2>
         <Form {...phoneForm}>
           <form onSubmit={phoneForm.handleSubmit(onPhoneSubmit)} className="space-y-4">
             <div className="border border-input rounded-lg overflow-hidden">

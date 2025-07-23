@@ -42,7 +42,7 @@ export default function SafetySupportPage() {
 
               <div className="flex-1 space-y-4">
                 <div className="bg-background rounded-xl rounded-tl-none p-4 shadow-sm border w-fit max-w-md">
-                  <p className="font-semibold mb-1 text-primary">TripsandStay Support</p>
+                  <p className="font-semibold mb-1 text-primary">EasyStays Support</p>
                   <p>
                     Hi {user ? user.name.split(' ')[0] : 'there'}, if there’s an emergency in progress, let’s get you connected with local emergency services now.
                   </p>
@@ -59,7 +59,7 @@ export default function SafetySupportPage() {
 
                 <div className="bg-background rounded-xl rounded-tl-none p-4 shadow-sm border w-fit max-w-md">
                   <p>
-                    If you need help from TripsandStay, select the issue you’re experiencing. This info helps us get you to the right person faster.
+                    If you need help from EasyStays, select the issue you’re experiencing. This info helps us get you to the right person faster.
                   </p>
                 </div>
 
@@ -102,7 +102,7 @@ export default function SafetySupportPage() {
                   </Avatar>
                   <div className="flex-1 space-y-4">
                       <div className="bg-background rounded-xl rounded-tl-none p-4 shadow-sm border w-fit max-w-md">
-                          <p className="font-semibold mb-1 text-primary">TripsandStay Support</p>
+                          <p className="font-semibold mb-1 text-primary">EasyStays Support</p>
                           <p>Let’s get you connected to a member of our team. How would you like to connect with us?</p>
                       </div>
                       <div className="bg-background rounded-xl rounded-tl-none p-4 shadow-sm border w-fit">

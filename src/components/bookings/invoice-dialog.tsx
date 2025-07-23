@@ -68,7 +68,7 @@ export function InvoiceDialog({ booking, isOpen, onOpenChange }: InvoiceDialogPr
               <div>
                 <h3 className="font-semibold">From</h3>
                 <p>{booking.property.host.name}</p>
-                <p>TripsandStay Host</p>
+                <p>EasyStays Host</p>
               </div>
             </div>
 

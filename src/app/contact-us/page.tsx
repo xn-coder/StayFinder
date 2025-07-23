@@ -67,7 +67,7 @@ export default function ContactUsPage() {
                         <Mail className="h-6 w-6 text-primary-foreground/80 mt-1 flex-shrink-0" />
                         <div>
                             <h4 className="font-semibold">Email</h4>
-                            <a href="mailto:support@tripsandstay.com" className="text-primary-foreground/80 hover:underline">support@tripsandstay.com</a>
+                            <a href="mailto:support@easystays.com" className="text-primary-foreground/80 hover:underline">support@easystays.com</a>
                         </div>
                     </div>
                      <div className="flex items-start gap-4">
@@ -81,7 +81,7 @@ export default function ContactUsPage() {
                         <MapPin className="h-6 w-6 text-primary-foreground/80 mt-1 flex-shrink-0" />
                         <div>
                             <h4 className="font-semibold">Office</h4>
-                            <p className="text-primary-foreground/80">123 TripsandStay Lane, Silicon Valley</p>
+                            <p className="text-primary-foreground/80">123 EasyStays Lane, Silicon Valley</p>
                         </div>
                     </div>
                  </div>

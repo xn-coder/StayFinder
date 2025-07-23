@@ -6,7 +6,7 @@ import { AnnouncementBar } from '@/components/layout/announcement-bar';
 import { ClientProviders } from '@/components/client-providers';
 
 export const metadata: Metadata = {
-  title: 'TripsandStay',
+  title: 'EasyStays',
   description: 'Find your next stay',
 };
 

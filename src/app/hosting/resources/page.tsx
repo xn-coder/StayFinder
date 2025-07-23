@@ -9,7 +9,7 @@ import Link from 'next/link';
 
 const resourceCategories = [
   {
-    title: 'Your StayFinder tools',
+    title: 'Your EasyStays tools',
     articles: [
       {
         title: 'Exploring your new hosting tools',
@@ -17,12 +17,12 @@ const resourceCategories = [
         hint: 'hosting tools',
       },
       {
-        title: 'Introducing StayFinder Services',
+        title: 'Introducing EasyStays Services',
         image: 'https://placehold.co/600x400.png',
         hint: 'service listing',
       },
       {
-        title: 'Introducing StayFinder Experiences',
+        title: 'Introducing EasyStays Experiences',
         image: 'https://placehold.co/600x400.png',
         hint: 'horse riding',
       },
@@ -97,7 +97,7 @@ const resourceCategories = [
         hint: 'cancellation policy',
       },
       {
-        title: 'How StayFinder protects hosts',
+        title: 'How EasyStays protects hosts',
         image: 'https://placehold.co/600x400.png',
         hint: 'host protection',
       },
