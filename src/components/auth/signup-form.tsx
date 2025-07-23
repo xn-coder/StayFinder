@@ -84,7 +84,7 @@ export function SignupForm() {
 
   return (
     <div>
-        <h2 className="text-2xl font-semibold mb-4">Welcome to StayFinder</h2>
+        <h2 className="text-2xl font-semibold mb-4">Welcome to TripsandStay</h2>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <div className="grid grid-cols-1 gap-4">
@@ -183,7 +183,7 @@ export function SignupForm() {
                 />
             </div>
              <p className="text-xs text-muted-foreground">
-                By selecting Agree and continue, I agree to StayFinder’s <Link href="/#" className="underline font-semibold">Terms of Service</Link>, <Link href="/#" className="underline font-semibold">Payments Terms of Service</Link>, and <Link href="/privacy-policy" className="underline font-semibold">Privacy Policy</Link>, and acknowledge the <Link href="/#" className="underline font-semibold">Nondiscrimination Policy</Link>.
+                By selecting Agree and continue, I agree to TripsandStay’s <Link href="/#" className="underline font-semibold">Terms of Service</Link>, <Link href="/#" className="underline font-semibold">Payments Terms of Service</Link>, and <Link href="/privacy-policy" className="underline font-semibold">Privacy Policy</Link>, and acknowledge the <Link href="/#" className="underline font-semibold">Nondiscrimination Policy</Link>.
             </p>
             <Button type="submit" className="w-full h-12 text-base" disabled={loading}>
               {loading && <Loader2 className="mr-2 animate-spin" />}

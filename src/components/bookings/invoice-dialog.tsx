@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useRef } from 'react';
@@ -67,7 +68,7 @@ export function InvoiceDialog({ booking, isOpen, onOpenChange }: InvoiceDialogPr
               <div>
                 <h3 className="font-semibold">From</h3>
                 <p>{booking.property.host.name}</p>
-                <p>StayFinder Host</p>
+                <p>TripsandStay Host</p>
               </div>
             </div>
 

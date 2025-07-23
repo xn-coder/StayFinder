@@ -21,7 +21,7 @@ export default function NewsroomPage() {
           <div className="container mx-auto px-4">
             <div className="max-w-2xl mx-auto text-center">
               <h1 className="text-4xl md:text-5xl font-bold font-headline">
-                StayFinder Newsroom: Stories and updates
+                TripsandStay Newsroom: Stories and updates
               </h1>
               <p className="mt-4 text-lg text-muted-foreground">
                 Subscribe to learn about new product features, the latest in travel technology, and updates from our team.

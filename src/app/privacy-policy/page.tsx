@@ -1,3 +1,4 @@
+
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 
@@ -9,7 +10,7 @@ export default function PrivacyPolicyPage() {
         <div className="max-w-4xl mx-auto prose lg:prose-xl">
           <h1 className="font-headline">Privacy Policy</h1>
           <p className="lead">
-            Your privacy is important to us. It is StayFinder's policy to respect your privacy regarding any information we may collect from you across our website.
+            Your privacy is important to us. It is TripsandStay's policy to respect your privacy regarding any information we may collect from you across our website.
           </p>
           
           <h2>1. Information We Collect</h2>

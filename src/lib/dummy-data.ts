@@ -1,3 +1,4 @@
+
 import type { Property, User, PrivacyType } from '@/types';
 
 export const dummyUsers: User[] = [
@@ -23,7 +24,7 @@ export const properties: Property[] = [
     host: {
       id: 'host-1',
       name: 'Alice Johnson',
-      email: 'host1@stayfinder.com',
+      email: 'host1@tripsandstay.com',
       avatar: 'https://placehold.co/100x100.png',
       role: 'host',
       verificationStatus: 'verified',
@@ -53,7 +54,7 @@ export const properties: Property[] = [
     host: {
       id: 'host-2',
       name: 'Bob Richards',
-      email: 'host2@stayfinder.com',
+      email: 'host2@tripsandstay.com',
       avatar: 'https://placehold.co/100x100.png',
       role: 'host',
       verificationStatus: 'verified',
@@ -83,7 +84,7 @@ export const properties: Property[] = [
     host: {
       id: 'host-3',
       name: 'Charlie Davis',
-      email: 'host3@stayfinder.com',
+      email: 'host3@tripsandstay.com',
       avatar: 'https://placehold.co/100x100.png',
       role: 'host',
       verificationStatus: 'verified',
@@ -113,7 +114,7 @@ export const properties: Property[] = [
     host: {
       id: 'host-4',
       name: 'Diana Prince',
-      email: 'host4@stayfinder.com',
+      email: 'host4@tripsandstay.com',
       avatar: 'https://placehold.co/100x100.png',
       role: 'host',
       verificationStatus: 'verified',
@@ -143,7 +144,7 @@ export const properties: Property[] = [
     host: {
       id: 'host-5',
       name: 'Giovanni Rossi',
-      email: 'host5@stayfinder.com',
+      email: 'host5@tripsandstay.com',
       avatar: 'https://placehold.co/100x100.png',
       role: 'host',
       verificationStatus: 'verified',
@@ -173,7 +174,7 @@ export const properties: Property[] = [
     host: {
       id: 'host-6',
       name: 'Amélie Dubois',
-      email: 'host6@stayfinder.com',
+      email: 'host6@tripsandstay.com',
       avatar: 'https://placehold.co/100x100.png',
       role: 'host',
       verificationStatus: 'verified',
@@ -203,7 +204,7 @@ export const properties: Property[] = [
     host: {
       id: 'host-9',
       name: 'Ken Tanaka',
-      email: 'host9@stayfinder.com',
+      email: 'host9@tripsandstay.com',
       avatar: 'https://placehold.co/100x100.png',
       role: 'host',
       verificationStatus: 'verified',
@@ -233,7 +234,7 @@ export const properties: Property[] = [
     host: {
       id: 'host-10',
       name: 'Olivia Smith',
-      email: 'host10@stayfinder.com',
+      email: 'host10@tripsandstay.com',
       avatar: 'https://placehold.co/100x100.png',
       role: 'host',
       verificationStatus: 'verified',
@@ -263,7 +264,7 @@ export const properties: Property[] = [
     host: {
       id: 'host-11',
       name: 'Fatima Al-Fassi',
-      email: 'host11@stayfinder.com',
+      email: 'host11@tripsandstay.com',
       avatar: 'https://placehold.co/100x100.png',
       role: 'host',
       verificationStatus: 'verified',
@@ -293,7 +294,7 @@ export const properties: Property[] = [
     host: {
       id: 'host-12',
       name: 'Carlos Hernandez',
-      email: 'host12@stayfinder.com',
+      email: 'host12@tripsandstay.com',
       avatar: 'https://placehold.co/100x100.png',
       role: 'host',
       verificationStatus: 'verified',
@@ -369,7 +370,7 @@ export const properties: Property[] = [
   },
   {
     id: 'prop-15',
-    name: 'StayFinder Hotel',
+    name: 'TripsandStay Hotel',
     location: 'Demonn',
     pricePerNight: 2500,
     description: 'nice',
@@ -486,10 +487,10 @@ export const helpTopics = [
     ],
   },
   {
-    category: 'About StayFinder',
+    category: 'About TripsandStay',
     links: [
       { title: 'Getting started', href: '#' },
-      { title: 'How StayFinder works', href: '#' },
+      { title: 'How TripsandStay works', href: '#' },
       { title: 'Our community policies', href: '#' },
       { title: 'Partnerships', href: '#' },
     ],
@@ -793,7 +794,7 @@ export const newsArticles = [
     title: 'Conversations with London Makr & Co.',
     author: 'Olivia Rhye',
     date: '20 Jan 2024',
-    description: "We sat down with London's fast-growing brand and product design studio, Makr & Co. to find out how they've used StayFinder to 2x their corporate travel efficiency.",
+    description: "We sat down with London's fast-growing brand and product design studio, Makr & Co. to find out how they've used TripsandStay to 2x their corporate travel efficiency.",
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ2CRkmPfbgJ09cITKB91pHn_jEaRoN_q8N4g&s',
     hint: 'business meeting',
     tags: ['Business', 'Travel', 'Interviews'],
@@ -829,7 +830,7 @@ export const newsArticles = [
     title: 'Why Food Matters – Disease Prevention & Treatment',
     author: 'Lana Steiner',
     date: '18 Jan 2024',
-    description: 'Exploring how local culinary experiences on StayFinder can contribute to a healthier and more enriching travel lifestyle.',
+    description: 'Exploring how local culinary experiences on TripsandStay can contribute to a healthier and more enriching travel lifestyle.',
     image: 'https://placehold.co/400x400.png',
     hint: 'healthy food',
     tags: ['Health', 'Experiences'],

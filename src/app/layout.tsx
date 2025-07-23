@@ -1,3 +1,4 @@
+
 import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
@@ -5,7 +6,7 @@ import { AnnouncementBar } from '@/components/layout/announcement-bar';
 import { ClientProviders } from '@/components/client-providers';
 
 export const metadata: Metadata = {
-  title: 'StayFinder',
+  title: 'TripsandStay',
   description: 'Find your next stay',
 };
 

@@ -23,7 +23,7 @@ const footerLinks = {
     { title: 'Community forum', href: '#' },
     { title: 'Hosting responsibly', href: '#' },
   ],
-  StayFinder: [
+  TripsandStay: [
     { title: 'Newsroom', href: '/newsroom' },
     { title: 'Careers', href: '#' },
     { title: 'Contact Us', href: '/contact-us' },
@@ -52,7 +52,7 @@ export function Footer() {
             <div className="md:col-span-1">
               <Link href="/" className="flex items-center gap-2 mb-4">
                   <Home className="h-8 w-8 text-white" />
-                  <span className="font-bold font-headline text-2xl text-white">StayFinder</span>
+                  <span className="font-bold font-headline text-2xl text-white">TripsandStay</span>
               </Link>
               <p className="text-[#c8edf0cc] text-sm">
                   Your next adventure is just a stay away.
@@ -91,13 +91,13 @@ export function Footer() {
               </ul>
             </div>
 
-            {/* Column 4: StayFinder Links */}
+            {/* Column 4: TripsandStay Links */}
             <div>
               <h4 className="font-semibold mb-3 text-[#aef0f4] uppercase text-xs tracking-wide">
-                StayFinder
+                TripsandStay
               </h4>
               <ul className="space-y-2 text-[#c8edf0cc]">
-                {footerLinks.StayFinder.map((link) => (
+                {footerLinks.TripsandStay.map((link) => (
                   <li key={link.title}>
                     <Link href={link.href} className="hover:text-white hover:underline underline-offset-2 cursor-pointer">
                       {link.title}
@@ -112,7 +112,7 @@ export function Footer() {
         {/* Bottom Bar */}
         <div className="max-w-7xl mx-auto px-6 py-6 border-t border-teal-300/30 flex flex-wrap justify-between items-center text-xs text-[#c8edf0cc] z-10 relative">
           <div className="flex items-center gap-4">
-            <span>© {new Date().getFullYear()} StayFinder, Inc.</span>
+            <span>© {new Date().getFullYear()} TripsandStay, Inc.</span>
           </div>
           <div className="flex items-center gap-4 mt-4 md:mt-0">
              <Button variant="ghost" className="text-[#c8edf0cc] p-0 h-auto font-semibold hover:text-white" onClick={() => setIsLangCurrencyOpen(true)}>

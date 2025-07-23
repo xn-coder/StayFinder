@@ -16,7 +16,7 @@ const ListPropertyIntro = ({ onGetStarted }: { onGetStarted: () => void }) => {
         {/* Left Column */}
         <div className="text-left">
           <h1 className="text-4xl md:text-5xl font-bold font-headline mb-4 text-primary">
-            It's easy to get started on StayFinder
+            It's easy to get started on TripsandStay
           </h1>
         </div>
         
