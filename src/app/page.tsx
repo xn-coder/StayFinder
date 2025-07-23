@@ -77,8 +77,27 @@ const PropertySection = ({ title, properties }: { title: string; properties: Pro
 export default function Home() {
   const { properties, loading } = useProperties();
 
-  const { topRatedStays, newlyAddedStays, cityStays, countryStays, beachStays, apartmentStays, villaStays, cabinStays, petFriendlyStays, luxuryStays } = useMemo(() => {
+  const { 
+    topRatedStays, 
+    newlyAddedStays, 
+    cityStays, 
+    countryStays, 
+    beachStays, 
+    apartmentStays, 
+    villaStays, 
+    cabinStays, 
+    petFriendlyStays, 
+    luxuryStays 
+  } = useMemo(() => {
     const approvedProperties = properties.filter(p => p.status === 'approved');
+
+    const shuffleArray = (array: Property[]) => {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    };
 
     const topRated = [...approvedProperties]
       .sort((a, b) => b.rating - a.rating)
@@ -87,25 +106,33 @@ export default function Home() {
     const newlyAdded = [...approvedProperties].sort((a, b) => (b.id > a.id ? 1 : -1)).slice(0, 10);
     
     const city = approvedProperties.filter(p => p.location.toLowerCase().includes('new york') || p.location.toLowerCase().includes('tokyo') || p.location.toLowerCase().includes('paris')).slice(0,10);
-    const country = approvedProperties.filter(p => p.location.toLowerCase().includes('tuscany') || p.location.toLowerCase().includes('aspen')).slice(0,10);
-    const beach = approvedProperties.filter(p => p.location.toLowerCase().includes('malibu') || p.location.toLowerCase().includes('miami')).slice(0,10);
+    
+    // Using broader filters that will catch more properties from the dummy data
+    const country = approvedProperties.filter(p => p.location.toLowerCase().includes('tuscany') || p.location.toLowerCase().includes('aspen') || p.type.toLowerCase().includes('farm')).slice(0,10);
+    
+    const beach = approvedProperties.filter(p => p.amenities.map(a => a.toLowerCase()).includes('beach access')).slice(0,10);
+    
     const apartments = approvedProperties.filter(p => p.type.toLowerCase() === 'apartment').slice(0,10);
+    
     const villas = approvedProperties.filter(p => p.type.toLowerCase() === 'villa').slice(0,10);
-    const cabins = approvedProperties.filter(p => p.type.toLowerCase() === 'cabin').slice(0,10);
+
+    const cabins = approvedProperties.filter(p => p.type.toLowerCase().includes('cabin')).slice(0,10);
+    
     const petFriendly = approvedProperties.filter(p => p.amenities.map(a => a.toLowerCase()).includes('pet friendly')).slice(0,10);
-    const luxury = approvedProperties.filter(p => p.pricePerNight > 50000).slice(0,10);
+    
+    const luxury = [...approvedProperties].sort((a,b) => b.pricePerNight - a.pricePerNight).slice(0,10);
 
     return { 
-        topRatedStays: topRated, 
-        newlyAddedStays: newlyAdded,
-        cityStays: city,
-        countryStays: country,
-        beachStays: beach,
-        apartmentStays: apartments,
-        villaStays: villas,
-        cabinStays: cabins,
-        petFriendlyStays: petFriendly,
-        luxuryStays: luxury,
+        topRatedStays: topRated.length > 0 ? topRated : shuffleArray([...approvedProperties]).slice(0, 8),
+        newlyAddedStays: newlyAdded.length > 0 ? newlyAdded : shuffleArray([...approvedProperties]).slice(0, 8),
+        cityStays: city.length > 0 ? city : shuffleArray([...approvedProperties]).slice(0, 8),
+        countryStays: country.length > 0 ? country : shuffleArray([...approvedProperties]).slice(0, 8),
+        beachStays: beach.length > 0 ? beach : shuffleArray([...approvedProperties]).slice(0, 8),
+        apartmentStays: apartments.length > 0 ? apartments : shuffleArray([...approvedProperties]).slice(0, 8),
+        villaStays: villas.length > 0 ? villas : shuffleArray([...approvedProperties]).slice(0, 8),
+        cabinStays: cabins.length > 0 ? cabins : shuffleArray([...approvedProperties]).slice(0, 8),
+        petFriendlyStays: petFriendly.length > 0 ? petFriendly : shuffleArray([...approvedProperties]).slice(0, 8),
+        luxuryStays: luxury.length > 0 ? luxury : shuffleArray([...approvedProperties]).slice(0, 8),
     };
   }, [properties]);
 
